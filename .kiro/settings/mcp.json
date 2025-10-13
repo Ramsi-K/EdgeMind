@@ -13,71 +13,22 @@
       "disabled": false,
       "autoApprove": []
     },
-    "bedrock-agentcore-mcp-server": {
-      "command": "uvx",
+    "awslabs.git-repo-research-mcp-server": {
+      "command": "uv",
       "args": [
+        "tool",
+        "run",
         "--from",
-        "awslabs.amazon-bedrock-agentcore-mcp-server@latest",
-        "awslabs.amazon-bedrock-agentcore-mcp-server.exe"
+        "awslabs.git-repo-research-mcp-server@latest",
+        "awslabs.git-repo-research-mcp-server.exe"
       ],
       "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
+        "FASTMCP_LOG_LEVEL": "ERROR",
+
+        "AWS_REGION": "us-east-1"
       },
       "disabled": false,
-      "autoApprove": []
-    },
-    "awslabs.cdk-mcp-server": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "awslabs.cdk-mcp-server@latest",
-        "awslabs.cdk-mcp-server.exe"
-      ],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false,
-      "timeout": 60,
-      "autoApprove": []
-    },
-    "awslabs.cloudwatch-mcp-server": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "awslabs.cloudwatch-mcp-server@latest",
-        "awslabs.cloudwatch-mcp-server.exe"
-      ],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false,
-      "autoApprove": []
-    },
-    "awslabs.aws-serverless-mcp-server": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "awslabs.aws-serverless-mcp-server@latest",
-        "awslabs.aws-serverless-mcp-server.exe"
-      ],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false,
-      "autoApprove": []
-    },
-    "awslabs.aws-pricing-mcp-server": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "awslabs.aws-pricing-mcp-server@latest",
-        "awslabs.aws-pricing-mcp-server.exe"
-      ],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false,
-      "autoApprove": []
+      "autoApprove": ["create_research_repository", "search_repos_on_github"]
     }
   }
 }

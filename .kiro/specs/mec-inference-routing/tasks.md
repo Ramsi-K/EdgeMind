@@ -1,33 +1,87 @@
 # Implementation Plan
 
-- [ ] 1. Set up project foundation and AWS infrastructure
+- [x] 0. Create architecture diagrams and project visualization
 
-  - Create Python project structure with proper package organization
-  - Configure AWS CDK for infrastructure as code deployment
-  - Set up development environment with required dependencies
-  - Initialize AWS credentials and configure MCP server connections
+  - Generate high-level system architecture diagram using AWS Diagram MCP Server
+  - Create detailed component interaction diagrams
+  - Build data flow and deployment architecture diagrams
+  - Document system overview with visual representations
+  - _Requirements: 5.4, 11.1_
+
+- [x] 0.1 Generate high-level system architecture diagram
+
+  - Create multi-agent system overview showing Context, Resource, Router, Cache, Monitor agents
+  - Show AWS service integration layer with Bedrock AgentCore, Lambda, DynamoDB, CloudWatch
+  - Illustrate three-tier compute model (Device/MEC/Cloud) with AWS Wavelength/Outposts
+  - _Requirements: 5.4_
+
+- [x] 0.2 Create detailed component interaction diagrams
+
+  - Generate agent communication flow diagrams
+  - Show Nova reasoning integration with routing decisions
+  - Illustrate MCP server integration architecture
+  - _Requirements: 5.4, 11.1_
+
+- [x] 0.3 Build data flow and deployment diagrams
+
+  - Create request processing pipeline visualization
+  - Show infrastructure deployment architecture with CDK
+  - Generate monitoring and observability flow diagrams
+  - _Requirements: 5.4, 11.1_
+
+- [x] 1. Set up project foundation following Strands Agents deployment pattern
+  - Research Strands Agents deployment patterns from official samples
+  - Create project structure following Lambda deployment pattern (cdk/, cdk/lambda/, package.json, etc.)
+  - Set up Strands Agents with tools as Lambda functions (not MCP servers in production)
+  - Configure TypeScript CDK for AWS infrastructure deployment
+  - Set up development environment with Strands dependencies
+  - Add pre-commit setup for code quality
+  - **Key insight**: Agents run as Lambda functions with @tool decorators calling AWS services directly
+  - **Key insight**: MCP servers are for local development, production uses direct AWS API calls
   - _Requirements: 5.1, 9.1, 10.4_
 
-- [ ] 1.1 Initialize core project structure
+- [x] 1.1 Initialize core project structure
 
   - Create src/agents/, src/aws/, src/data/, src/dashboard/ directories
   - Set up requirements.txt with AWS SDK, FastAPI, Streamlit dependencies
   - Configure .env.example with required environment variables
   - _Requirements: 5.1, 5.3_
 
-- [ ] 1.2 Configure AWS CDK infrastructure foundation
+- [x] 1.2 Configure AWS CDK infrastructure foundation
 
   - Create CDK app with Lambda, API Gateway, DynamoDB stack definitions
   - Define IAM roles with least privilege access for each agent
   - Set up VPC and security groups for secure communication
   - _Requirements: 5.1, 5.2, 10.1_
 
-- [ ] 1.3 Set up MCP server integrations
+- [x] 1.3 Set up MCP server integrations
 
   - Configure AWS Bedrock AgentCore MCP server connection
-  - Set up DynamoDB, Lambda, and CloudWatch MCP servers
   - Test MCP server connectivity and basic operations
   - _Requirements: 9.2, 10.1, 10.4_
+
+- [x] 1.4 Configure pre-commit automation
+
+  - Add `.pre-commit-config.yaml` with:
+    - **Black** – code formatter
+    - **Ruff** – linter
+    - **isort** – import sorter
+    - **detect-secrets** – secret scanner
+  - Run `pre-commit install` and verify hooks run cleanly before first commit.
+  - Commit `.kiro/` and `.pre-commit-config.yaml` to document environment state.
+
+- [x] 1.5 Verify project foundation and clarify architecture
+
+
+
+
+  - Verify all project files are correctly structured following Strands pattern
+  - Confirm understanding: Agents = Lambda functions with Strands + @tool decorators
+  - Confirm understanding: Tools call AWS services directly (boto3), not MCP servers
+  - Confirm understanding: MCP servers only for local development/testing
+  - Validate CDK structure matches Strands deployment tutorial pattern
+  - Test that all dependencies are correctly specified
+  - _Requirements: 5.1, 9.1, 10.4_
 
 - [ ] 2. Implement data models and dummy data generation
 

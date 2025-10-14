@@ -2,9 +2,9 @@
 
 ## 💰 Budget Overview
 
-**Total AWS Credits**: $100  
-**Estimated Project Cost**: $35-50  
-**Safety Buffer**: $50-65  
+**Total AWS Credits**: $100
+**Estimated Project Cost**: $35-50
+**Safety Buffer**: $50-65
 **Cost Optimization**: Aggressive use of free tier
 
 ## 📊 Service-by-Service Breakdown
@@ -152,7 +152,7 @@ def get_daily_costs():
 
 ### Cost Alerts
 - **$25 Alert**: 50% of budget used
-- **$40 Alert**: 80% of budget used  
+- **$40 Alert**: 80% of budget used
 - **$45 Alert**: 90% of budget used
 - **$50 Alert**: Budget exceeded
 

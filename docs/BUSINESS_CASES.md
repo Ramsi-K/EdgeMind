@@ -7,11 +7,11 @@
 
 #### Use Case 1: Intelligent NPC Interactions
 - **Problem**: NPCs need instant responses but complex personalities
-- **Solution**: 
+- **Solution**:
   - Simple responses: Device (TinyLLM, <50ms)
   - Contextual dialogue: MEC (Llama 7B, <200ms)
   - Creative storytelling: Cloud (GPT-4, 1-3s acceptable)
-- **Business Impact**: 
+- **Business Impact**:
   - 60% faster NPC response times
   - 40% more engaging player interactions
   - $2M+ revenue increase for AAA titles
@@ -57,11 +57,11 @@
 
 #### Use Case 2: Fleet Management
 - **Problem**: Managing 10,000+ delivery vehicles
-- **Solution**: 
+- **Solution**:
   - Vehicle diagnostics: Device
   - Route optimization: MEC
   - Fleet analytics: Cloud
-- **Business Impact**: 
+- **Business Impact**:
   - 25% fuel savings
   - 40% faster deliveries
   - $50M+ annual cost reduction
@@ -83,11 +83,11 @@
 - **Sensor Detection (Device)**: Fire, flood, accident detection
   - Response: Immediate alerts
   - Latency: <100ms
-  
+
 - **Coordination (MEC)**: Emergency service routing, resource allocation
   - Response: Dispatch optimization
   - Latency: <500ms
-  
+
 - **Analytics (Cloud)**: Pattern analysis, prevention strategies
   - Response: Long-term planning
   - Latency: Minutes/hours acceptable
@@ -115,11 +115,11 @@
 - **Vital Signs (Device)**: Heart rate, blood pressure monitoring
   - Critical alerts: <1s response
   - Privacy: Data stays local
-  
+
 - **Pattern Analysis (MEC)**: Regional health trends, outbreak detection
   - Response: Minutes
   - Compliance: HIPAA-compliant edge processing
-  
+
 - **Research Analytics (Cloud)**: Population health studies
   - Response: Hours/days
   - Scale: Global health insights
@@ -141,11 +141,11 @@
 - **Sensor Data (Device)**: Vibration, temperature, pressure
   - Alert threshold: <100ms
   - Reliability: 99.9% uptime
-  
+
 - **Equipment Analysis (MEC)**: Predictive failure detection
   - Prediction horizon: Hours/days
   - Accuracy: 95%+ failure prediction
-  
+
 - **Supply Chain (Cloud)**: Parts ordering, maintenance scheduling
   - Optimization: Global supply chain
   - Cost savings: 40% maintenance reduction
@@ -190,8 +190,8 @@
 
 ## 🎯 Total Addressable Market
 
-**Combined TAM**: $4.1T across all verticals  
-**Serviceable Market**: $410B (10% penetration)  
+**Combined TAM**: $4.1T across all verticals
+**Serviceable Market**: $410B (10% penetration)
 **Revenue Opportunity**: $41B (10% market share)
 
 ---

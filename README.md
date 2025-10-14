@@ -1,6 +1,6 @@
 # AWS MEC Inference Routing System
 
-> 🏆 **AWS Agents Hackathon 2025 Entry**  
+> 🏆 **AWS Agents Hackathon 2025 Entry**
 > Intelligent AI inference routing across device-edge-cloud continuum
 
 ## 🎯 Project Overview
@@ -33,7 +33,7 @@ Device (Edge)    MEC (Regional)    Cloud (Global)
 
 ### Gaming & Esports
 - **Real-time NPC dialogue**: Device-level for instant responses
-- **Game state analysis**: MEC for regional multiplayer coordination  
+- **Game state analysis**: MEC for regional multiplayer coordination
 - **Content generation**: Cloud for complex world building
 
 ### Autonomous Vehicles
@@ -116,8 +116,8 @@ aws-mec-inference-routing/
 
 ## 📞 Contact
 
-**Team**: [Your Name]  
-**Email**: [Your Email]  
+**Team**: [Your Name]
+**Email**: [Your Email]
 **LinkedIn**: [Your LinkedIn]
 
 ---

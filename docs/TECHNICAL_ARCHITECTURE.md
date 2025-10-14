@@ -11,7 +11,7 @@ The MEC Inference Routing System uses a multi-agent architecture to intelligentl
 
 **Responsibilities**:
 - Request complexity analysis
-- User context evaluation  
+- User context evaluation
 - Device capability assessment
 - Network condition monitoring
 

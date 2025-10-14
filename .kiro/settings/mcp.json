@@ -7,9 +7,7 @@
         "awslabs.aws-api-mcp-server@latest",
         "awslabs.aws-api-mcp-server.exe"
       ],
-      "env": {
-        "AWS_REGION": "us-east-1"
-      },
+      "env": {},
       "disabled": false,
       "autoApprove": []
     },
@@ -29,6 +27,19 @@
       },
       "disabled": false,
       "autoApprove": ["create_research_repository", "search_repos_on_github"]
+    },
+    "awslabs.aws-diagram-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "tool",
+        "run",
+        "--from",
+        " awslabs.aws-diagram-mcp-server@latest",
+        "awslabs.aws-diagram-mcp-server.exe"
+      ],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
     }
   }
 }

@@ -2,14 +2,14 @@
 
 ## 🎬 Demo Strategy Overview
 
-**Total Demo Time**: 2-3 minutes  
-**Format**: Live dashboard + narrated scenarios  
+**Total Demo Time**: 2-3 minutes
+**Format**: Live dashboard + narrated scenarios
 **Goal**: Show intelligent routing in action across multiple use cases
 
 ## 🎮 Scenario 1: Gaming - Real-Time NPC Interactions
 
 ### Setup
-**Game**: Multiplayer RPG with intelligent NPCs  
+**Game**: Multiplayer RPG with intelligent NPCs
 **Challenge**: Balance response speed with NPC personality depth
 
 ### Demo Flow (30 seconds)
@@ -23,13 +23,13 @@
 
 **Routing Decision**:
 1. **Context Agent**: Analyzes request complexity → "High complexity dialogue"
-2. **Resource Agent**: Checks MEC capacity → "Tokyo MEC available"  
+2. **Resource Agent**: Checks MEC capacity → "Tokyo MEC available"
 3. **Router Agent**: Decision → "Route to MEC (Llama 7B)"
 4. **Result**: 150ms response with rich, contextual lore
 
 **Comparison Shown**:
 - Device routing: 50ms but generic response
-- Cloud routing: 2s but creative response  
+- Cloud routing: 2s but creative response
 - **MEC routing: 150ms with rich response** ✅
 
 ### Business Impact
@@ -42,7 +42,7 @@
 ## 🚗 Scenario 2: Autonomous Vehicle - Safety Critical Decision
 
 ### Setup
-**Vehicle**: Self-driving car approaching intersection  
+**Vehicle**: Self-driving car approaching intersection
 **Challenge**: Balance safety response time with decision accuracy
 
 ### Demo Flow (30 seconds)
@@ -56,7 +56,7 @@
 
 **Multi-Tier Processing**:
 1. **Immediate Safety (Device)**: Pedestrian detection → Emergency brake signal (10ms)
-2. **Traffic Analysis (MEC)**: Regional traffic patterns → Route adjustment (100ms)  
+2. **Traffic Analysis (MEC)**: Regional traffic patterns → Route adjustment (100ms)
 3. **Journey Optimization (Cloud)**: Weather + global traffic → Long-term route (2s)
 
 **Result**: Layered intelligence with appropriate latency for each decision type
@@ -71,7 +71,7 @@
 ## 🏥 Scenario 3: Healthcare - Patient Monitoring
 
 ### Setup
-**Patient**: ICU monitoring with wearable devices  
+**Patient**: ICU monitoring with wearable devices
 **Challenge**: Balance privacy with diagnostic capability
 
 ### Demo Flow (30 seconds)
@@ -103,7 +103,7 @@
 ## 🏭 Scenario 4: Industrial IoT - Predictive Maintenance
 
 ### Setup
-**Factory**: Manufacturing line with sensor monitoring  
+**Factory**: Manufacturing line with sensor monitoring
 **Challenge**: Prevent equipment failure while optimizing maintenance costs
 
 ### Demo Flow (30 seconds)
@@ -135,7 +135,7 @@
 ## 🛒 Scenario 5: Retail - Personalized Shopping
 
 ### Setup
-**Store**: Smart retail with AR shopping assistant  
+**Store**: Smart retail with AR shopping assistant
 **Challenge**: Instant product recognition with personalized recommendations
 
 ### Demo Flow (20 seconds)
@@ -227,7 +227,7 @@
 
 **Demo Success Metrics**:
 - Clear problem/solution narrative ✅
-- Multiple compelling use cases ✅  
+- Multiple compelling use cases ✅
 - Live, interactive demonstration ✅
 - Measurable business impact ✅
 - Technical depth for judges ✅

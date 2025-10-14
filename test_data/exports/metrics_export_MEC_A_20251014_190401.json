@@ -1,0 +1,58 @@
+{
+  "export_info": {
+    "timestamp": "2025-10-14T19:04:01.436500+00:00",
+    "site_id": "MEC_A",
+    "hours": 1,
+    "total_records": 2
+  },
+  "current_metrics": {
+    "site_id": "MEC_A",
+    "timestamp": "2025-10-14T19:04:01.199667+00:00",
+    "cpu_utilization": 38.27059551313796,
+    "gpu_utilization": 25.071438111785792,
+    "memory_utilization": 30.13870636555487,
+    "queue_depth": 15,
+    "network_latency": {
+      "MEC_B": 12.83,
+      "MEC_C": 28.01
+    },
+    "response_time_ms": 42.48015117258288,
+    "requests_per_second": 174,
+    "active_connections": 357,
+    "cache_hit_ratio": 86.10778923431762
+  },
+  "historical_metrics": [
+    {
+      "site_id": "MEC_A",
+      "timestamp": "2025-10-14T19:04:01.199667+00:00",
+      "cpu_utilization": 38.27059551313796,
+      "gpu_utilization": 25.071438111785792,
+      "memory_utilization": 30.13870636555487,
+      "queue_depth": 15,
+      "network_latency": {
+        "MEC_B": 12.83,
+        "MEC_C": 28.01
+      },
+      "response_time_ms": 42.48015117258288,
+      "requests_per_second": 174,
+      "active_connections": 357,
+      "cache_hit_ratio": 86.10778923431762
+    },
+    {
+      "site_id": "MEC_A",
+      "timestamp": "2025-10-14T19:04:01.199667+00:00",
+      "cpu_utilization": 38.27059551313796,
+      "gpu_utilization": 25.071438111785792,
+      "memory_utilization": 30.13870636555487,
+      "queue_depth": 15,
+      "network_latency": {
+        "MEC_B": 12.83,
+        "MEC_C": 28.01
+      },
+      "response_time_ms": 42.48015117258288,
+      "requests_per_second": 174,
+      "active_connections": 357,
+      "cache_hit_ratio": 86.10778923431762
+    }
+  ]
+}

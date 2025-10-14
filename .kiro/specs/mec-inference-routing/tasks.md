@@ -78,7 +78,7 @@
   - Create logging configuration for agent activity tracking
   - _Requirements: 11.1_
 
-- [ ] 2. Implement dummy metric generation and data simulation
+- [x] 2. Implement dummy metric generation and data simulation
 
   - Build realistic MEC metrics generator with CPU, GPU, latency, queue depth
   - Create synthetic data patterns for normal operation and threshold breaches
@@ -86,14 +86,14 @@
   - Implement data persistence using JSON files for session continuity
   - _Requirements: 1.1, 2.1, 6.1_
 
-- [ ] 2.1 Create MEC metrics data generator
+- [x] 2.1 Create MEC metrics data generator
 
   - Implement MECMetricsGenerator class with realistic CPU/GPU/latency patterns
   - Add configurable threshold breach scenarios (latency spike, CPU overload)
   - Create time-series data with realistic variance and trends
   - _Requirements: 1.1, 6.1_
 
-- [ ] 2.2 Build synthetic data persistence layer
+- [x] 2.2 Build synthetic data persistence layer
 
   - Create DataStore class using JSON files for metrics history
   - Implement session state management for Streamlit continuity

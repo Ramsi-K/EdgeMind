@@ -1,0 +1,80 @@
+[project]
+name = "mec-inference-routing"
+version = "0.1.0"
+description = "MEC (Multi-access Edge Computing) Inference Routing System with Swarm Orchestration"
+authors = [
+    {name = "MEC Team", email = "team@mec-routing.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    # Streamlit Dashboard
+    "streamlit>=1.28.0",
+    "plotly>=5.17.0",
+    "pandas>=2.1.0",
+    "numpy>=1.24.0",
+
+    # Network Visualization
+    "networkx>=3.2.0",
+    "streamlit-agraph>=0.0.45",
+
+    # HTTP and WebSocket Support
+    "httpx>=0.25.0",
+    "websockets>=12.0",
+
+    # Environment and Configuration
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+
+    # Logging and Monitoring
+    "structlog>=23.2.0",
+    "rich>=13.7.0",
+
+    # Async Support
+    "aiohttp>=3.9.0",
+
+    # Data Processing
+    "scipy>=1.11.0",
+    "scikit-learn>=1.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.9.0",
+    "ruff>=0.1.0",
+    "isort>=5.12.0",
+    "pre-commit>=3.5.0",
+    "mypy>=1.7.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "C90", "I", "N", "UP", "YTT", "S", "BLE", "FBT", "B", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "FA", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "SIM", "TID", "TCH", "INT", "ARG", "PTH", "ERA", "PD", "PGH", "PL", "TRY", "FLY", "NPY", "RUF"]
+ignore = ["E501", "S101", "PLR0913", "PLR0912", "PLR0915", "S311", "ARG001", "ARG002", "PLR2004", "TRY401"]
+
+[tool.black]
+target-version = ["py311"]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

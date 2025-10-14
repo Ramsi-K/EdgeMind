@@ -41,8 +41,10 @@
       "disabled": false,
       "autoApprove": [
         "list_icons",
-        "list_icons"
-      ]
+        "list_icons",
+        "generate_diagram"
+      ],
+      "disabledTools": []
     }
   }
 }

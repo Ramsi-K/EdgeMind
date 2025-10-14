@@ -40,29 +40,32 @@ Device Layer (SLM) → MEC Orchestration → Swarm Decision
 ## 🎮 Business Use Cases
 
 ### Gaming & Esports
+
 - **Real-time NPC dialogue**: Device SLM for instant responses
 - **Game state analysis**: MEC swarm coordination for regional multiplayer
 - **Performance analytics**: Cloud observability (passive)
 
 ### Autonomous Vehicles
+
 - **Collision detection**: Device SLM for ultra-low latency safety
 - **Traffic coordination**: MEC orchestrator manages regional traffic flow
 - **Fleet analytics**: Cloud monitoring and long-term insights
 
 ### Smart Cities & IoT
+
 - **Sensor processing**: Device SLM for immediate responses
 - **City-wide coordination**: MEC swarm balances infrastructure load
 - **Urban planning**: Cloud analytics from aggregated MEC data
 
 ## 🤖 MEC Agent Architecture
 
-| Agent | Role | Deployment |
-|-------|------|------------|
-| **Orchestrator Agent** | Threshold monitoring & swarm triggering | MEC Site Controller |
-| **Load Balancer Agent** | Distribute workload across MEC sites | Strands Swarm Member |
-| **Resource Monitor Agent** | Track CPU/GPU/latency metrics | Strands Swarm Member |
-| **Decision Coordinator Agent** | Coordinate swarm consensus | Strands Swarm Member |
-| **Cache Manager Agent** | Local model and data caching | Strands Swarm Member |
+| Agent                          | Role                                    | Deployment           |
+| ------------------------------ | --------------------------------------- | -------------------- |
+| **Orchestrator Agent**         | Threshold monitoring & swarm triggering | MEC Site Controller  |
+| **Load Balancer Agent**        | Distribute workload across MEC sites    | Strands Swarm Member |
+| **Resource Monitor Agent**     | Track CPU/GPU/latency metrics           | Strands Swarm Member |
+| **Decision Coordinator Agent** | Coordinate swarm consensus              | Strands Swarm Member |
+| **Cache Manager Agent**        | Local model and data caching            | Strands Swarm Member |
 
 ## 🛠️ Technology Stack
 
@@ -84,37 +87,38 @@ Device Layer (SLM) → MEC Orchestration → Swarm Decision
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/edgemind-mec-orchestration.git
-cd edgemind-mec-orchestration
+git clone https://github.com/yourusername/mec-inference-routing.git
+cd mec-inference-routing
 
-# Install Strands and dependencies
-pip install -r requirements.txt
+# Set up UV environment and install dependencies
+uv sync
 
-# Deploy MEC simulation environment
-docker-compose up -d mec-cluster
+# Start Streamlit dashboard
+uv run streamlit run src/dashboard/app.py
 
-# Start orchestrator and swarm
-python src/orchestrator/start_mec_orchestrator.py
+# Run MEC orchestration demo
+uv run python src/orchestrator/mec_orchestrator.py
 
-# Run demo scenarios
-python demo/run_mec_demo.py
+# Test swarm coordination
+uv run python src/swarm/swarm_coordinator.py
 ```
 
 ## 📁 Project Structure
 
 ```
-edgemind-mec-orchestration/
+mec-inference-routing/
 ├── README.md
-├── docs/                    # MEC architecture documentation
-├── architecture/            # 5G-MEC topology diagrams
+├── pyproject.toml          # UV project configuration
+├── requirements.txt        # Dependencies
+├── docs/                   # MEC architecture documentation
+├── architecture/           # MEC topology diagrams (Mermaid)
 ├── src/
-│   ├── orchestrator/       # Threshold monitoring & swarm triggering
-│   ├── swarm/              # Strands agent implementations
-│   ├── device/             # SLM integration layer
-│   └── dashboard/          # MEC monitoring UI
-├── infrastructure/         # Container orchestration
-├── tests/                  # Swarm coordination tests
-└── demo/                   # Real-time demo scenarios
+│   ├── orchestrator/      # Threshold monitoring & swarm triggering
+│   ├── swarm/             # Strands agent implementations
+│   ├── device/            # Edge device integration layer
+│   └── dashboard/         # Streamlit MEC monitoring UI
+├── tests/                 # Swarm coordination tests
+└── demo/                  # Real-time demo scenarios
 ```
 
 ## 🏆 5G Edge Computing Showcase
@@ -133,4 +137,4 @@ edgemind-mec-orchestration/
 
 ---
 
-*Showcasing the future of 5G-MEC intelligence - where real decisions happen at the edge, not in the cloud*
+_Showcasing the future of 5G-MEC intelligence - where real decisions happen at the edge, not in the cloud_

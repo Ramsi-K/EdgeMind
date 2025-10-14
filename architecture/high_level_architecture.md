@@ -2,144 +2,125 @@
 
 ## System Overview
 
+```mermaid
+graph TB
+    %% Device Layer
+    subgraph DeviceLayer["🌐 Device Layer (First Line)"]
+        DeviceSLM["📱<br/>Device SLM<br/>• Immediate Response<br/>• Local Processing<br/>• MEC Triggers"]
+        IoTSensors["🔧<br/>IoT Sensors<br/>• Edge Devices<br/>• Mobile Apps<br/>• Basic AI"]
+        EdgeDevices["📟<br/>Edge Devices<br/>• Real-time Data<br/>• Local Decisions<br/>• <50ms Latency"]
+    end
+
+    %% MEC Layer - Core Intelligence
+    subgraph MECLayer["🏢 MEC Layer (Primary Intelligence)"]
+        subgraph OrchestratorLayer["🎯 Orchestrator Layer"]
+            OrchestratorAgent["🤖<br/>Orchestrator Agent<br/>(Primary)"]
+            ThresholdMonitor["📊<br/>Threshold Monitoring<br/>• Latency: <100ms<br/>• CPU/GPU: <80%<br/>• Queue: <50 reqs"]
+        end
+
+        subgraph SwarmLayer["🤝 Strands Swarm Agents"]
+            LoadBalancer["⚖️<br/>Load Balance Agent<br/>• MEC Site Selection<br/>• Dynamic Balancing<br/>• Failover Logic"]
+            ResourceMonitor["📈<br/>Resource Monitor<br/>• Capacity Tracking<br/>• Latency Monitor<br/>• Health Checks"]
+            DecisionCoord["🧠<br/>Decision Coordinator<br/>• Swarm Consensus<br/>• Pattern Learning<br/>• Threshold Adjust"]
+            CacheManager["💾<br/>Cache Manager<br/>• Local Caching<br/>• 15min Refresh<br/>• Predictive Preload"]
+        end
+
+        subgraph Infrastructure["🏗️ MEC Infrastructure"]
+            ContainerRuntime["🐳<br/>Container Runtime<br/>• Docker Containers<br/>• Kubernetes<br/>• Auto Scaling"]
+            LocalStorage["💽<br/>Local Storage<br/>• Local Cache<br/>• Model Storage<br/>• Response Cache"]
+            MECNetwork["🌐<br/>MEC-to-MEC Network<br/>• Direct MEC Comm<br/>• Low Latency<br/>• Redundant Paths"]
+        end
+    end
+
+    %% Cloud Layer
+    subgraph CloudLayer["☁️ Cloud Layer (Passive Observer)"]
+        Analytics["📊<br/>Analytics Only<br/>• Long-term Analytics<br/>• Pattern Recognition<br/>• Observability<br/>• No Real-time Decisions"]
+        DataAggregation["📈<br/>Data Aggregation<br/>• Historical Data<br/>• Trend Analysis<br/>• Compliance Reporting"]
+    end
+
+    %% Orchestration Flow
+    subgraph OrchFlow["⚡ Orchestration Flow"]
+        Step1["1️⃣ Device SLM Processing"]
+        Step2["2️⃣ Threshold Monitoring"]
+        Step3["3️⃣ Swarm Trigger"]
+        Step4["4️⃣ Load Balancing"]
+        Step5["5️⃣ MEC Coordination"]
+        Step6["6️⃣ Response & Learning"]
+    end
+
+    %% Primary Data Flow
+    DeviceSLM -->|"Trigger MEC"| OrchestratorAgent
+    IoTSensors -->|"Sensor Data"| OrchestratorAgent
+    EdgeDevices -->|"Real-time Requests"| OrchestratorAgent
+
+    %% Orchestrator Coordination
+    OrchestratorAgent --> ThresholdMonitor
+    ThresholdMonitor -->|"Threshold Breach"| LoadBalancer
+
+    %% Swarm Coordination
+    LoadBalancer --> ResourceMonitor
+    ResourceMonitor --> DecisionCoord
+    DecisionCoord --> CacheManager
+    LoadBalancer --> CacheManager
+
+    %% Infrastructure Integration
+    OrchestratorAgent --> ContainerRuntime
+    CacheManager --> LocalStorage
+    LoadBalancer --> MECNetwork
+
+    %% Passive Cloud Observation
+    ResourceMonitor -.->|"Metrics"| Analytics
+    DecisionCoord -.->|"Decisions"| DataAggregation
+
+    %% Orchestration Flow Connections
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Step4
+    Step4 --> Step5
+    Step5 --> Step6
+
+    %% Styling
+    classDef deviceStyle fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef mecStyle fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+    classDef swarmStyle fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef cloudStyle fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef flowStyle fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    classDef infraStyle fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+
+    class DeviceLayer,DeviceSLM,IoTSensors,EdgeDevices deviceStyle
+    class MECLayer,OrchestratorLayer,OrchestratorAgent,ThresholdMonitor mecStyle
+    class SwarmLayer,LoadBalancer,ResourceMonitor,DecisionCoord,CacheManager swarmStyle
+    class CloudLayer,Analytics,DataAggregation cloudStyle
+    class OrchFlow,Step1,Step2,Step3,Step4,Step5,Step6 flowStyle
+    class Infrastructure,ContainerRuntime,LocalStorage,MECNetwork infraStyle
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        EdgeMind MEC Intelligence System                         │
-│                      Threshold-Based Swarm Orchestration                       │
-└─────────────────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────────────────────┐
-│  Device Layer   │    │   MEC Sites      │    │     Orchestration Flow          │
-│                 │    │                  │    │                                 │
-│  ┌───────────┐  │    │  ┌─────────────┐ │    │  1. Device SLM Processing       │
-│  │Device SLM │──┼────┼──│ MEC Site A  │─┼────┼──2. Threshold Monitoring        │
-│  └───────────┘  │    │  └─────────────┘ │    │  3. Swarm Trigger               │
-│                 │    │                  │    │  4. Load Balancing              │
-│  ┌───────────┐  │    │  ┌─────────────┐ │    │  5. MEC Coordination            │
-│  │IoT Sensor │──┼────┼──│ MEC Site B  │ │    │  6. Response & Learning         │
-│  └───────────┘  │    │  └─────────────┘ │    │                                 │
-└─────────────────┘    └──────────────────┘    └─────────────────────────────────┘
+### Three-Layer Intelligence Model
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                         MEC Orchestration Core                                  │
-│                      (Strands Swarm Coordination)                              │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Orchestrator Layer                                   │   │
-│  │                                                                         │   │
-│  │  ┌─────────────────┐         ┌─────────────────────────────────────┐   │   │
-│  │  │ Orchestrator    │◄────────┤     Threshold Monitoring            │   │   │
-│  │  │ Agent           │         │     (Real-time Metrics)             │   │   │
-│  │  │ (Primary)       │         │                                     │   │   │
-│  │  └─────────────────┘         │  • Latency: <100ms target          │   │   │
-│  │                              │  • CPU/GPU Load: 80% threshold     │   │   │
-│  │                              │  • Queue Depth: 50 requests max    │   │   │
-│  │                              └─────────────────────────────────────┘   │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                        Strands Swarm Agents                            │   │
-│  │                                                                         │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │   │
-│  │  │Load Balance │  │ Resource    │  │ Decision    │  │ Cache       │   │   │
-│  │  │   Agent     │  │ Monitor     │  │ Coordinator │  │ Manager     │   │   │
-│  │  │             │  │ Agent       │  │ Agent       │  │ Agent       │   │   │
-│  │  │• MEC Site   │  │• Capacity   │  │• Swarm      │  │• Local      │   │   │
-│  │  │  Selection  │  │  Tracking   │  │  Consensus  │  │  Caching    │   │   │
-│  │  │• Dynamic    │  │• Latency    │  │• Pattern    │  │• 15min      │   │   │
-│  │  │  Balancing  │  │  Monitor    │  │  Learning   │  │  Refresh    │   │   │
-│  │  │• Failover   │  │• Health     │  │• Threshold  │  │• Predictive │   │   │
-│  │  │  Logic      │  │  Checks     │  │  Adjustment │  │  Preload    │   │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph Layer1["🌐 Device Layer (First Line)"]
+        Device["📱 Small Language Models<br/>🎯 Role: Trigger<br/>⚡ Latency: <50ms<br/>🤖 Autonomy: Basic<br/><br/>• Immediate Response<br/>• Local Processing<br/>• Triggers MEC<br/>• IoT Devices<br/>• Mobile Apps<br/>• Basic AI"]
+    end
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        MEC Infrastructure Layer                                 │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐   │
-│  │ Container   │  │ Local       │  │ MEC-to-MEC  │  │ Threshold           │   │
-│  │ Runtime     │  │ Storage     │  │ Network     │  │ Monitoring          │   │
-│  │             │  │             │  │             │  │                     │   │
-│  │• Docker     │  │• Local      │  │• Direct     │  │• Real-time          │   │
-│  │  Containers │  │  Cache      │  │  MEC Comm   │  │  Metrics            │   │
-│  │• Kubernetes │  │• Model      │  │• Low        │  │• Swarm              │   │
-│  │  Orchestr   │  │  Storage    │  │  Latency    │  │  Triggers           │   │
-│  │• Auto       │  │• Response   │  │• Redundant  │  │• Pattern            │   │
-│  │  Scaling    │  │  Cache      │  │  Paths      │  │  Recognition        │   │
-│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────────────┘   │
-│                                                                                 │
-│                    ┌─────────────────────────────────────────────────────┐     │
-│                    │           Swarm Coordination                        │     │
-│                    │                                                     │     │
-│                    │  • Inter-MEC Agent Communication                    │     │
-│                    │  • Consensus-based Decision Making                  │     │
-│                    │  • Autonomous Load Balancing                        │     │
-│                    │  • Threshold-based Orchestration                    │     │
-│                    └─────────────────────────────────────────────────────┘     │
-└─────────────────────────────────────────────────────────────────────────────────┘
+    subgraph Layer2["🏢 MEC Layer (Primary Intelligence)"]
+        MEC["🤝 Strands Swarm Orchestration<br/>🎯 Role: Intelligence<br/>⚡ Latency: <100ms<br/>🤖 Autonomy: Full<br/><br/>• Real-time Decisions<br/>• Swarm Coordination<br/>• Load Balance<br/>• Autonomous Operation<br/>• 5G RAN Controllers<br/>• Containerized Deployment"]
+    end
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        Three-Layer Intelligence Model                          │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐     │
-│  │ Device Layer    │    │    MEC Layer        │    │   Cloud Layer       │     │
-│  │ (First Line)    │    │  (Primary Intel)    │    │ (Passive Observer)  │     │
-│  │                 │    │                     │    │                     │     │
-│  │ ┌─────────────┐ │    │ ┌─────────────────┐ │    │ ┌─────────────────┐ │     │
-│  │ │Small Lang   │ │    │ │ Strands Swarm   │ │    │ │ Analytics Only  │ │     │
-│  │ │Models (SLM) │ │    │ │ Orchestration   │ │    │ │                 │ │     │
-│  │ │             │ │    │ │                 │ │    │ │• Long-term      │ │     │
-│  │ │• Immediate  │ │    │ │• Real-time      │ │    │ │  Analytics      │ │     │
-│  │ │  Response   │ │    │ │  Decisions      │ │    │ │• Pattern        │ │     │
-│  │ │• Local      │ │    │ │• Swarm          │ │    │ │  Recognition    │ │     │
-│  │ │  Processing │ │    │ │  Coordination   │ │    │ │• Observability  │ │     │
-│  │ │• Triggers   │ │    │ │• Load Balance   │ │    │ │• No Real-time   │ │     │
-│  │ │  MEC        │ │    │ │• Autonomous     │ │    │ │  Decisions      │ │     │
-│  │ └─────────────┘ │    │ └─────────────────┘ │    │ └─────────────────┘ │     │
-│  │                 │    │                     │    │                     │     │
-│  │ ┌─────────────┐ │    │ ┌─────────────────┐ │    │ ┌─────────────────┐ │     │
-│  │ │ Edge        │ │    │ │ 5G RAN          │ │    │ │ Data            │ │     │
-│  │ │ Sensors     │ │    │ │ Controllers     │ │    │ │ Aggregation     │ │     │
-│  │ │             │ │    │ │                 │ │    │ │                 │ │     │
-│  │ │• IoT        │ │    │ │• Physical       │ │    │ │• Historical     │ │     │
-│  │ │  Devices    │ │    │ │  Proximity      │ │    │ │  Data           │ │     │
-│  │ │• Mobile     │ │    │ │• Ultra-low      │ │    │ │• Trend          │ │     │
-│  │ │  Apps       │ │    │ │  Latency        │ │    │ │  Analysis       │ │     │
-│  │ │• Basic      │ │    │ │• Containerized  │ │    │ │• Compliance     │ │     │
-│  │ │  AI         │ │    │ │  Deployment     │ │    │ │  Reporting      │ │     │
-│  │ └─────────────┘ │    │ └─────────────────┘ │    │ └─────────────────┘ │     │
-│  │                 │    │                     │    │                     │     │
-│  │ Latency: <50ms  │    │ Latency: <100ms     │    │ Latency: N/A        │     │
-│  │ Role: Trigger   │    │ Role: Intelligence  │    │ Role: Observer      │     │
-│  │ Autonomy: Basic │    │ Autonomy: Full      │    │ Autonomy: None      │     │
-│  └─────────────────┘    └─────────────────────┘    └─────────────────────┘     │
-└─────────────────────────────────────────────────────────────────────────────────┘
+    subgraph Layer3["☁️ Cloud Layer (Passive Observer)"]
+        Cloud["📊 Analytics Only<br/>🎯 Role: Observer<br/>⚡ Latency: N/A<br/>🤖 Autonomy: None<br/><br/>• Long-term Analytics<br/>• Pattern Recognition<br/>• Observability<br/>• No Real-time Decisions<br/>• Historical Data<br/>• Compliance Reporting"]
+    end
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                      MEC Orchestration Dashboard                               │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Real-time MEC Monitoring                             │   │
-│  │                      (Live Orchestration)                              │   │
-│  │                                                                         │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │   │
-│  │  │ Threshold   │  │ Swarm       │  │ MEC Site    │  │ Performance │   │   │
-│  │  │ Monitoring  │  │ Coordination│  │ Health      │  │ Analytics   │   │   │
-│  │  │             │  │             │  │             │  │             │   │   │
-│  │  │• Latency    │  │• Agent      │  │• CPU/GPU    │  │• Sub-100ms  │   │   │
-│  │  │  <100ms     │  │  Swarm      │  │  Load       │  │  Decisions  │   │   │
-│  │  │• CPU Load   │  │• Load       │  │• Network    │  │• Swarm      │   │   │
-│  │  │  <80%       │  │  Balance    │  │  Status     │  │  Efficiency │   │   │
-│  │  │• Queue      │  │• Consensus  │  │• Container  │  │• Threshold  │   │   │
-│  │  │  <50 reqs   │  │  Decisions  │  │  Health     │  │  Accuracy   │   │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────────┘
+    Device -->|"Complex Requests"| MEC
+    MEC -.->|"Metrics & Logs"| Cloud
+
+    classDef deviceStyle fill:#e8f5e8,stroke:#4caf50,stroke-width:3px
+    classDef mecStyle fill:#e3f2fd,stroke:#2196f3,stroke-width:3px
+    classDef cloudStyle fill:#fff3e0,stroke:#ff9800,stroke-width:3px
+
+    class Layer1,Device deviceStyle
+    class Layer2,MEC mecStyle
+    class Layer3,Cloud cloudStyle
 ```
 
 ## Key Architecture Principles

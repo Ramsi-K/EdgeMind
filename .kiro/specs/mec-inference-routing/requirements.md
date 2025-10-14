@@ -2,129 +2,138 @@
 
 ## Introduction
 
-The MEC Inference Routing System is an intelligent multi-agent platform that dynamically routes AI inference requests to the optimal compute location (device, edge, or cloud) based on real-time conditions, model requirements, and user context. The system optimizes for latency, accuracy, cost, and availability while providing autonomous decision-making capabilities.
-
-This system is designed to meet AWS AI Agent qualification requirements by implementing reasoning LLMs for decision-making, demonstrating autonomous capabilities, and integrating with external APIs, databases, and tools.
+EdgeMind is a 5G-MEC intelligence orchestration system that deploys Strands agent swarms directly at Multi-access Edge Computing (MEC) sites near 5G RAN controllers. The system enables real-time AI orchestration through threshold-based monitoring and autonomous swarm coordination, ensuring sub-100ms decision making without cloud dependency for time-critical applications.
 
 ## Requirements
 
-### Requirement 1
+### Requirement 1: Threshold-Based Orchestration
 
-**User Story:** As a developer integrating AI capabilities, I want the system to automatically route my inference requests to the best available compute tier, so that I get optimal performance without manual configuration.
-
-#### Acceptance Criteria
-
-1. WHEN a user submits an inference request THEN the system SHALL analyze the request complexity within 50ms
-2. WHEN request analysis is complete THEN the system SHALL determine the optimal compute tier (device/edge/cloud) within 100ms
-3. WHEN routing decision is made THEN the system SHALL execute the inference on the selected tier
-4. IF the selected tier is unavailable THEN the system SHALL automatically failover to the next best option
-5. WHEN inference is complete THEN the system SHALL return results with performance metadata
-
-### Requirement 2
-
-**User Story:** As a system administrator, I want real-time monitoring of all compute tiers and routing decisions, so that I can ensure optimal system performance and troubleshoot issues.
+**User Story:** As a MEC operator, I want the system to automatically monitor performance thresholds and trigger swarm responses, so that real-time applications maintain sub-100ms latency without manual intervention.
 
 #### Acceptance Criteria
 
-1. WHEN the system is running THEN it SHALL continuously monitor device, edge, and cloud resource availability
-2. WHEN resource metrics change THEN the system SHALL update routing algorithms within 30 seconds
-3. WHEN a routing decision is made THEN the system SHALL log the decision rationale and performance metrics
-4. WHEN system performance degrades THEN the system SHALL automatically adjust routing thresholds
-5. IF critical errors occur THEN the system SHALL send alerts and maintain service availability
+1. WHEN latency exceeds 100ms THEN the Orchestrator Agent SHALL trigger swarm coordination within 10ms
+2. WHEN CPU/GPU load exceeds 80% THEN the system SHALL activate load balancing across available MEC sites
+3. WHEN queue depth exceeds 50 requests THEN the swarm SHALL redistribute workload to alternate MEC sites
+4. WHEN network conditions degrade THEN the system SHALL automatically adjust thresholds to maintain performance
+5. WHEN all thresholds are within normal ranges THEN the system SHALL operate in autonomous mode without cloud involvement
 
-### Requirement 3
+### Requirement 2: Strands Agent Swarm Coordination
 
-**User Story:** As a business stakeholder, I want the system to optimize costs while maintaining performance SLAs, so that we can scale efficiently without overspending.
-
-#### Acceptance Criteria
-
-1. WHEN making routing decisions THEN the system SHALL consider cost implications of each compute tier
-2. WHEN cloud resources are expensive THEN the system SHALL prefer edge/device processing when feasible
-3. WHEN performance requirements are met THEN the system SHALL choose the most cost-effective option
-4. WHEN generating reports THEN the system SHALL provide detailed cost analysis and savings metrics
-5. IF budget thresholds are exceeded THEN the system SHALL automatically implement cost-saving measures
-
-### Requirement 4
-
-**User Story:** As an AI application user, I want different types of requests to be handled appropriately based on their complexity and urgency, so that I get the best experience for each use case.
+**User Story:** As a system architect, I want Strands agents to coordinate as a swarm across multiple MEC sites, so that load balancing and decision making happens autonomously at the edge.
 
 #### Acceptance Criteria
 
-1. WHEN processing simple queries THEN the system SHALL route to device-level models for sub-50ms response
-2. WHEN processing complex analysis THEN the system SHALL route to cloud models for maximum accuracy
-3. WHEN processing regional data THEN the system SHALL prefer edge computing for optimal latency
-4. WHEN network connectivity is poor THEN the system SHALL prioritize local processing capabilities
-5. IF user context indicates urgency THEN the system SHALL optimize for latency over cost
+1. WHEN a swarm trigger occurs THEN all relevant Strands agents SHALL coordinate within 50ms
+2. WHEN MEC sites communicate THEN the system SHALL use direct MEC-to-MEC networking without cloud routing
+3. WHEN making load balancing decisions THEN the swarm SHALL reach consensus using distributed algorithms
+4. WHEN a MEC site fails THEN the swarm SHALL automatically failover to healthy sites within 100ms
+5. WHEN swarm coordination completes THEN the system SHALL log decisions for pattern learning
 
-### Requirement 5
+### Requirement 3: Device Layer Integration
 
-**User Story:** As a developer, I want to deploy and manage the system using infrastructure as code, so that I can maintain consistent environments and easily scale the solution.
-
-#### Acceptance Criteria
-
-1. WHEN deploying the system THEN all AWS resources SHALL be provisioned via CDK/CloudFormation scripts
-2. WHEN updating infrastructure THEN changes SHALL be version controlled and reproducible
-3. WHEN scaling is needed THEN the system SHALL support horizontal scaling through configuration
-4. WHEN monitoring is required THEN all metrics SHALL be automatically configured in CloudWatch
-5. IF deployment fails THEN the system SHALL provide clear error messages and rollback capabilities
-
-### Requirement 6
-
-**User Story:** As a system integrator, I want the multi-agent system to coordinate seamlessly and make autonomous decisions, so that the system operates reliably without constant human intervention.
+**User Story:** As a mobile application developer, I want device-level Small Language Models (SLMs) to handle immediate responses and trigger MEC processing when needed, so that users get instant feedback for simple queries.
 
 #### Acceptance Criteria
 
-1. WHEN agents communicate THEN they SHALL use standardized message formats and protocols
-2. WHEN making decisions THEN agents SHALL coordinate to avoid conflicts and optimize globally
-3. WHEN learning from performance data THEN the system SHALL automatically improve routing decisions
-4. WHEN handling failures THEN agents SHALL implement graceful degradation and recovery
-5. IF agent coordination fails THEN the system SHALL maintain basic functionality with reduced capabilities
+1. WHEN a user request is simple THEN the device SLM SHALL respond within 50ms without MEC involvement
+2. WHEN request complexity exceeds device capabilities THEN the SLM SHALL trigger MEC orchestration within 10ms
+3. WHEN device battery is low THEN the system SHALL prefer lMEC processing to conserve power
+4. WHEN network connectivity is poor THEN the device SHALL operate offline with cached responses
+5. WHEN MEC processing completes THEN the device SHALL receive the response within the total 100ms target
 
-### Requirement 7
+### Requirement 4: MEC Site Infrastructure
 
-**User Story:** As a compliance officer, I want the system to handle data privacy and security appropriately across all compute tiers, so that we meet regulatory requirements.
-
-#### Acceptance Criteria
-
-1. WHEN processing sensitive data THEN the system SHALL prefer local/edge processing over cloud
-2. WHEN data must be transmitted THEN the system SHALL use encryption and secure protocols
-3. WHEN storing model metadata THEN the system SHALL implement proper access controls
-4. WHEN logging decisions THEN the system SHALL exclude sensitive information from logs
-5. IF security violations are detected THEN the system SHALL immediately isolate affected components
-
-### Requirement 8
-
-**User Story:** As a performance engineer, I want comprehensive analytics and learning capabilities, so that the system continuously improves its routing decisions.
+**User Story:** As a telecom infrastructure manager, I want MEC sites to operate autonomously with containerized Strands agents, so that real-time decisions happen at the network edge near RAN controllers.
 
 #### Acceptance Criteria
 
-1. WHEN collecting performance data THEN the system SHALL track latency, accuracy, cost, and availability metrics
-2. WHEN analyzing patterns THEN the system SHALL identify optimization opportunities automatically
-3. WHEN learning from decisions THEN the system SHALL update routing algorithms based on outcomes
-4. WHEN generating insights THEN the system SHALL provide actionable recommendations for improvement
-5. IF performance degrades THEN the system SHALL automatically investigate and suggest corrections
+1. WHEN deploying agents THEN the system SHALL use containerized deployment with Docker/Kubernetes
+2. WHEN MEC sites communicate THEN the latency SHALL be under 20ms between adjacent sites
+3. WHEN local caching is needed THEN the system SHALL maintain 15-minute refresh cycles with predictive preloading
+4. WHEN MEC capacity changes THEN the system SHALL automatically scale containers based on demand
+5. WHEN MEC sites are deployed THEN they SHALL be physically located within 10ms round-trip latency
 
-### Requirement 9
+### Requirement 5: Cloud Observer Role
 
-**User Story:** As a competition participant, I want the system to meet all AWS AI Agent qualification criteria, so that the submission is eligible and demonstrates required capabilities.
-
-#### Acceptance Criteria
-
-1. WHEN deploying LLMs THEN the system SHALL use AWS Bedrock or Amazon SageMaker AI as the hosting platform
-2. WHEN implementing core functionality THEN the system SHALL use Amazon Bedrock AgentCore primitives for agent coordination
-3. WHEN making routing decisions THEN the system SHALL use reasoning LLMs (Nova/Claude) for decision-making logic
-4. WHEN operating autonomously THEN the system SHALL demonstrate task execution with and without human inputs
-5. WHEN integrating external systems THEN the system SHALL connect to APIs, databases, and monitoring tools
-6. IF additional services are needed THEN the system MAY use AWS Lambda, S3, and API Gateway as helper services
-
-### Requirement 10
-
-**User Story:** As a system architect, I want the multi-agent system to use AWS-native services for agent coordination and communication, so that we leverage cloud-native capabilities effectively.
+**User Story:** As a system administrator, I want the cloud to serve as a passive observer for analytics and monitoring, so that long-term insights are available without interfering with real-time edge decisions.
 
 #### Acceptance Criteria
 
-1. WHEN agents communicate THEN they SHALL use Amazon Bedrock AgentCore for coordination primitives
-2. WHEN processing requests THEN agents SHALL leverage Nova models for reasoning and decision-making
-3. WHEN storing agent state THEN the system SHALL use DynamoDB for persistence and coordination
-4. WHEN triggering agent actions THEN the system SHALL use Lambda functions and EventBridge for orchestration
-5. IF agents need external data THEN they SHALL integrate with APIs using API Gateway and external web services
+1. WHEN collecting metrics THEN the cloud SHALL aggregate data from MEC sites without real-time decision making
+2. WHEN analyzing patterns THEN the cloud SHALL provide insights for threshold optimization but not override edge decisions
+3. WHEN storing historical data THEN the cloud SHALL maintain compliance with data residency requirements
+4. WHEN generating reports THEN the cloud SHALL provide observability dashboards for system performance
+5. WHEN MEC sites are autonomous THEN the cloud SHALL NOT be required for operational decisions
+
+### Requirement 6: Real-Time Performance
+
+**User Story:** As an application developer building time-critical applications, I want guaranteed sub-100ms response times for orchestration decisions, so that autonomous vehicles, gaming, and industrial control systems can operate safely (for simulated workloads).
+
+#### Acceptance Criteria
+
+1. WHEN processing any request THEN the total orchestration decision time SHALL be under 100ms
+2. WHEN measuring latency THEN 95% of decisions SHALL complete within 80ms
+3. WHEN system load increases THEN performance SHALL degrade gracefully without exceeding 150ms
+4. WHEN network conditions vary THEN the system SHALL maintain consistent sub-100ms performance
+5. WHEN benchmarking performance THEN the system SHALL demonstrate 50% faster response than cloud-dependent alternatives
+
+### Requirement 7: Swarm Intelligence and Learning
+
+**User Story:** As a system operator, I want the agent swarm to learn from performance patterns and optimize thresholds automatically, so that the system improves over time without manual tuning.
+
+#### Acceptance Criteria
+
+1. WHEN decisions are made THEN the Decision Coordinator Agent SHALL log outcomes for pattern analysis
+2. WHEN patterns are detected THEN the system SHALL automatically adjust thresholds to optimize performance
+3. WHEN anomalies occur THEN the swarm SHALL adapt coordination strategies to maintain service quality
+4. WHEN learning from historical data THEN the system SHALL predict and preload resources based on usage patterns
+5. WHEN optimization opportunities are identified THEN the system SHALL implement improvements autonomously
+
+### Requirement 8: Fault Tolerance and Resilience
+
+**User Story:** As a reliability engineer, I want the system to maintain 99.9% availability through automatic failover and graceful degradation, so that critical applications continue operating even during component failures.
+
+#### Acceptance Criteria
+
+1. WHEN a MEC site fails THEN the swarm SHALL redirect traffic to healthy sites within 100ms
+2. WHEN network partitions occur THEN isolated MEC sites SHALL continue operating with cached data
+3. WHEN agent failures happen THEN the system SHALL restart failed agents automatically within 30 seconds
+4. WHEN cascading failures are detected THEN the system SHALL implement circuit breaker patterns to prevent system-wide outages
+5. WHEN recovering from failures THEN the system SHALL gradually restore traffic to recovered components
+
+### Requirement 9: Security and Compliance
+
+**User Story:** As a security officer, I want the system to maintain data privacy and security at the edge while complying with regional regulations, so that sensitive data processing meets enterprise security requirements.
+
+#### Acceptance Criteria
+
+1. WHEN processing sensitive data THEN the system SHALL keep data local to the appropriate geographic region
+2. WHEN agents communicate THEN all inter-MEC communication SHALL be encrypted in transit
+3. WHEN storing data locally THEN MEC sites SHALL implement encryption at rest for cached models and responses
+4. WHEN audit trails are required THEN the system SHALL log all orchestration decisions with timestamps and rationale
+5. WHEN compliance is verified THEN the system SHALL support GDPR, HIPAA, and other regional privacy regulations
+
+### Requirement 10: Containerized Deployment
+
+**User Story:** As a DevOps engineer, I want Strands agents deployed in containers with proper orchestration, so that the system can scale dynamically and maintain consistent deployment across MEC sites.
+
+#### Acceptance Criteria
+
+1. WHEN deploying agents THEN each Strands agent SHALL run in its own container with resource limits
+2. WHEN scaling is needed THEN Kubernetes SHALL automatically scale agent containers based on load metrics
+3. WHEN updating agents THEN the system SHALL support rolling updates without service interruption
+4. WHEN monitoring containers THEN health checks SHALL detect and restart failed agent containers within 10 seconds
+5. WHEN managing resources THEN container orchestration SHALL optimize CPU/GPU allocation across agents
+
+### Requirement 11: Demo and Visualization
+
+**User Story:** As a stakeholder, I want a real-time dashboard that demonstrates MEC orchestration and swarm coordination in action, so that the system's capabilities and performance can be clearly understood.
+
+#### Acceptance Criteria
+
+1. WHEN demonstrating the system THEN the dashboard SHALL show real-time threshold monitoring with live metrics
+2. WHEN visualizing swarm coordination THEN the interface SHALL display agent communication and consensus decisions
+3. WHEN showing performance THEN the dashboard SHALL compare MEC response times against cloud-dependent alternatives
+4. WHEN running demo scenarios THEN the system SHALL support gaming, automotive, healthcare, and IoT use cases
+5. WHEN presenting to stakeholders THEN the dashboard SHALL be accessible via web interface with mobile responsiveness

@@ -1,447 +1,423 @@
 # Implementation Plan
 
-- [x] 0. Create architecture diagrams and project visualization
+## Phase 1 — MVP (Week 1): Local Demo Simulation
 
-  - Generate high-level system architecture diagram using AWS Diagram MCP Server
-  - Create detailed component interaction diagrams
-  - Build data flow and deployment architecture diagrams
-  - Document system overview with visual representations
-  - _Requirements: 5.4, 11.1_
+- [ ] 0. Clean up legacy AWS project and prepare fresh MEC foundation
+  - Remove all legacy AWS-focused code and infrastructure files
+  - Create clean, minimal repository structure for MEC-centric architecture
+  - Generate new architecture diagrams using AWS Diagram MCP or Mermaid
+  - Set up fresh UV environment with Streamlit and MEC-specific dependencies
+  - Verify README skeleton aligns with new MEC architecture
+  - _Requirements: 10.1, 11.1_
 
-- [x] 0.1 Generate high-level system architecture diagram
+- [ ] 0.1 Remove legacy AWS code and infrastructure
+  - Delete cdk/ directory and all AWS CDK infrastructure code
+  - Remove infrastructure/ directory with AWS-specific stack definitions
+  - Clean up src/ directory removing AWS Lambda and Bedrock integrations
+  - Delete any remaining AWS configuration files and scripts
+  - _Requirements: 10.1_
 
-  - Create multi-agent system overview showing Context, Resource, Router, Cache, Monitor agents
-  - Show AWS service integration layer with Bedrock AgentCore, Lambda, DynamoDB, CloudWatch
-  - Illustrate three-tier compute model (Device/MEC/Cloud) with AWS Wavelength/Outposts
-  - _Requirements: 5.4_
+- [ ] 0.2 Create clean minimal repository structure
+  - Restructure src/ for MEC-centric architecture: src/orchestrator/, src/swarm/, src/device/, src/dashboard/
+  - Remove AWS-specific directories and create MEC-focused structure
+  - Clean up root directory removing AWS deployment files
+  - _Requirements: 10.1_
 
-- [x] 0.2 Create detailed component interaction diagrams
+- [ ] 0.3 Generate new MEC architecture diagrams
+  - Use AWS Diagram MCP tool to explore available icons for custom MEC components
+  - Create high-level MEC orchestration architecture diagram
+  - Build Strands swarm coordination diagram with custom icons
+  - If MCP unavailable, create Mermaid diagrams for manual conversion
+  - _Requirements: 11.1_
 
-  - Generate agent communication flow diagrams
-  - Show Nova reasoning integration with routing decisions
-  - Illustrate MCP server integration architecture
-  - _Requirements: 5.4, 11.1_
+- [ ] 0.4 Set up fresh UV environment and dependencies
+  - Create new UV environment specifically for MEC orchestration project
+  - Install Streamlit, plotly, networkx, streamlit-agraph for dashboard
+  - Add Strands framework dependencies and MCP client libraries
+  - Verify all dependencies work correctly in clean environment
+  - _Requirements: 10.1_
 
-- [x] 0.3 Build data flow and deployment diagrams
+- [ ] 0.5 Verify README and documentation alignment
+  - Confirm README.md reflects new MEC-centric architecture (already updated)
+  - Ensure all documentation references are consistent with new direction
+  - Remove any remaining AWS-specific references from documentation
+  - _Requirements: 11.1_
 
-  - Create request processing pipeline visualization
-  - Show infrastructure deployment architecture with CDK
-  - Generate monitoring and observability flow diagrams
-  - _Requirements: 5.4, 11.1_
+- [ ] 0.6 Initialize version control and tagging
+  - Commit all changes after cleanup as initial v2 baseline
+  - Tag this commit as `v2-init` or `task0-baseline`
+  - Push to remote to preserve rollback point
+  - _Requirements: 10.1_
 
-- [x] 1. Set up project foundation following Strands Agents deployment pattern
-  - Research Strands Agents deployment patterns from official samples
-  - Create project structure following Lambda deployment pattern (cdk/, cdk/lambda/, package.json, etc.)
-  - Set up Strands Agents with tools as Lambda functions (not MCP servers in production)
-  - Configure TypeScript CDK for AWS infrastructure deployment
-  - Set up development environment with Strands dependencies
-  - Add pre-commit setup for code quality
-  - **Key insight**: Agents run as Lambda functions with @tool decorators calling AWS services directly
-  - **Key insight**: MCP servers are for local development, production uses direct AWS API calls
-  - _Requirements: 5.1, 9.1, 10.4_
+- [ ] 1. Set up project foundation and development environment
+  - Create project structure with src/, tests/, and docs/ directories
+  - Set up requirements.txt with Streamlit, plotly, pandas, and basic dependencies
+  - Initialize .env.example with configuration variables
+  - Create basic README with setup instructions
+  - _Requirements: 10.1, 11.1_
 
-- [x] 1.1 Initialize core project structure
+- [ ] 1.1 Create project structure and dependencies
+  - Initialize src/agents/, src/mcp_tools/, src/dashboard/, src/data/ directories
+  - Add requirements.txt with streamlit, plotly, pandas, networkx, streamlit-agraph
+  - Create .gitignore for Python projects
+  - _Requirements: 10.1_
 
-  - Create src/agents/, src/aws/, src/data/, src/dashboard/ directories
-  - Set up requirements.txt with AWS SDK, FastAPI, Streamlit dependencies
-  - Configure .env.example with required environment variables
-  - _Requirements: 5.1, 5.3_
+- [ ] 1.2 Set up basic configuration and environment
+  - Create config.py with MEC site definitions and threshold settings
+  - Add .env.example with simulation parameters
+  - Create logging configuration for agent activity tracking
+  - _Requirements: 11.1_
 
-- [x] 1.2 Configure AWS CDK infrastructure foundation
+- [ ] 2. Implement dummy metric generation and data simulation
+  - Build realistic MEC metrics generator with CPU, GPU, latency, queue depth
+  - Create synthetic data patterns for normal operation and threshold breaches
+  - Add time-series data generation with configurable variance
+  - Implement data persistence using JSON files for session continuity
+  - _Requirements: 1.1, 2.1, 6.1_
 
-  - Create CDK app with Lambda, API Gateway, DynamoDB stack definitions
-  - Define IAM roles with least privilege access for each agent
-  - Set up VPC and security groups for secure communication
-  - _Requirements: 5.1, 5.2, 10.1_
+- [ ] 2.1 Create MEC metrics data generator
+  - Implement MECMetricsGenerator class with realistic CPU/GPU/latency patterns
+  - Add configurable threshold breach scenarios (latency spike, CPU overload)
+  - Create time-series data with realistic variance and trends
+  - _Requirements: 1.1, 6.1_
 
-- [x] 1.3 Set up MCP server integrations
+- [ ] 2.2 Build synthetic data persistence layer
+  - Create DataStore class using JSON files for metrics history
+  - Implement session state management for Streamlit continuity
+  - Add data export functionality for analysis
+  - _Requirements: 2.1_
 
-  - Configure AWS Bedrock AgentCore MCP server connection
-  - Test MCP server connectivity and basic operations
-  - _Requirements: 9.2, 10.1, 10.4_
+- [ ] 3. Implement basic swarm trigger logic and event system
+  - Create threshold monitoring logic that detects breaches
+  - Build simple swarm activation system with event logging
+  - Implement basic consensus simulation (majority vote algorithm)
+  - Add event history tracking for dashboard display
+  - _Requirements: 1.1, 1.2, 7.1_
 
-- [x] 1.4 Configure pre-commit automation
+- [ ] 3.1 Create threshold monitoring system
+  - Implement ThresholdMonitor class with configurable thresholds
+  - Add breach detection logic for latency (>100ms), CPU (>80%), queue depth (>50)
+  - Create event generation system with timestamps and severity levels
+  - _Requirements: 1.1, 6.1_
 
-  - Add `.pre-commit-config.yaml` with:
-    - **Black** – code formatter
-    - **Ruff** – linter
-    - **isort** – import sorter
-    - **detect-secrets** – secret scanner
-  - Run `pre-commit install` and verify hooks run cleanly before first commit.
-  - Commit `.kiro/` and `.pre-commit-config.yaml` to document environment state.
+- [ ] 3.2 Build swarm activation simulation
+  - Implement SwarmCoordinator class with basic consensus logic
+  - Add majority vote algorithm for MEC site selection
+  - Create event logging system with structured log format
+  - _Requirements: 1.2, 7.1_
 
-- [x] 1.5 Verify project foundation and clarify architecture
+- [ ] 4. Build Streamlit dashboard with four-panel layout
+  - Create main dashboard with sidebar controls and four main panels
+  - Implement real-time metrics visualization with plotly charts
+  - Add swarm visualization using networkx and streamlit-agraph
+  - Build agent activity stream with live event logging
+  - _Requirements: 11.1_
 
+- [ ] 4.1 Create dashboard foundation and layout
+  - Build main Streamlit app with sidebar and four-panel grid layout
+  - Add simulation control sliders (latency, CPU, GPU, queue depth)
+  - Implement mode selector (Normal/Threshold Breach/Swarm Active)
+  - _Requirements: 11.1_
 
+- [ ] 4.2 Implement real-time metrics panel
+  - Create plotly line charts for latency, CPU/GPU load, queue depth
+  - Add threshold breach indicators with red flashing markers
+  - Implement auto-refresh functionality with configurable intervals
+  - _Requirements: 11.1_
 
+- [ ] 4.3 Build swarm visualization panel
+  - Create networkx graph of MEC sites with color-coded status
+  - Implement node state visualization (green=active, red=overloaded, gray=standby)
+  - Add edge thickness to represent inter-MEC communication volume
+  - _Requirements: 11.1_
 
-  - Verify all project files are correctly structured following Strands pattern
-  - Confirm understanding: Agents = Lambda functions with Strands + @tool decorators
-  - Confirm understanding: Tools call AWS services directly (boto3), not MCP servers
-  - Confirm understanding: MCP servers only for local development/testing
-  - Validate CDK structure matches Strands deployment tutorial pattern
-  - Test that all dependencies are correctly specified
-  - _Requirements: 5.1, 9.1, 10.4_
+- [ ] 4.4 Create agent activity stream panel
+  - Build real-time log display with color-coded message types
+  - Add filtering by agent type and action category
+  - Implement scrollable log history with timestamps
+  - _Requirements: 11.1_
 
-- [ ] 2. Implement data models and dummy data generation
-
-  - Create core data structures for requests, context, and routing decisions
-  - Build realistic dummy data generators for testing and demo
-  - Implement database schemas and data access patterns
-  - _Requirements: 1.1, 2.1, 8.1_
-
-- [ ] 2.1 Create core data models
-
-  - Implement InferenceRequest, ContextAnalysis, ResourceState, RoutingDecision classes
-  - Add validation and serialization methods for all data models
-  - Create enum classes for ComputeTier, LatencyTier, PrivacyLevel
-  - _Requirements: 1.1, 4.1, 7.1_
-
-- [ ] 2.2 Build dummy data generators
-
-  - Create realistic request generators for gaming, automotive, healthcare scenarios
-  - Implement device capability and network condition simulators
-  - Generate historical routing decision data for testing
-  - _Requirements: 4.1, 4.2, 4.3, 8.1_
-
-- [ ] 2.3 Implement DynamoDB schemas and access patterns
-
-  - Create RoutingDecisions and ResourceMetrics table definitions
-  - Implement data access layer with proper indexing and TTL
-  - Add batch operations for high-throughput scenarios
-  - _Requirements: 2.2, 5.2, 8.1_
-
-- [ ] 2.4 Write unit tests for data models
-
-  - Create comprehensive test suite for all data model classes
-  - Test data validation, serialization, and edge cases
-  - Implement property-based testing for data generators
+- [ ] 5. Add mock MCP tools and basic event logging
+  - Create mock MCP tool interfaces for metrics_monitor, container_ops, telemetry
+  - Implement basic function stubs that return synthetic data
+  - Add structured logging for all MCP tool calls
+  - Build event aggregation for dashboard display
   - _Requirements: 2.1, 8.1_
 
-- [ ] 3. Implement Context Agent with Nova reasoning
+- [ ] 5.1 Create mock MCP tool interfaces
+  - Implement MockMCPClient class with tool registration system
+  - Create mock tools: metrics_monitor, container_ops, telemetry, memory_sync
+  - Add synthetic data responses with realistic latency simulation
+  - _Requirements: 2.1_
 
-  - Build request analysis using Bedrock Nova models
-  - Implement device capability assessment and network monitoring
-  - Create complexity scoring and routing recommendation logic
-  - _Requirements: 1.1, 1.2, 9.3, 10.2_
+- [ ] 5.2 Build event logging and aggregation system
+  - Create EventLogger class with structured log format
+  - Implement log aggregation for dashboard display
+  - Add log filtering and search functionality
+  - _Requirements: 8.1_
 
-- [ ] 3.1 Create Context Agent core functionality
+- [ ] 6. Create working demo scenarios and testing
+  - Implement gaming, automotive, healthcare scenario simulations
+  - Add scenario-specific threshold patterns and swarm behaviors
+  - Create automated demo mode that cycles through scenarios
+  - Build basic testing framework for simulation logic
+  - _Requirements: 4.1, 4.2, 4.3, 11.1_
 
-  - Implement request complexity analysis using Nova Micro for classification
-  - Build device capability assessment with performance scoring
-  - Add network condition evaluation and geographic region detection
-  - _Requirements: 1.1, 4.4, 9.3_
-
-- [ ] 3.2 Integrate Bedrock Nova for reasoning
-
-  - Set up Nova Lite for complexity scoring and routing hints
-  - Implement Nova Pro integration for complex reasoning scenarios
-  - Add error handling and fallback logic for Nova API failures
-  - _Requirements: 9.3, 10.2, 6.4_
-
-- [ ] 3.3 Deploy Context Agent to AWS Lambda
-
-  - Package Context Agent as Lambda function with proper dependencies
-  - Configure API Gateway endpoint for request ingestion
-  - Set up CloudWatch logging and monitoring
-  - _Requirements: 5.1, 5.2, 2.2_
-
-- [ ] 3.4 Write integration tests for Context Agent
-
-  - Test Nova model integration with various request types
-  - Validate API Gateway integration and error handling
-  - Test performance under load with concurrent requests
-  - _Requirements: 1.1, 1.2, 9.3_
-
-- [ ] 4. Implement Resource Agent for infrastructure monitoring
-
-  - Build capacity monitoring for device, MEC, and cloud tiers
-  - Integrate with CloudWatch for real-time metrics collection
-  - Implement cost calculation using AWS Pricing API
-  - _Requirements: 2.1, 2.2, 3.1, 3.3_
-
-- [ ] 4.1 Create resource monitoring core
-
-  - Implement MEC node capacity tracking with health checks
-  - Build cloud service availability monitoring
-  - Add device resource assessment via telemetry APIs
-  - _Requirements: 2.1, 2.2, 4.4_
-
-- [ ] 4.2 Integrate CloudWatch metrics collection
-
-  - Set up custom metrics for each compute tier
-  - Implement real-time capacity and performance monitoring
-  - Create automated alerting for resource threshold breaches
-  - _Requirements: 2.2, 2.4, 6.2_
-
-- [ ] 4.3 Implement cost calculation engine
-
-  - Integrate AWS Pricing API for real-time cost data
-  - Build cost prediction models for routing decisions
-  - Add budget tracking and cost optimization recommendations
-  - _Requirements: 3.1, 3.3, 3.5_
-
-- [ ] 4.4 Deploy Resource Agent with monitoring setup
-
-  - Deploy as Lambda function with CloudWatch integration
-  - Set up EventBridge triggers for periodic monitoring
-  - Configure DynamoDB storage for resource metrics
-  - _Requirements: 5.1, 5.2, 2.2_
-
-- [ ] 5. Implement Router Agent with Bedrock AgentCore coordination
-
-  - Build intelligent routing decision engine using Nova reasoning
-  - Implement multi-criteria scoring and load balancing
-  - Add failover logic and circuit breaker patterns
-  - _Requirements: 1.2, 1.4, 6.1, 6.4, 9.2, 10.1_
-
-- [ ] 5.1 Create routing decision engine
-
-  - Implement multi-criteria scoring algorithm with Nova Pro reasoning
-  - Build load balancing logic with capacity-aware distribution
-  - Add geographic proximity and latency optimization
-  - _Requirements: 1.2, 4.1, 4.2, 4.3_
-
-- [ ] 5.2 Integrate Bedrock AgentCore coordination
-
-  - Set up agent coordination primitives using AgentCore
-  - Implement agent-to-agent communication protocols
-  - Add coordination for complex multi-step routing decisions
-  - _Requirements: 6.1, 9.2, 10.1_
-
-- [ ] 5.3 Implement failover and resilience patterns
-
-  - Add circuit breaker pattern for tier availability
-  - Implement automatic failover to next best compute tier
-  - Create graceful degradation for agent communication failures
-  - _Requirements: 1.4, 6.4, 2.4_
-
-- [ ] 5.4 Deploy Router Agent with coordination setup
-
-  - Deploy as Lambda function with AgentCore integration
-  - Configure Step Functions for complex workflow orchestration
-  - Set up DynamoDB for routing decision logging
-  - _Requirements: 5.1, 5.2, 10.4_
-
-- [ ] 5.5 Write comprehensive routing tests
-
-  - Test routing decisions across various scenarios and load conditions
-  - Validate failover behavior and circuit breaker functionality
-  - Test AgentCore coordination under failure conditions
-  - _Requirements: 1.2, 1.4, 6.1, 6.4_
-
-- [ ] 6. Implement Cache Agent for model management
-
-  - Build model deployment and caching strategies
-  - Implement preloading and cleanup logic
-  - Add S3 integration for model storage and versioning
-  - _Requirements: 2.1, 5.3, 8.2_
-
-- [ ] 6.1 Create model management system
-
-  - Implement hot/warm/cold model deployment strategies
-  - Build model caching logic with usage-based optimization
-  - Add model versioning and rollback capabilities
-  - _Requirements: 2.1, 8.2_
-
-- [ ] 6.2 Integrate S3 for model storage
-
-  - Set up S3 buckets with proper lifecycle policies
-  - Implement model upload, download, and versioning
-  - Add encryption and access control for model assets
-  - _Requirements: 5.3, 7.2, 7.3_
-
-- [ ] 6.3 Implement predictive preloading
-
-  - Build usage pattern analysis for model prediction
-  - Create preloading algorithms based on historical data
-  - Add cleanup logic for unused models to optimize costs
-  - _Requirements: 8.2, 8.3, 3.3_
-
-- [ ] 6.4 Deploy Cache Agent with S3 integration
-
-  - Deploy as Lambda function with S3 access permissions
-  - Set up ECS/Fargate for container-based model deployment
-  - Configure ElastiCache for response caching
-  - _Requirements: 5.1, 5.2_
-
-- [ ] 7. Implement Monitor Agent with learning capabilities
-
-  - Build performance tracking and analytics system
-  - Implement pattern recognition and optimization recommendations
-  - Add SageMaker integration for continuous learning
-  - _Requirements: 2.2, 8.1, 8.2, 8.3, 8.4_
-
-- [ ] 7.1 Create performance monitoring core
-
-  - Implement real-time performance metrics collection
-  - Build analytics engine for pattern recognition
-  - Add anomaly detection for system health monitoring
-  - _Requirements: 2.2, 8.1, 8.4_
-
-- [ ] 7.2 Integrate Kinesis for data streaming
-
-  - Set up Kinesis Data Streams for real-time metrics
-  - Implement data processing pipelines for analytics
-  - Add S3 data lake integration for historical analysis
-  - _Requirements: 8.1, 8.2_
-
-- [ ] 7.3 Implement SageMaker learning integration
-
-  - Build feedback loops for routing decision optimization
-  - Implement automated model retraining based on performance data
-  - Add optimization recommendations using ML insights
-  - _Requirements: 8.2, 8.3, 8.4_
-
-- [ ] 7.4 Deploy Monitor Agent with analytics pipeline
-
-  - Deploy as Lambda function with Kinesis integration
-  - Set up CloudWatch dashboards for real-time monitoring
-  - Configure SageMaker endpoints for ML-based optimization
-  - _Requirements: 5.1, 5.2, 2.2_
-
-- [ ] 8. Build Streamlit dashboard for demo visualization
-
-  - Create interactive dashboard for routing decisions and metrics
-  - Implement real-time visualization of system performance
-  - Add demo scenarios for gaming, automotive, and healthcare use cases
-  - _Requirements: 4.1, 4.2, 4.3, 8.4_
-
-- [ ] 8.1 Create dashboard core functionality
-
-  - Build real-time routing decision visualization
-  - Implement performance metrics dashboard with charts
-  - Add cost analysis and optimization recommendations display
-  - _Requirements: 8.4, 3.1, 3.4_
-
-- [ ] 8.2 Implement demo scenario interfaces
-
-  - Create gaming NPC dialogue simulation interface
-  - Build automotive safety decision visualization
-  - Add healthcare monitoring scenario demonstration
+- [ ] 6.1 Implement demo scenario simulations
+  - Create gaming scenario with NPC dialogue complexity patterns
+  - Build automotive scenario with safety-critical threshold breaches
+  - Add healthcare scenario with patient monitoring patterns
   - _Requirements: 4.1, 4.2, 4.3_
 
-- [ ] 8.3 Add interactive controls and configuration
+- [ ] 6.2 Add automated demo mode and testing
+  - Create demo orchestrator that cycles through scenarios automatically
+  - Implement basic unit tests for threshold detection and swarm logic
+  - Add integration tests for dashboard functionality
+  - _Requirements: 11.1_
 
-  - Implement scenario selection and parameter adjustment
-  - Add real-time system configuration controls
-  - Create performance tuning and threshold adjustment interface
-  - _Requirements: 2.4, 8.4_
+## Phase 2 — Version 1: Functional Prototype with Strands Framework
 
-- [ ] 8.4 Deploy dashboard with AWS integration
+- [ ] 7. Implement Strands-like agent framework with MCP integration
+  - Create base Agent class with MCP client integration
+  - Build agent registry and lifecycle management
+  - Implement agent communication protocols using message passing
+  - Add agent manifest system for tool access definition
+  - _Requirements: 2.1, 2.2, 9.1_
 
-  - Deploy Streamlit app using Lambda and API Gateway
-  - Set up real-time data connections to monitoring systems
-  - Configure secure access and authentication
-  - _Requirements: 5.1, 5.2, 7.3_
+- [ ] 7.1 Create base agent framework
+  - Implement BaseAgent class with MCP client integration
+  - Create AgentRegistry for agent discovery and communication
+  - Add agent lifecycle management (start, stop, restart)
+  - _Requirements: 2.1, 9.1_
 
-- [ ] 9. Implement security and compliance features
+- [ ] 7.2 Build agent manifest and tool access system
+  - Create agent manifest.json files defining tool access per agent
+  - Implement MCP tool loading and validation system
+  - Add tool access control and permission checking
+  - _Requirements: 2.2_
 
-  - Add AWS Secrets Manager integration for credential management
-  - Implement IAM role segmentation and access controls
-  - Add audit trails and compliance reporting
-  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+- [ ] 8. Create specialized agent implementations
+  - Implement OrchestratorAgent with threshold monitoring and swarm triggering
+  - Build LoadBalancerAgent with MEC site selection and failover logic
+  - Create DecisionCoordinatorAgent with consensus algorithms
+  - Add CacheManagerAgent with model caching simulation
+  - Add ResourceMonitorAgent with metrics collection
+  - _Requirements: 1.1, 1.2, 2.1, 2.2_
 
-- [ ] 9.1 Integrate AWS Secrets Manager
+- [ ] 8.1 Implement OrchestratorAgent
+  - Create OrchestratorAgent class with MCP tool integration
+  - Add threshold monitoring logic using metrics_monitor.mcp
+  - Implement swarm triggering via memory_sync.mcp
+  - _Requirements: 1.1_
 
-  - Store all Bedrock/Nova API keys and credentials securely
-  - Implement automatic credential rotation
-  - Add secure credential access for all agents
-  - _Requirements: 7.2, 7.4_
+- [ ] 8.2 Build LoadBalancerAgent
+  - Implement LoadBalancerAgent with site selection algorithms
+  - Add failover coordination using container_ops.mcp
+  - Create load distribution logic with weighted scoring
+  - _Requirements: 1.2_
 
-- [ ] 9.2 Implement IAM role segmentation
+- [ ] 8.3 Create DecisionCoordinatorAgent
+  - Build DecisionCoordinatorAgent with consensus protocols
+  - Implement modified Raft algorithm for swarm consensus
+  - Add pattern learning and threshold adjustment logic
+  - _Requirements: 7.1_
 
-  - Create distinct IAM roles for each agent with least privilege
-  - Set up cross-service access policies with explicit permissions
-  - Add security auditing and access logging
-  - _Requirements: 7.2, 7.3, 7.5_
+- [ ] 8.4 Implement CacheManagerAgent and ResourceMonitorAgent
+  - Create CacheManagerAgent with model caching simulation
+  - Build ResourceMonitorAgent with metrics collection
+  - Add predictive preloading and cache optimization
+  - _Requirements: 2.1, 2.2_
 
-- [ ] 9.3 Add compliance and audit features
+- [ ] 9. Upgrade Streamlit dashboard to use real agent methods
+  - Replace mock logic with actual agent method calls
+  - Add agent status monitoring and health checks
+  - Implement real-time agent communication visualization
+  - Create agent performance metrics and debugging tools
+  - _Requirements: 11.1_
 
-  - Implement CloudTrail integration for audit trails
-  - Add data residency controls for privacy compliance
-  - Create compliance reporting for GDPR and healthcare regulations
-  - _Requirements: 7.1, 7.3, 7.5_
+- [ ] 9.1 Integrate agents with Streamlit dashboard
+  - Replace simulation logic with actual agent method calls
+  - Add agent status indicators and health monitoring
+  - Implement real-time agent communication display
+  - _Requirements: 11.1_
 
-- [ ] 10. Create comprehensive testing and validation
+- [ ] 9.2 Add agent debugging and performance tools
+  - Create agent performance metrics dashboard
+  - Add agent communication flow visualization
+  - Implement debugging tools for agent state inspection
+  - _Requirements: 11.1_
 
-  - Implement end-to-end testing for all demo scenarios
-  - Add performance testing and load validation
-  - Create chaos engineering tests for resilience validation
-  - _Requirements: 1.1, 1.2, 1.3, 6.1, 6.4_
+- [ ] 10. Implement data persistence and session management
+  - Add SQLite database for metrics and event history
+  - Implement session state management for dashboard continuity
+  - Create data export and import functionality
+  - Build performance analytics and reporting
+  - _Requirements: 8.1, 8.2_
 
-- [ ] 10.1 Implement end-to-end scenario testing
+- [ ] 10.1 Create database layer and persistence
+  - Implement SQLite database schema for metrics, events, and agent state
+  - Add data access layer with CRUD operations
+  - Create database migration and initialization scripts
+  - _Requirements: 8.1_
 
-  - Create automated tests for gaming, automotive, healthcare scenarios
-  - Test complete request flow from ingestion to response
-  - Validate routing decisions and performance metrics
-  - _Requirements: 4.1, 4.2, 4.3, 1.5_
+- [ ] 10.2 Build analytics and reporting system
+  - Create performance analytics with trend analysis
+  - Add report generation for swarm efficiency and threshold accuracy
+  - Implement data export functionality (CSV, JSON)
+  - _Requirements: 8.2_
 
-- [ ] 10.2 Add performance and load testing
+## Phase 3 — Version 2: Extended System with Multi-MEC Simulation
 
-  - Implement concurrent request testing with realistic load
-  - Test auto-scaling behavior under varying demand
-  - Validate latency requirements across all compute tiers
-  - _Requirements: 1.1, 1.2, 1.3_
+- [ ] 11. Implement multi-MEC site simulation
+  - Create multiple MEC site instances with independent metrics
+  - Build inter-MEC communication simulation with network latency
+  - Add geographic distribution and proximity modeling
+  - Implement MEC site failure and recovery scenarios
+  - _Requirements: 4.1, 8.1_
 
-- [ ]\* 10.3 Create chaos engineering tests
+- [ ] 11.1 Create multi-MEC site architecture
+  - Implement MECSite class with independent metrics and state
+  - Create MEC site registry and discovery system
+  - Add geographic modeling with latency calculations
+  - _Requirements: 4.1_
 
-  - Test agent failure scenarios and recovery behavior
-  - Simulate network partitions and service outages
-  - Validate graceful degradation and failover mechanisms
-  - _Requirements: 6.1, 6.4, 2.4_
+- [ ] 11.2 Build inter-MEC communication simulation
+  - Implement network latency simulation between MEC sites
+  - Add communication protocols for agent coordination
+  - Create failure injection and recovery testing
+  - _Requirements: 8.1_
 
-- [ ] 11. Generate architecture documentation and diagrams
+- [ ] 12. Enhance swarm consensus with distributed algorithms
+  - Implement proper distributed consensus using Raft protocol
+  - Add leader election and follower synchronization
+  - Create conflict resolution and split-brain prevention
+  - Build consensus performance monitoring and optimization
+  - _Requirements: 7.1, 8.1_
 
-  - Create comprehensive system architecture diagrams
-  - Generate API documentation and integration guides
-  - Build deployment and operations documentation
-  - _Requirements: 5.1, 5.2, 5.4_
+- [ ] 12.1 Implement distributed Raft consensus
+  - Create Raft consensus implementation for swarm coordination
+  - Add leader election with timeout-based voting
+  - Implement log replication and consistency guarantees
+  - _Requirements: 7.1_
 
-- [ ] 11.1 Generate architecture diagrams using AWS Diagram MCP
+- [ ] 12.2 Add consensus monitoring and optimization
+  - Create consensus performance metrics and monitoring
+  - Add conflict resolution and split-brain detection
+  - Implement consensus optimization based on network conditions
+  - _Requirements: 8.1_
 
-  - Create high-level system architecture diagram
-  - Generate detailed component interaction diagrams
-  - Build deployment architecture and data flow diagrams
-  - _Requirements: 5.4_
+- [ ] 13. Extend dashboard for multi-MEC visualization
+  - Add multi-MEC site network topology visualization
+  - Implement inter-MEC communication flow display
+  - Create MEC site comparison and performance analytics
+  - Build geographic map view with MEC site locations
+  - _Requirements: 11.1_
 
-- [ ] 11.2 Create comprehensive documentation
+- [ ] 13.1 Create multi-MEC network visualization
+  - Build interactive network graph with multiple MEC sites
+  - Add inter-MEC communication flow visualization
+  - Implement MEC site status and performance indicators
+  - _Requirements: 11.1_
 
-  - Write API documentation for all agent interfaces
-  - Create deployment guide with step-by-step instructions
-  - Build troubleshooting and operations manual
-  - _Requirements: 5.1, 5.2, 5.4_
+- [ ] 13.2 Add geographic and performance views
+  - Create geographic map view with MEC site locations
+  - Add performance comparison charts across MEC sites
+  - Implement drill-down views for individual MEC analysis
+  - _Requirements: 11.1_
 
-- [ ] 11.3 Prepare demo materials and presentation
+- [ ] 14. Integrate synthetic data MCP or AWS services
+  - Add AWS Synthetic Data integration for realistic metrics
+  - Implement cloud observer functionality with passive monitoring
+  - Create Edge vs Cloud performance comparison analytics
+  - Build cost optimization and efficiency reporting
+  - _Requirements: 5.1, 8.2_
 
-  - Create professional demo video showcasing key features
-  - Build presentation materials highlighting innovation and AWS integration
-  - Prepare cost analysis and ROI demonstration
-  - _Requirements: 3.4, 5.4_
+- [ ] 14.1 Integrate AWS synthetic data services
+  - Add AWS Synthetic Data MCP integration for realistic metrics
+  - Implement cloud observer with passive monitoring role
+  - Create data aggregation from multiple MEC sites
+  - _Requirements: 5.1_
 
-- [ ] 12. Final integration and deployment
+- [ ] 14.2 Build performance comparison analytics
+  - Create Edge vs Cloud response time comparisons
+  - Add cost optimization analysis and recommendations
+  - Implement efficiency reporting and trend analysis
+  - _Requirements: 8.2_
 
-  - Deploy complete system to AWS with all components integrated
-  - Perform final testing and validation of all features
-  - Prepare submission materials and documentation
-  - _Requirements: 5.1, 5.2, 5.3, 5.5_
+## Phase 4 — Version 3: Deployment & Packaging
 
-- [ ] 12.1 Deploy production system
+- [ ] 15. Create production-ready containerization
+  - Build Dockerfile with multi-stage build for optimization
+  - Create docker-compose.yml for local development setup
+  - Add Kubernetes manifests for container orchestration
+  - Implement health checks and monitoring endpoints
+  - _Requirements: 10.1, 10.2_
 
-  - Deploy all agents and infrastructure using CDK
-  - Configure monitoring, alerting, and logging
-  - Set up auto-scaling and cost optimization
-  - _Requirements: 5.1, 5.2, 5.3_
+- [ ] 15.1 Build Docker containerization
+  - Create optimized Dockerfile with multi-stage build
+  - Add docker-compose.yml for complete local setup
+  - Implement container health checks and readiness probes
+  - _Requirements: 10.1_
 
-- [ ] 12.2 Perform final validation and testing
+- [ ] 15.2 Create Kubernetes deployment manifests
+  - Build Kubernetes deployment, service, and configmap manifests
+  - Add horizontal pod autoscaling configuration
+  - Implement monitoring and logging integration
+  - _Requirements: 10.2_
 
-  - Execute complete end-to-end testing suite
-  - Validate all competition requirements are met
-  - Test demo scenarios and performance metrics
-  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
+- [ ] 16. Build comprehensive documentation and demo materials
+  - Create detailed README with setup and deployment instructions
+  - Build architecture diagrams using mermaid or draw.io
+  - Record professional demo video showcasing key features
+  - Write API documentation and user guides
+  - _Requirements: 11.1, 11.2_
 
-- [ ] 12.3 Prepare submission package
-  - Finalize repository with clean code and documentation
-  - Create submission video and presentation materials
-  - Validate all AWS services and MCP integrations are working
-  - _Requirements: 5.4, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
+- [ ] 16.1 Create documentation and setup guides
+  - Write comprehensive README with installation and usage instructions
+  - Create architecture diagrams and system overview documentation
+  - Add troubleshooting guide and FAQ section
+  - _Requirements: 11.1_
+
+- [ ] 16.2 Build demo materials and presentation
+  - Record professional demo video (3-5 minutes) showcasing MEC orchestration
+  - Create presentation slides highlighting key innovations
+  - Build interactive demo scenarios for stakeholder presentations
+  - _Requirements: 11.2_
+
+- [ ] 17. Optional: Cloud deployment and live integration
+  - Deploy to AWS using ECS or Lambda for live demonstration
+  - Integrate with AWS Bedrock for enhanced AI capabilities
+  - Add Modal deployment option for easy cloud hosting
+  - Implement production monitoring and alerting
+  - _Requirements: 5.1, 5.2_
+
+- [ ] 17.1 Deploy to cloud platforms
+  - Create AWS ECS deployment with Fargate for scalability
+  - Add Modal deployment configuration for easy hosting
+  - Implement production-grade monitoring and logging
+  - _Requirements: 5.1_
+
+- [ ] 17.2 Integrate enhanced AI capabilities
+  - Add AWS Bedrock integration for advanced reasoning
+  - Implement real AI model inference for demonstration
+  - Create production-ready security and compliance features
+  - _Requirements: 5.2_
+
+- [ ] 18. Final testing, validation, and submission preparation
+  - Execute comprehensive end-to-end testing across all scenarios
+  - Validate performance targets (sub-100ms orchestration decisions)
+  - Create submission package with all required materials
+  - Perform final code review and quality assurance
+  - _Requirements: 6.1, 8.1, 11.1_
+
+- [ ] 18.1 Execute comprehensive testing and validation
+  - Run end-to-end tests for all demo scenarios (gaming, automotive, healthcare)
+  - Validate sub-100ms orchestration decision performance targets
+  - Test multi-MEC failover and consensus scenarios
+  - _Requirements: 6.1, 8.1_
+
+- [ ] 18.2 Prepare final submission package
+  - Create complete submission package with code, documentation, and demo
+  - Perform final code review and quality assurance
+  - Validate all requirements are met and documented
+  - _Requirements: 11.1_

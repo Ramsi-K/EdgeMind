@@ -2,212 +2,267 @@
 
 ## Overview
 
-The MEC Inference Routing System implements a multi-agent architecture using AWS Bedrock AgentCore primitives to intelligently route AI inference requests across three compute tiers: device, edge (MEC), and cloud. The system uses Nova reasoning models for autonomous decision-making and integrates with external APIs and databases for comprehensive intelligence.
+EdgeMind implements a three-layer intelligence architecture with Strands agent swarms deployed at MEC sites near 5G RAN controllers. The system uses threshold-based orchestration to trigger autonomous swarm coordination, ensuring sub-100ms decision making for real-time applications without cloud dependency.
 
 ## Architecture
 
-### High-Level System Architecture
+### System Architecture Overview
 
 ```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   User Request  │───▶│  API Gateway     │───▶│ Context Agent   │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                                                         │
-                       ┌──────────────────┐             ▼
-                       │ Bedrock AgentCore│◀────┌─────────────────┐
-                       │   Coordination   │     │ Resource Agent  │
-                       └──────────────────┘     └─────────────────┘
-                                │                        │
-                                ▼                        ▼
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│  Router Agent   │◀───│   Nova Reasoning │───▶│  Cache Agent    │
-└─────────────────┘    │      Models      │    └─────────────────┘
-         │              └──────────────────┘             │
-         ▼                                               ▼
-┌─────────────────┐                              ┌─────────────────┐
-│ Inference Tiers │                              │ Monitor Agent   │
-│ Device/MEC/Cloud│                              └─────────────────┘
-└─────────────────┘
+Device Layer (SLM) → MEC Orchestration → Swarm Decision
+                           ↓
+    ┌─────────────────────────────────────────────┐
+    │         MEC Site Intelligence               │
+    │  ┌─────────────┐  ┌─────────────────────┐   │
+    │  │Orchestrator │  │   Strands Swarm     │   │
+    │  │   Agent     │  │ ┌─────┐ ┌─────┐     │   │
+    │  │             │  │ │Agent│ │Agent│ ... │   │
+    │  │• Thresholds │  │ └─────┘ └─────┘     │   │
+    │  │• Triggers   │  │                     │   │
+    │  └─────────────┘  └─────────────────────┘   │
+    │                                             │
+    │  ┌─────────────────────────────────────┐   │
+    │  │         MCP Integration Layer       │   │
+    │  │ ┌─────────┐ ┌─────────┐ ┌─────────┐ │   │
+    │  │ │metrics_ │ │container│ │telemetry│ │   │
+    │  │ │monitor  │ │_ops     │ │         │ │   │
+    │  │ │.mcp     │ │.mcp     │ │.mcp     │ │   │
+    │  │ └─────────┘ └─────────┘ └─────────┘ │   │
+    │  │ ┌─────────┐ ┌─────────┐             │   │
+    │  │ │inference│ │memory_  │             │   │
+    │  │ │.mcp     │ │sync.mcp │             │   │
+    │  │ └─────────┘ └─────────┘             │   │
+    │  └─────────────────────────────────────┘   │
+    └─────────────────────────────────────────────┘
+                           ↓
+              Cloud (Passive Observer)
+           - Monitoring & Analytics Only
+           - No Real-Time Decisions
 ```
 
-### AWS Service Integration
+### Design Principles
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        AWS Cloud Services                       │
-├─────────────────────────────────────────────────────────────────┤
-│ API Gateway │ Lambda │ Bedrock │ DynamoDB │ S3 │ CloudWatch     │
-│             │        │ AgentCore│          │    │ EventBridge    │
-│ Step Functions │ X-Ray │ Secrets Mgr │ Global Accelerator      │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     Multi-Agent System                          │
-├─────────────────────────────────────────────────────────────────┤
-│ Context │ Resource │ Router │ Cache │ Monitor                   │
-│ Agent   │ Agent    │ Agent  │ Agent │ Agent                     │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Compute Tiers                                │
-├─────────────────────────────────────────────────────────────────┤
-│ Device Edge    │    MEC Nodes     │    Cloud Services           │
-│ (Local Models) │ (AWS Wavelength/ │ (Bedrock/SageMaker)        │
-│                │  AWS Outposts)   │                             │
-└─────────────────────────────────────────────────────────────────┘
+**All Strands agents use Model Context Protocol (MCP) connectors to interact with infrastructure, enabling modular tool invocation and shared context across the swarm.**
+
+Key principles:
+- Agents are tool-augmented entities, not closed boxes
+- Each Strands agent hosts its own MCP client instance, but swarm consensus allows cross-node MCP tool invocation when needed
+- Inter-MEC communication occurs over the low-latency network, while tool invocation happens through local MCP interfaces
+- MCP tools provide real functionality with synthetic data in simulation environment
+- Each agent has a defined manifest.json specifying available tools and capabilities
+
+### Three-Layer Intelligence Model
+
+#### Layer 1: Device Intelligence
+- **Purpose**: First-line processing and MEC triggering
+- **Technology**: Small Language Models (SLMs), ONNX Runtime
+- **Latency Target**: <50ms
+- **Capabilities**: Basic inference, immediate response, complexity detection
+- **Deployment**: Pre-installed on mobile devices, IoT sensors, edge devices
+
+#### Layer 2: MEC Intelligence (Primary)
+- **Purpose**: Real-time orchestration and swarm coordination
+- **Technology**: Strands agent swarms in Docker containers
+- **Latency Target**: <100ms
+- **Capabilities**: Complex reasoning, load balancing, autonomous decision making
+- **Deployment**: Kubernetes clusters at MEC sites near RAN controllers
+
+#### Layer 3: Cloud Observability (Passive)
+- **Purpose**: Long-term analytics and pattern recognition
+- **Technology**: Data aggregation and analytics platforms
+- **Latency**: Not critical (observability only)
+- **Capabilities**: Historical analysis, compliance reporting, trend monitoring
+- **Deployment**: Traditional cloud data centers
+
+### MCP Integration Layer
+
+Each Strands agent is backed by an MCP client that provides access to domain-specific tools:
+
+#### Core MCP Tools
+
+Five MCP tools provide infrastructure access: `metrics_monitor.mcp` (latency/CPU monitoring), `container_ops.mcp` (scaling/deployment), `telemetry.mcp` (logging/reporting), `inference.mcp` (model execution), and `memory_sync.mcp` (swarm coordination). Each tool's configuration (endpoint, functions, simulation mode) is defined in mcp-tools-config.json.
+
+#### Agent MCP Manifests
+
+Each agent has a manifest.json defining its MCP tool access:
+
+```json
+{
+  "agents": {
+    "orchestrator": {
+      "tools": ["metrics_monitor", "container_ops", "telemetry", "memory_sync"],
+      "capabilities": ["threshold_monitoring", "swarm_triggering"]
+    },
+    "load_balancer": {
+      "tools": ["metrics_monitor", "container_ops", "memory_sync"],
+      "capabilities": ["load_distribution", "failover_coordination"]
+    },
+    "resource_monitor": {
+      "tools": ["metrics_monitor", "telemetry", "memory_sync"],
+      "capabilities": ["metrics_collection", "anomaly_detection"]
+    },
+    "cache_manager": {
+      "tools": ["inference", "telemetry", "memory_sync"],
+      "capabilities": ["model_caching", "predictive_preloading"]
+    },
+    "decision_coordinator": {
+      "tools": ["memory_sync", "telemetry", "metrics_monitor"],
+      "capabilities": ["swarm_consensus", "pattern_learning"]
+    }
+  }
+}
 ```
 
-**Note**: Step Functions coordinates multi-agent workflows, providing orchestration between Context → Router → Monitor agents with built-in error handling and retry logic.
+### Agent-MCP Interaction Flow
+
+**Unified Swarm Coordination Pattern**:
+```
+Trigger Event → MCP Tool Query → Swarm Sync → Action Execution → Telemetry Logging
+```
+
+**Example: Threshold Breach Response**:
+1. **Orchestrator** detects breach via `metrics_monitor.get_mec_metrics()`
+2. **Orchestrator** triggers swarm via `memory_sync.sync_swarm_state(trigger_data)`
+3. **Load Balancer** receives trigger, queries `metrics_monitor.check_site_health()`
+4. **Load Balancer** executes `container_ops.scale_containers(target_site)`
+5. **Decision Coordinator** logs via `telemetry.log_decision(outcome)`
+6. **Cache Manager** adapts via `inference.preload_models(predicted_load)`
+
+**Cross-MEC Tool Invocation**: When swarm consensus requires cross-node coordination, agents use `memory_sync.mcp` to share tool invocation context, enabling distributed MCP operations while maintaining local tool execution.
 
 ## Components and Interfaces
 
-### 1. Context Agent
+### 1. Orchestrator Agent
 
-**Purpose**: Analyzes incoming requests using Nova reasoning models to determine optimal routing strategy.
+**Purpose**: Primary controller that monitors thresholds and triggers swarm consensus
 
-**AWS Services**:
-
-- **Lambda**: Request processing and analysis
-- **Bedrock Nova**: Request complexity analysis and reasoning
-- **API Gateway**: Request ingestion endpoint
-- **DynamoDB**: Context storage and historical patterns
-
-**Key Interfaces**:
-
+**Core Functions & Interfaces**:
+- Real-time threshold monitoring (latency, CPU/GPU, queue depth)
+- Swarm consensus trigger decision making
+- MEC site health assessment
+- Performance pattern recognition
 ```python
-class ContextAgent:
-    def analyze_request(self, request: InferenceRequest) -> ContextAnalysis
-    def assess_device_capability(self, device_info: DeviceInfo) -> CapabilityScore
-    def evaluate_network_conditions(self, location: str) -> NetworkMetrics
-    def predict_complexity(self, request: str) -> ComplexityScore
+class OrchestratorAgent:
+    def __init__(self, mcp_client: MCPClient):
+        self.metrics_monitor = mcp_client.get_tool("metrics_monitor")
+        self.container_ops = mcp_client.get_tool("container_ops")
+        self.telemetry = mcp_client.get_tool("telemetry")
+        self.memory_sync = mcp_client.get_tool("memory_sync")
+
+    def monitor_thresholds(self) -> OrchestrationDecision:
+        metrics = self.metrics_monitor.get_mec_metrics()
+        return self._evaluate_thresholds(metrics)
+
+    def trigger_swarm_coordination(self, trigger_reason: str) -> SwarmActivation:
+        swarm_state = {"trigger": trigger_reason, "timestamp": time.now()}
+        return self.memory_sync.sync_swarm_state(swarm_state)
+
+    def assess_mec_health(self, site_id: str) -> HealthStatus:
+        return self.metrics_monitor.check_site_health(site_id)
 ```
 
-**Nova Integration**:
+**Deployment**: One primary instance per MEC site with backup instances for failover
 
-- Uses Nova Micro for fast request classification
-- Uses Nova Lite for complexity scoring
-- Uses Nova Pro for complex reasoning about optimal routing
+### 2. Load Balancer Agent
 
-### 2. Resource Agent
+**Purpose**: Distributes workload across MEC sites using swarm intelligence
 
-**Purpose**: Monitors infrastructure capacity across all compute tiers using CloudWatch and external APIs.
-
-**AWS Services**:
-
-- **CloudWatch**: Metrics collection and monitoring
-- **Lambda**: Resource monitoring functions
-- **EventBridge**: Resource state change notifications
-- **DynamoDB**: Resource state persistence
-
-**Key Interfaces**:
-
+**Core Functions & Interfaces**: Dynamic load distribution, MEC site selection, failover coordination, performance optimization
 ```python
-class ResourceAgent:
-    def monitor_mec_capacity(self) -> List[MECNodeStatus]
-    def check_cloud_availability(self) -> CloudServiceStatus
-    def assess_device_resources(self, device_id: str) -> DeviceResources
-    def calculate_costs(self, tier: ComputeTier) -> CostMetrics
+class LoadBalancerAgent:
+    def __init__(self, mcp_client: MCPClient):
+        self.metrics_monitor = mcp_client.get_tool("metrics_monitor")
+        self.container_ops = mcp_client.get_tool("container_ops")
+        self.memory_sync = mcp_client.get_tool("memory_sync")
+
+    def balance_load(self, request: InferenceRequest) -> MECSite:
+        available_sites = self.metrics_monitor.get_healthy_sites()
+        site_scores = {site: self._calculate_site_score(site, request) for site in available_sites}
+        selected_site = max(site_scores, key=site_scores.get)
+        self.container_ops.scale_containers(selected_site, request.resource_requirements)
+        return selected_site
+
+    def handle_failover(self, failed_site: MECSite) -> FailoverPlan:
+        backup_sites = self.metrics_monitor.get_backup_sites(failed_site)
+        return self.container_ops.deploy_model(backup_sites[0], failed_site.active_models)
 ```
 
-**External Integrations**:
+**Decision Matrix**: MEC site latency (50%), current load capacity (30%), network proximity (15%), site availability (5%)
 
-- MEC node APIs for capacity monitoring
-- Device telemetry APIs for resource assessment
-- AWS Pricing API for cost calculations
+### 3. Resource Monitor Agent
 
-### 3. Router Agent
+**Purpose**: Tracks real-time metrics across MEC infrastructure
 
-**Purpose**: Makes intelligent routing decisions using Bedrock AgentCore coordination and Nova reasoning.
-
-**AWS Services**:
-
-- **Bedrock AgentCore**: Agent coordination primitives
-- **Bedrock Nova**: Multi-criteria decision reasoning
-- **Lambda**: Routing logic execution
-- **DynamoDB**: Decision logging and patterns
-
-**Key Interfaces**:
-
+**Core Functions & Interfaces**: MEC site capacity monitoring, inter-MEC latency tracking, device connectivity assessment, cache performance monitoring
 ```python
-class RouterAgent:
-    def make_routing_decision(self, context: ContextAnalysis, resources: ResourceState) -> RoutingDecision
-    def calculate_tier_scores(self, requirements: Requirements) -> Dict[str, float]
-    def handle_failover(self, failed_tier: str, request: InferenceRequest) -> RoutingDecision
-    def optimize_load_balancing(self, tier: str) -> LoadBalancingStrategy
+class ResourceMonitorAgent:
+    def __init__(self, mcp_client: MCPClient):
+        self.metrics_monitor = mcp_client.get_tool("metrics_monitor")
+        self.telemetry = mcp_client.get_tool("telemetry")
+        self.memory_sync = mcp_client.get_tool("memory_sync")
+
+    def collect_mec_metrics(self, site_id: str) -> MECMetrics:
+        metrics = self.metrics_monitor.get_mec_metrics(site_id)
+        self.telemetry.send_metrics(metrics)
+        return metrics
+
+    def monitor_inter_mec_latency(self, source: str, target: str) -> LatencyMetrics:
+        latency = self.metrics_monitor.ping_mec_site(source, target)
+        if latency > THRESHOLD:
+            self.memory_sync.share_decision_context({"alert": "high_latency", "sites": [source, target]})
+        return latency
 ```
 
-**Decision Matrix Implementation**:
+### 4. Cache Manager Agent
 
+**Purpose**: Manages local caching and predictive preloading at MEC sites
+
+**Core Functions & Interfaces**: Local model caching (15-min refresh), response caching, predictive preloading, cache optimization
 ```python
-def calculate_routing_score(context, resources, tier):
-    # Use Nova reasoning for multi-criteria decision making
-    nova_prompt = f"""
-    Analyze routing decision for:
-    - Request complexity: {context.complexity}
-    - Latency requirement: {context.latency_requirement}
-    - Available resources: {resources.get_tier_status(tier)}
-    - Cost constraints: {context.cost_budget}
+class CacheManagerAgent:
+    def __init__(self, mcp_client: MCPClient):
+        self.inference = mcp_client.get_tool("inference")
+        self.telemetry = mcp_client.get_tool("telemetry")
+        self.memory_sync = mcp_client.get_tool("memory_sync")
 
-    Provide routing score (0-100) and reasoning.
-    """
+    def cache_model(self, model_id: str, mec_site: str) -> CacheStatus:
+        cache_result = self.inference.cache_response(model_id, mec_site)
+        self.telemetry.log_decision(f"Cached model {model_id} at {mec_site}")
+        return cache_result
 
-    nova_response = bedrock_client.invoke_model(
-        modelId="amazon.nova-pro-v1:0",
-        body=json.dumps({"prompt": nova_prompt})
-    )
-
-    return parse_nova_decision(nova_response)
+    def predict_preload(self, usage_patterns: UsagePatterns) -> PreloadPlan:
+        swarm_context = self.memory_sync.get_swarm_context()
+        predicted_models = self._analyze_patterns(usage_patterns, swarm_context)
+        return self.inference.preload_models(predicted_models)
 ```
 
-### 4. Cache Agent
+### 5. Decision Coordinator Agent
 
-**Purpose**: Manages model deployment and caching across compute tiers.
+**Purpose**: Coordinates swarm consensus and implements learning algorithms
 
-**AWS Services**:
-
-- **S3**: Model storage and versioning
-- **Lambda**: Cache management logic
-- **ECS/Fargate**: Container-based model deployment
-- **ElastiCache**: Response caching
-
-**Key Interfaces**:
-
+**Core Functions & Interfaces**: Swarm consensus protocols, pattern recognition, threshold adjustment, anomaly detection
 ```python
-class CacheAgent:
-    def deploy_model(self, model_id: str, tier: ComputeTier) -> DeploymentStatus
-    def manage_cache_strategy(self, usage_patterns: UsageMetrics) -> CacheStrategy
-    def preload_models(self, predictions: List[ModelPrediction]) -> None
-    def cleanup_unused_models(self, tier: ComputeTier) -> None
+class DecisionCoordinatorAgent:
+    def __init__(self, mcp_client: MCPClient):
+        self.memory_sync = mcp_client.get_tool("memory_sync")
+        self.telemetry = mcp_client.get_tool("telemetry")
+        self.metrics_monitor = mcp_client.get_tool("metrics_monitor")
+
+    def coordinate_swarm_decision(self, decision_request: DecisionRequest) -> SwarmConsensus:
+        swarm_state = self.memory_sync.get_swarm_context()
+        consensus = self.memory_sync.update_consensus(decision_request, swarm_state)
+        self.telemetry.log_decision(consensus)
+        return consensus
+
+    def detect_anomalies(self, performance_data: PerformanceData) -> AnomalyReport:
+        anomalies = self._analyze_performance(performance_data)
+        if anomalies:
+            self.telemetry.report_anomaly(anomalies)
+            self.memory_sync.share_decision_context({"anomalies": anomalies})
+        return anomalies
 ```
 
-**Model Management Strategy**:
-
-- **Hot Models**: Always deployed on MEC nodes
-- **Warm Models**: Cached in S3 with fast deployment scripts
-- **Cold Models**: Cloud-only deployment with lazy loading
-
-### 5. Monitor Agent
-
-**Purpose**: Tracks performance and enables continuous learning using AWS analytics services.
-
-**AWS Services**:
-
-- **Kinesis Data Streams**: Real-time performance data
-- **CloudWatch**: Dashboards and alerting
-- **S3**: Data lake for historical analysis
-- **SageMaker**: ML-based performance optimization
-
-**Key Interfaces**:
-
-```python
-class MonitorAgent:
-    def track_performance(self, request_id: str, metrics: PerformanceMetrics) -> None
-    def analyze_patterns(self, time_window: str) -> List[Pattern]
-    def generate_optimization_recommendations(self) -> List[Recommendation]
-    def detect_anomalies(self, metrics: List[Metric]) -> List[Anomaly]
-```
+**Consensus Algorithm**: Modified Raft protocol with weighted voting, timeout-based decisions, performance-based conflict resolution
 
 ## Data Models
 
@@ -217,617 +272,370 @@ class MonitorAgent:
 @dataclass
 class InferenceRequest:
     request_id: str
-    user_id: str
     content: str
-    complexity_hint: Optional[str]
-    latency_requirement: LatencyTier
-    cost_budget: Optional[float]
-    device_info: DeviceInfo
-    timestamp: datetime
-
-@dataclass
-class ContextAnalysis:
-    complexity_score: float  # 0-1 scale
-    estimated_tokens: int
-    required_model_size: ModelSize
+    complexity_score: float
     latency_requirement: int  # milliseconds
     privacy_level: PrivacyLevel
-    geographic_region: str
-
-@dataclass
-class ResourceState:
-    device_resources: DeviceResources
-    mec_nodes: List[MECNodeStatus]
-    cloud_services: CloudServiceStatus
-    network_conditions: NetworkMetrics
+    device_capabilities: DeviceCapabilities
     timestamp: datetime
 
 @dataclass
-class RoutingDecision:
-    selected_tier: ComputeTier
-    selected_model: str
-    confidence_score: float
+class MECMetrics:
+    site_id: str
+    cpu_utilization: float
+    gpu_utilization: float
+    memory_usage: float
+    queue_depth: int
+    network_latency: Dict[str, float]  # latency to other MEC sites
+    timestamp: datetime
+
+@dataclass
+class SwarmDecision:
+    decision_id: str
+    selected_mec_site: str
     reasoning: str
-    fallback_options: List[ComputeTier]
-    estimated_latency: int
-    estimated_cost: float
+    confidence_score: float
+    fallback_sites: List[str]
+    execution_time_ms: int
+    timestamp: datetime
+
+@dataclass
+class ThresholdConfig:
+    latency_threshold_ms: int = 100
+    cpu_threshold_percent: float = 80.0
+    gpu_threshold_percent: float = 80.0
+    queue_depth_threshold: int = 50
+    network_latency_threshold_ms: int = 20
 ```
 
-### Database Schema (DynamoDB)
+### Data Flow Architecture
 
-**Routing Decisions Table**:
-
-```json
-{
-  "TableName": "RoutingDecisions",
-  "KeySchema": [
-    { "AttributeName": "request_id", "KeyType": "HASH" },
-    { "AttributeName": "timestamp", "KeyType": "RANGE" }
-  ],
-  "AttributeDefinitions": [
-    { "AttributeName": "request_id", "AttributeType": "S" },
-    { "AttributeName": "timestamp", "AttributeType": "N" },
-    { "AttributeName": "user_id", "AttributeType": "S" }
-  ],
-  "GlobalSecondaryIndexes": [
-    {
-      "IndexName": "UserIndex",
-      "KeySchema": [
-        { "AttributeName": "user_id", "KeyType": "HASH" },
-        { "AttributeName": "timestamp", "KeyType": "RANGE" }
-      ]
-    }
-  ]
-}
 ```
-
-**Resource Metrics Table**:
-
-```json
-{
-  "TableName": "ResourceMetrics",
-  "KeySchema": [
-    { "AttributeName": "tier_id", "KeyType": "HASH" },
-    { "AttributeName": "timestamp", "KeyType": "RANGE" }
-  ],
-  "TimeToLiveSpecification": {
-    "AttributeName": "ttl",
-    "Enabled": true
-  }
-}
+Device SLM → Complexity Assessment → MEC Trigger
+    ↓
+Orchestrator Agent → Threshold Check → Swarm Activation
+    ↓
+Resource Monitor → Capacity Assessment → Load Balancer
+    ↓
+Cache Manager → Model Availability → Decision Coordinator
+    ↓
+Swarm Consensus → MEC Site Selection → Response Execution
+    ↓
+Performance Logging → Pattern Learning → Threshold Optimization
 ```
 
 ## Error Handling
 
-### Failure Scenarios and Recovery
+### Fault Tolerance Strategy
 
-**1. Agent Communication Failures**:
+**Circuit Breaker Pattern**:
+- Monitor MEC site health with 10-second intervals
+- Open circuit after 3 consecutive failures
+- Half-open state for gradual recovery testing
+- Automatic failover to healthy MEC sites
 
-- **Detection**: Bedrock AgentCore coordination timeouts
-- **Recovery**: Fallback to local decision-making with reduced capabilities
-- **Monitoring**: CloudWatch alarms on agent response times
+**Graceful Degradation**:
+- Fallback to device-only processing when MEC unavailable
+- Cached response serving during MEC site failures
+- Reduced functionality mode with core features only
+- Automatic recovery when MEC sites return online
 
-**2. Compute Tier Unavailability**:
-
-- **Detection**: Health check failures and resource monitoring
-- **Recovery**: Automatic failover to next best tier
-- **Monitoring**: Real-time availability dashboards
-
-**3. Nova Model Failures**:
-
-- **Detection**: Bedrock API error responses
-- **Recovery**: Fallback to rule-based routing algorithms
-- **Monitoring**: Model invocation success rates
-
-**4. Network Partitions**:
-
-- **Detection**: Network connectivity monitoring
-- **Recovery**: Local processing with eventual consistency
-- **Monitoring**: Network latency and packet loss metrics
-
-### Circuit Breaker Pattern
-
+**Error Recovery Protocols**:
 ```python
-class CircuitBreaker:
-    def __init__(self, failure_threshold: int = 5, timeout: int = 60):
-        self.failure_threshold = failure_threshold
-        self.timeout = timeout
-        self.failure_count = 0
-        self.last_failure_time = None
-        self.state = "CLOSED"  # CLOSED, OPEN, HALF_OPEN
-
-    def call(self, func, *args, **kwargs):
-        if self.state == "OPEN":
-            if time.time() - self.last_failure_time > self.timeout:
-                self.state = "HALF_OPEN"
-            else:
-                raise CircuitBreakerOpenException()
-
-        try:
-            result = func(*args, **kwargs)
-            if self.state == "HALF_OPEN":
-                self.state = "CLOSED"
-                self.failure_count = 0
-            return result
-        except Exception as e:
-            self.failure_count += 1
-            self.last_failure_time = time.time()
-            if self.failure_count >= self.failure_threshold:
-                self.state = "OPEN"
-            raise e
+class ErrorHandler:
+    def handle_mec_site_failure(self, failed_site: str) -> RecoveryPlan
+    def implement_graceful_degradation(self, failure_type: FailureType) -> DegradationStrategy
+    def recover_from_network_partition(self, partition_info: PartitionInfo) -> RecoveryAction
+    def handle_swarm_consensus_failure(self, consensus_error: ConsensusError) -> FallbackDecision
 ```
+
+### Monitoring and Alerting
+
+**Real-time Monitoring**:
+- Sub-100ms decision time tracking
+- MEC site availability monitoring
+- Swarm coordination success rates
+- Threshold breach detection and alerting
+
+**Performance Metrics**:
+- 95th percentile response times
+- MEC site utilization rates
+- Cache hit ratios
+- Failover frequency and recovery times
 
 ## Testing Strategy
 
 ### Unit Testing
+- Individual agent functionality testing
+- Threshold detection algorithm validation
+- Swarm consensus protocol testing
+- Cache management logic verification
 
-**Agent Testing**:
+### Integration Testing
+- End-to-end swarm coordination testing
+- MEC site failover scenario testing
+- Device-to-MEC integration validation
+- Performance benchmark testing
 
-- Mock Bedrock AgentCore responses
-- Test decision logic with various scenarios
-- Validate error handling and recovery
+### Load Testing
+- Concurrent request handling (1000+ requests/second)
+- MEC site capacity limit testing
+- Network partition resilience testing
+- Threshold breach response time validation
 
-**Integration Testing**:
-
-- Test agent coordination through AgentCore
-- Validate Nova model integration
-- Test AWS service integrations
-
-### Performance Testing
-
-**Load Testing**:
-
-- Simulate concurrent inference requests
-- Test auto-scaling behavior
-- Validate latency requirements under load
-
-**Chaos Engineering**:
-
-- Simulate agent failures
-- Test network partitions
-- Validate graceful degradation
-
-### End-to-End Testing
-
-**Scenario Testing**:
-
-- Gaming: Real-time NPC interactions
-- Automotive: Safety-critical decisions
-- IoT: Sensor data processing
-- Healthcare: Patient monitoring
-
-**Deployment Testing**:
-
-- Infrastructure as Code validation
-- Multi-region deployment testing
-- Rollback and recovery procedures
+### Chaos Engineering
+- Random MEC site failure injection
+- Network latency variation testing
+- Agent failure and recovery testing
+- Swarm coordination stress testing
 
 ## Security Considerations
 
 ### Data Protection
-
-**In Transit**:
-
-- TLS 1.3 for all API communications
-- VPC endpoints for AWS service communication
-- Encrypted agent-to-agent messaging
-
-**At Rest**:
-
-- DynamoDB encryption at rest
-- S3 bucket encryption with KMS
-- CloudWatch logs encryption
+- End-to-end encryption for inter-MEC communication
+- Local data encryption at rest on MEC sites
+- Regional data residency compliance
+- Secure key management and rotation
 
 ### Access Control
+- Role-based access control for MEC site management
+- Agent authentication and authorization
+- Secure container deployment and runtime
+- Audit logging for all orchestration decisions
 
-**IAM Policies**:
+### Compliance
+- GDPR compliance for European deployments
+- HIPAA compliance for healthcare use cases
+- SOC 2 Type II compliance for enterprise customers
+- Regional data sovereignty requirements
 
-- Least privilege access for Lambda functions
-- Service-specific roles for each agent
-- Cross-account access controls for MEC integration
+## Deployment Architecture
 
-**API Security**:
-
-- API Gateway authentication and authorization
-- Rate limiting and throttling
-- Request validation and sanitization
-
-### Privacy Compliance
-
-**Data Residency**:
-
-- Regional data processing preferences
-- GDPR compliance for EU users
-- Healthcare data handling (HIPAA)
-
-**Model Privacy**:
-
-- Local processing for sensitive data
-- Differential privacy for learning algorithms
-- Audit trails for compliance reporting
-
-## Implementation Tools & AWS MCP Servers
-
-### Core Development & Deployment MCP Servers
-
-**AWS Bedrock AgentCore MCP Server** (Required)
-
-- **Purpose**: Essential for competition compliance and agent coordination
-- **Usage**: Implement agent primitives, coordination protocols, and multi-agent workflows
-- **Integration**: Core to our Router Agent and agent communication layer
-
-**AWS CDK MCP Server**
-
-- **Purpose**: Infrastructure as Code deployment and management
-- **Usage**: Deploy all AWS resources, manage environments, handle updates
-- **Benefits**: Version-controlled infrastructure, reproducible deployments
-
-**AWS Lambda MCP Server**
-
-- **Purpose**: Serverless function deployment and management
-- **Usage**: Deploy and manage all 5 agents as Lambda functions
-- **Benefits**: Auto-scaling, cost optimization, easy updates
-
-**Amazon DynamoDB MCP Server**
-
-- **Purpose**: Database operations and schema management
-- **Usage**: Manage routing decisions table, resource metrics, agent state
-- **Benefits**: Real-time data operations, performance optimization
-
-### Monitoring & Operations MCP Servers
-
-**CloudWatch MCP Server**
-
-- **Purpose**: Comprehensive monitoring and alerting
-- **Usage**: Create dashboards, set up alarms, track performance metrics
-- **Benefits**: Real-time visibility, automated alerting, performance insights
-
-**AWS Cost Explorer MCP Server**
-
-- **Purpose**: Cost analysis and optimization
-- **Usage**: Implement cost-aware routing decisions, generate cost reports
-- **Benefits**: Real-time cost data for routing algorithms
-
-**AWS Pricing MCP Server**
-
-- **Purpose**: Real-time pricing information for routing decisions
-- **Usage**: Calculate costs for different compute tiers in routing logic
-- **Benefits**: Dynamic cost optimization, accurate cost predictions
-
-**CloudTrail MCP Server**
-
-- **Purpose**: Audit trails and compliance reporting
-- **Usage**: Track agent decisions, security events, compliance reporting
-- **Benefits**: Full audit capability, security monitoring
-
-### AI & Machine Learning MCP Servers
-
-**Amazon Bedrock Knowledge Base Retrieval MCP Server**
-
-- **Purpose**: Enhanced context analysis and decision-making
-- **Usage**: Augment Context Agent with historical patterns and knowledge
-- **Benefits**: Improved routing accuracy, pattern recognition
-
-**AWS Diagram MCP Server**
-
-- **Purpose**: Architecture documentation and visualization
-- **Usage**: Generate system architecture diagrams, component relationships
-- **Benefits**: Professional documentation, clear system visualization
-
-### Data & Integration MCP Servers
-
-**Amazon SNS SQS MCP Server**
-
-- **Purpose**: Agent communication and event handling
-- **Usage**: Implement event-driven architecture, agent notifications
-- **Benefits**: Decoupled communication, reliable message delivery
-
-**AWS Step Functions Tool MCP Server**
-
-- **Purpose**: Complex workflow orchestration
-- **Usage**: Coordinate multi-step routing decisions, error handling workflows
-- **Benefits**: Visual workflow management, robust error handling
-
-**AWS S3 Tables MCP Server**
-
-- **Purpose**: Model storage and data lake management
-- **Usage**: Store ML models, historical data, configuration files
-- **Benefits**: Scalable storage, data lifecycle management
-
-### MCP Server Integration Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Development Environment                       │
-├─────────────────────────────────────────────────────────────────┤
-│ AWS CDK MCP │ Lambda MCP │ DynamoDB MCP │ Diagram MCP           │
-│ (Deploy)    │ (Functions)│ (Database)   │ (Documentation)       │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Production System                             │
-├─────────────────────────────────────────────────────────────────┤
-│ Bedrock     │ CloudWatch │ Cost Explorer│ SNS/SQS              │
-│ AgentCore   │ (Monitor)  │ (Optimize)   │ (Communicate)        │
-└─────────────────────────────────────────────────────────────────┘
+### Container Orchestration with MCP Integration
+```yaml
+# Kubernetes deployment example with MCP tools
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator-agent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orchestrator-agent
+  template:
+    metadata:
+      labels:
+        app: orchestrator-agent
+    spec:
+      containers:
+      - name: orchestrator
+        image: edgemind/orchestrator:latest
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        env:
+        - name: MEC_SITE_ID
+          value: "mec-site-001"
+        - name: MCP_MANIFEST_PATH
+          value: "/app/manifests/orchestrator_manifest.json"
+        - name: MCP_TOOLS_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: mcp-tools-config
+              key: tools.json
+        volumeMounts:
+        - name: mcp-manifests
+          mountPath: /app/manifests
+        - name: mcp-tools
+          mountPath: /app/mcp-tools
+      volumes:
+      - name: mcp-manifests
+        configMap:
+          name: agent-manifests
+      - name: mcp-tools
+        configMap:
+          name: mcp-tools-config
 ```
 
-### Implementation Workflow with MCP Servers
+### MCP Tools Configuration
+```json
+{
+  "mcp_tools": {
+    "metrics_monitor": {
+      "endpoint": "http://metrics-service:8080",
+      "functions": ["get_mec_metrics", "check_site_health", "monitor_thresholds"],
+      "synthetic_data": true,
+      "simulation_mode": "realistic"
+    },
+    "container_ops": {
+      "endpoint": "http://k8s-api:8080",
+      "functions": ["scale_containers", "deploy_model", "restart_failed_agents"],
+      "synthetic_data": true,
+      "simulation_mode": "kubernetes_mock"
+    },
+    "telemetry": {
+      "endpoint": "http://telemetry-service:8080",
+      "functions": ["log_decision", "send_metrics", "report_anomaly"],
+      "synthetic_data": true,
+      "simulation_mode": "cloud_observer"
+    },
+    "inference": {
+      "endpoint": "http://inference-service:8080",
+      "functions": ["run_local_inference", "cache_response", "preload_models"],
+      "synthetic_data": true,
+      "simulation_mode": "model_simulation"
+    },
+    "memory_sync": {
+      "endpoint": "http://memory-sync:8080",
+      "functions": ["sync_swarm_state", "update_consensus", "share_decision_context"],
+      "synthetic_data": true,
+      "simulation_mode": "distributed_state"
+    }
+  }
+}
+```
 
-**Phase 1: Infrastructure Setup**
+### MEC Site Infrastructure
+- Docker containers for each Strands agent
+- Kubernetes for container orchestration and scaling
+- Local Redis for caching and inter-agent communication
+- Prometheus for metrics collection and monitoring
+- Grafana for real-time dashboard visualization
 
-1. Use **AWS CDK MCP Server** to deploy base infrastructure
-2. Use **DynamoDB MCP Server** to create and configure tables
-3. Use **Lambda MCP Server** to deploy agent functions
-4. Use **CloudWatch MCP Server** to set up monitoring
-
-**Phase 2: Agent Development**
-
-1. Use **Bedrock AgentCore MCP Server** to implement agent coordination
-2. Use **SNS/SQS MCP Server** for agent communication
-3. Use **Step Functions MCP Server** for complex workflows
-4. Use **Pricing MCP Server** for cost-aware routing
-
-**Phase 3: Operations & Monitoring**
-
-1. Use **CloudWatch MCP Server** for real-time monitoring
-2. Use **Cost Explorer MCP Server** for cost analysis
-3. Use **CloudTrail MCP Server** for audit trails
-4. Use **Diagram MCP Server** for documentation updates
-
-### Benefits of MCP Server Integration
-
-**Development Efficiency**:
-
-- Rapid prototyping with pre-built AWS integrations
-- Consistent API patterns across all AWS services
-- Reduced boilerplate code and configuration
-
-**Operational Excellence**:
-
-- Unified monitoring and alerting setup
-- Automated cost optimization workflows
-- Comprehensive audit and compliance reporting
-
-**Scalability & Maintenance**:
-
-- Infrastructure as Code with version control
-- Automated deployment and rollback capabilities
-- Real-time performance monitoring and optimization
+### Network Architecture
+- Direct MEC-to-MEC communication using dedicated network links
+- 5G network integration for device connectivity
+- Edge-optimized routing protocols for minimal latency
+- Redundant network paths for fault tolerance
 
 ## Performance Optimization
 
 ### Latency Optimization
-
-**Request Processing**:
-
-- Async processing with Lambda
-- Connection pooling for database access
-- Caching frequently accessed data
-
-**Model Inference**:
-
-- Model quantization for edge deployment
-- Batch processing for cloud inference
-- Predictive model preloading
-
-### Cost Optimization
-
-**Resource Management**:
-
-- Auto-scaling based on demand
-- Spot instances for non-critical workloads
-- Reserved capacity for predictable loads
-
-**Model Efficiency**:
-
-- Model compression techniques
-- Efficient model serving frameworks
-- Cost-aware routing decisions
-
-### Scalability Design
-
-**Horizontal Scaling**:
-
-- Stateless agent design
-- Event-driven architecture
-- Auto-scaling groups for compute resources
-
-**Geographic Distribution**:
-
-- Multi-region deployment
-- Edge location optimization
-- Content delivery network integration
-
-## Implementation Tools & AWS MCP Servers
-
-### Core Development & Deployment MCP Servers
-
-**AWS Bedrock AgentCore MCP Server** (Required)
-
-- **Purpose**: Essential for competition compliance and agent coordination
-- **Usage**: Implement agent primitives, coordination protocols, and multi-agent workflows
-- **Integration**: Core to our Router Agent and agent communication layer
-
-**AWS CDK MCP Server**
-
-- **Purpose**: Infrastructure as Code deployment and management
-- **Usage**: Deploy all AWS resources, manage environments, handle updates
-- **Benefits**: Version-controlled infrastructure, reproducible deployments
-
-**AWS Lambda MCP Server**
-
-- **Purpose**: Serverless function deployment and management
-- **Usage**: Deploy and manage all 5 agents as Lambda functions
-- **Benefits**: Auto-scaling, cost optimization, easy updates
-
-**Amazon DynamoDB MCP Server**
-
-- **Purpose**: Database operations and schema management
-- **Usage**: Manage routing decisions table, resource metrics, agent state
-- **Benefits**: Real-time data operations, performance optimization
-
-### Monitoring & Operations MCP Servers
-
-**CloudWatch MCP Server**
-
-- **Purpose**: Comprehensive monitoring and alerting
-- **Usage**: Create dashboards, set up alarms, track performance metrics
-- **Benefits**: Real-time visibility, automated alerting, performance insights
-
-**AWS X-Ray MCP Server**
-
-- **Purpose**: Distributed tracing and performance visibility
-- **Usage**: Track request flows across agents, identify bottlenecks in demo
-- **Benefits**: Enhanced debugging, performance optimization insights
-
-**AWS Cost Explorer MCP Server**
-
-- **Purpose**: Cost analysis and optimization
-- **Usage**: Implement cost-aware routing decisions, generate cost reports
-- **Benefits**: Real-time cost data for routing algorithms
-
-**AWS Pricing MCP Server**
-
-- **Purpose**: Real-time pricing information for routing decisions
-- **Usage**: Calculate costs for different compute tiers in routing logic
-- **Benefits**: Dynamic cost optimization, accurate cost predictions
-
-### Security & Infrastructure MCP Servers
-
-**AWS Secrets Manager MCP Server**
-
-- **Purpose**: Secure credential and API key management
-- **Usage**: Store Bedrock/Nova API keys, database credentials securely
-- **Benefits**: Centralized secret management, automatic rotation
-
-**AWS Cloud Control API MCP Server**
-
-- **Purpose**: Universal resource provisioning across all AWS services
-- **Usage**: Core infrastructure setup and management
-- **Benefits**: Consistent resource provisioning, simplified deployment
-
-**AWS Serverless MCP Server**
-
-- **Purpose**: Simplified Lambda + API Gateway deployment
-- **Usage**: Rapid serverless function deployment and configuration
-- **Benefits**: Streamlined serverless architecture, reduced complexity
-
-### AI & Documentation MCP Servers
-
-**AWS Diagram MCP Server**
-
-- **Purpose**: Architecture documentation and visualization
-- **Usage**: Generate system architecture diagrams, component relationships
-- **Benefits**: Professional documentation, clear system visualization
-
-**Amazon Bedrock Knowledge Base Retrieval MCP Server**
-
-- **Purpose**: Enhanced context analysis and decision-making
-- **Usage**: Augment Context Agent with historical patterns and knowledge
-- **Benefits**: Improved routing accuracy, pattern recognition
-
-### Integration & Workflow MCP Servers
-
-**Amazon SNS SQS MCP Server**
-
-- **Purpose**: Agent communication and event handling
-- **Usage**: Implement event-driven architecture, agent notifications
-- **Benefits**: Decoupled communication, reliable message delivery
-
-**AWS Step Functions Tool MCP Server**
-
-- **Purpose**: Complex workflow orchestration
-- **Usage**: Coordinate multi-step routing decisions, error handling workflows
-- **Benefits**: Visual workflow management, robust error handling
-
-### MCP Integration Benefits
-
-**Development Efficiency**:
-
-- MCP integration supports both Q Developer and Kiro IDE deployments
-- Enables automated provisioning and management without manual console operations
-- Rapid prototyping with pre-built AWS integrations
-- Consistent API patterns across all AWS services
-
-**Operational Excellence**:
-
-- Unified monitoring and alerting setup
-- Automated cost optimization workflows
-- Comprehensive audit and compliance reporting
-- Real-time performance monitoring and optimization
-
-## Demo & Visualization Components
-
-### Streamlit Dashboard
-
-- **Purpose**: Provides live URL for deployed project demonstration
-- **Integration**: Deployed via Lambda + API Gateway using Serverless MCP Server
-- **Features**: Real-time routing decisions, performance metrics, cost analysis
-- **Benefits**: Interactive visualization for judges, professional presentation
-
-### Demo Scenario Mapping
-
-| Use Case              | Key Metrics                    | Routing Priority     | Expected Tier |
-| --------------------- | ------------------------------ | -------------------- | ------------- |
-| Gaming NPC Dialogue   | Latency < 50ms                 | Speed > Accuracy     | Device        |
-| Automotive Safety     | Latency < 100ms, High Accuracy | Safety Critical      | MEC/Device    |
-| Healthcare Monitoring | Privacy + Accuracy             | Compliance + Quality | MEC/Local     |
-| IoT Sensor Processing | Cost + Efficiency              | Volume Processing    | Edge/MEC      |
-
-## Enhanced Security Considerations
-
-### Secrets Handling
-
-- All Bedrock/Nova credentials and API tokens are stored in AWS Secrets Manager
-- IAM access policies restrict secret access per-agent with least privilege model
-- Automatic credential rotation for enhanced security
-
-### IAM Role Segmentation
-
-- Each agent runs in a distinct IAM execution role with scoped permissions
-- Cross-service access is explicitly defined and audited
-- Principle of least privilege enforced across all components
-
-### Enhanced Performance Optimization
-
-#### Global Latency Optimization
-
-- **AWS Global Accelerator**: Optimizes latency for multi-region routing decisions
-- **Edge Location Integration**: Leverages CloudFront edge locations for request processing
-- **Regional Failover**: Automatic failover to nearest available compute tier
-
-#### Continuous Learning Integration
-
-- **SageMaker Integration**: Feeds optimization results back into Nova reasoning
-- **Automated Retraining**: Updates routing models based on performance feedback
-- **Pattern Recognition**: Identifies and adapts to usage patterns automatically
-
-## Architecture Enhancements
-
-### Compute Tier Specifications
-
-**Device Edge Tier**:
-
-- Local model processing with offline capability
-- Privacy-first processing for sensitive data
-- Ultra-low latency for real-time applications
-
-**MEC Tier (AWS Wavelength/Outposts)**:
-
-- Regional edge computing via AWS Wavelength Zones
-- AWS Outposts for on-premises edge processing
-- Optimized for regional data residency and compliance
-
-**Cloud Tier**:
-
-- Full Bedrock/SageMaker AI capabilities
-- Unlimited compute resources and latest models
-- Global availability with multi-region deployment
-
-### Orchestration Layer
-
-- **AWS Step Functions**: Coordinates multi-agent workflows with built-in error handling
-- **Event-Driven Architecture**: Uses EventBridge for decoupled agent communication
-- **Distributed Tracing**: AWS X-Ray provides end-to-end request visibility
+- Agent co-location on the same MEC site for minimal communication overhead
+- Pre-compiled decision trees for common scenarios
+- Asynchronous processing for non-critical operations
+- Connection pooling for inter-MEC communication
+
+### Resource Optimization
+- Dynamic container scaling based on load patterns
+- Memory-efficient data structures for real-time processing
+- CPU affinity optimization for agent processes
+- GPU acceleration for complex inference tasks
+
+### Cache Optimization
+- Intelligent cache warming based on usage predictions
+- Hierarchical caching with local and regional tiers
+- Cache coherence protocols for multi-site deployments
+- Adaptive TTL based on content volatility
+
+Through MCP-enabled orchestration, EdgeMind transforms Strands agents into active infrastructure participants capable of autonomous reasoning and real-time adaptation.
+
+## Streamlit Dashboard Interface
+
+### Purpose
+Provides real-time visibility into MEC orchestration, swarm consensus, and threshold monitoring for demonstration and stakeholder engagement.
+
+### Dashboard Layout
+
+#### Left Sidebar - Control Interface
+**Simulation Controls**:
+- Latency slider (0-200ms)
+- CPU Load slider (0-100%)
+- GPU Load slider (0-100%)
+- Queue Depth slider (0-100 requests)
+- Network Quality selector (Excellent/Good/Poor/Degraded)
+
+**Action Buttons**:
+- "Trigger Swarm Consensus" - Manual swarm activation
+- "Simulate MEC Failure" - Test failover scenarios
+- "Reset to Normal" - Return to baseline metrics
+
+**Mode Selector**:
+- Normal Operation
+- Threshold Breach Simulation
+- Swarm Consensus Active
+- MEC Site Failover
+
+#### Main Dashboard - Four Panel Layout
+
+**Panel 1: Real-Time Metrics**
+- Line charts showing latency, CPU/GPU load, queue depth over time
+- Threshold breach indicators (red flashing markers when exceeded)
+- Current vs target performance metrics
+- Color-coded status indicators (green=normal, yellow=warning, red=breach)
+
+**Panel 2: Swarm Visualization**
+- Interactive network graph of MEC sites (A, B, C) using `st.graphviz_chart`
+- Node colors: green=active, gray=standby, red=overloaded, blue=consensus_leader
+- Edge thickness represents inter-MEC communication volume
+- Animated consensus flow when swarm activates
+- Agent status indicators for each MEC site
+
+**Panel 3: Agent Activity Stream**
+- Real-time log stream of agent actions and MCP calls:
+```
+[12:34:01] Orchestrator -> metrics_monitor.mcp: threshold_exceeded(latency=120ms)
+[12:34:02] Orchestrator -> memory_sync.mcp: sync_swarm_state(trigger="latency_breach")
+[12:34:03] LoadBalancer -> metrics_monitor.mcp: get_healthy_sites()
+[12:34:04] LoadBalancer -> container_ops.mcp: scale_containers(site="MEC_B", +2)
+[12:34:05] DecisionCoordinator -> telemetry.mcp: log_decision(consensus="MEC_B_selected")
+```
+- Filterable by agent type and MCP tool
+- Color-coded by action type (info=blue, warning=yellow, error=red)
+
+**Panel 4: Observer Cloud Dashboard**
+- Aggregated performance metrics (avg latency, uptime %, swarm efficiency)
+- Comparison charts: "Edge vs Cloud Response Times"
+- Historical trend analysis
+- Cost optimization metrics
+- Compliance and audit trail summary
+
+#### Interactive Features
+- **Scenario Buttons**: Gaming, Automotive, Healthcare, IoT use case simulations
+- **Performance Comparison**: Toggle between MEC-orchestrated vs cloud-dependent response times
+- **Threshold Configuration**: Adjustable threshold sliders with real-time impact visualization
+- **Export Functionality**: Download performance reports and metrics data
+
+#### Technical Implementation
+```python
+# Streamlit app structure
+import streamlit as st
+import plotly.graph_objects as go
+import networkx as nx
+from streamlit_agraph import agraph, Node, Edge
+
+def main():
+    st.set_page_config(page_title="EdgeMind MEC Orchestration", layout="wide")
+
+    # Sidebar controls
+    with st.sidebar:
+        render_simulation_controls()
+        render_action_buttons()
+        render_mode_selector()
+
+    # Main dashboard
+    col1, col2 = st.columns(2)
+    with col1:
+        render_metrics_panel()
+        render_agent_activity_stream()
+    with col2:
+        render_swarm_visualization()
+        render_observer_dashboard()
+
+def render_swarm_visualization():
+    # NetworkX graph for MEC sites
+    nodes = [
+        Node(id="MEC_A", label="MEC Site A", color="green"),
+        Node(id="MEC_B", label="MEC Site B", color="gray"),
+        Node(id="MEC_C", label="MEC Site C", color="red")
+    ]
+    edges = [Edge(source="MEC_A", target="MEC_B", width=2)]
+    agraph(nodes=nodes, edges=edges, config={"height": 400})
+```
+
+This dashboard provides comprehensive visibility into the MEC orchestration system, enabling real-time demonstration of swarm consensus, threshold monitoring, and autonomous edge intelligence for stakeholders and judges.

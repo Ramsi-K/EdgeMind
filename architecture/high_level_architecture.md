@@ -1,192 +1,190 @@
-# MEC Inference Routing - High-Level System Architecture
+# EdgeMind - 5G-MEC Intelligence Orchestration Architecture
 
 ## System Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           MEC Inference Routing System                          │
-│                         Multi-Agent Architecture Overview                       │
+│                        EdgeMind MEC Intelligence System                         │
+│                      Threshold-Based Swarm Orchestration                       │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────────────────────┐
-│   User Layer    │    │  API Gateway     │    │        Request Flow             │
+│  Device Layer   │    │   MEC Sites      │    │     Orchestration Flow          │
 │                 │    │                  │    │                                 │
-│  ┌───────────┐  │    │  ┌─────────────┐ │    │  1. User Request                │
-│  │   User    │──┼────┼──│ API Gateway │─┼────┼──2. Context Analysis            │
-│  └───────────┘  │    │  └─────────────┘ │    │  3. Resource Assessment         │
-│                 │    │                  │    │  4. Routing Decision            │
-│  ┌───────────┐  │    │                  │    │  5. Model Execution             │
-│  │Mobile App │──┘    │                  │    │  6. Response & Monitoring       │
-│  └───────────┘       │                  │    │                                 │
+│  ┌───────────┐  │    │  ┌─────────────┐ │    │  1. Device SLM Processing       │
+│  │Device SLM │──┼────┼──│ MEC Site A  │─┼────┼──2. Threshold Monitoring        │
+│  └───────────┘  │    │  └─────────────┘ │    │  3. Swarm Trigger               │
+│                 │    │                  │    │  4. Load Balancing              │
+│  ┌───────────┐  │    │  ┌─────────────┐ │    │  5. MEC Coordination            │
+│  │IoT Sensor │──┼────┼──│ MEC Site B  │ │    │  6. Response & Learning         │
+│  └───────────┘  │    │  └─────────────┘ │    │                                 │
 └─────────────────┘    └──────────────────┘    └─────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        Multi-Agent System Core                                  │
-│                      (Bedrock AgentCore Coordination)                          │
+│                         MEC Orchestration Core                                  │
+│                      (Strands Swarm Coordination)                              │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Agent Coordination Layer                             │   │
+│  │                    Orchestrator Layer                                   │   │
 │  │                                                                         │   │
 │  │  ┌─────────────────┐         ┌─────────────────────────────────────┐   │   │
-│  │  │ Bedrock         │◄────────┤        Nova Reasoning               │   │   │
-│  │  │ AgentCore       │         │     (Decision Engine)               │   │   │
-│  │  │ (Coordination)  │         │                                     │   │   │
-│  │  └─────────────────┘         │  • Nova Micro: Classification       │   │   │
-│  │                              │  • Nova Lite: Complexity Scoring    │   │   │
-│  │                              │  • Nova Pro: Complex Reasoning      │   │   │
+│  │  │ Orchestrator    │◄────────┤     Threshold Monitoring            │   │   │
+│  │  │ Agent           │         │     (Real-time Metrics)             │   │   │
+│  │  │ (Primary)       │         │                                     │   │   │
+│  │  └─────────────────┘         │  • Latency: <100ms target          │   │   │
+│  │                              │  • CPU/GPU Load: 80% threshold     │   │   │
+│  │                              │  • Queue Depth: 50 requests max    │   │   │
 │  │                              └─────────────────────────────────────┘   │   │
 │  └─────────────────────────────────────────────────────────────────────────┘   │
 │                                                                                 │
 │  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                           Core Agents                                   │   │
+│  │                        Strands Swarm Agents                            │   │
 │  │                                                                         │   │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │   │
-│  │  │  Context    │  │  Resource   │  │   Router    │  │   Cache     │   │   │
-│  │  │   Agent     │  │   Agent     │  │   Agent     │  │   Agent     │   │   │
-│  │  │             │  │             │  │             │  │             │   │   │
-│  │  │• Request    │  │• Capacity   │  │• Decision   │  │• Model      │   │   │
-│  │  │  Analysis   │  │  Monitor    │  │  Engine     │  │  Management │   │   │
-│  │  │• Device     │  │• Cost       │  │• Load       │  │• Preloading │   │   │
-│  │  │  Assessment │  │  Tracking   │  │  Balancing  │  │• Cleanup    │   │   │
-│  │  │• Network    │  │• Health     │  │• Failover   │  │• Versioning │   │   │
-│  │  │  Conditions │  │  Checks     │  │  Logic      │  │             │   │   │
+│  │  │Load Balance │  │ Resource    │  │ Decision    │  │ Cache       │   │   │
+│  │  │   Agent     │  │ Monitor     │  │ Coordinator │  │ Manager     │   │   │
+│  │  │             │  │ Agent       │  │ Agent       │  │ Agent       │   │   │
+│  │  │• MEC Site   │  │• Capacity   │  │• Swarm      │  │• Local      │   │   │
+│  │  │  Selection  │  │  Tracking   │  │  Consensus  │  │  Caching    │   │   │
+│  │  │• Dynamic    │  │• Latency    │  │• Pattern    │  │• 15min      │   │   │
+│  │  │  Balancing  │  │  Monitor    │  │  Learning   │  │  Refresh    │   │   │
+│  │  │• Failover   │  │• Health     │  │• Threshold  │  │• Predictive │   │   │
+│  │  │  Logic      │  │  Checks     │  │  Adjustment │  │  Preload    │   │   │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘   │   │
-│  │                                                                         │   │
-│  │                    ┌─────────────────────────────────────┐             │   │
-│  │                    │           Monitor Agent             │             │   │
-│  │                    │                                     │             │   │
-│  │                    │  • Performance Analytics            │             │   │
-│  │                    │  • Pattern Recognition              │             │   │
-│  │                    │  • Continuous Learning              │             │   │
-│  │                    │  • Optimization Recommendations     │             │   │
-│  │                    └─────────────────────────────────────┘             │   │
 │  └─────────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                          AWS Services Integration Layer                         │
+│                        MEC Infrastructure Layer                                 │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐   │
-│  │  DynamoDB   │  │     S3      │  │ CloudWatch  │  │    EventBridge      │   │
+│  │ Container   │  │ Local       │  │ MEC-to-MEC  │  │ Threshold           │   │
+│  │ Runtime     │  │ Storage     │  │ Network     │  │ Monitoring          │   │
 │  │             │  │             │  │             │  │                     │   │
-│  │• Routing    │  │• Model      │  │• Metrics    │  │• Event              │   │
-│  │  Decisions  │  │  Storage    │  │  Collection │  │  Coordination       │   │
-│  │• Agent      │  │• Version    │  │• Dashboards │  │• Agent              │   │
-│  │  State      │  │  Control    │  │• Alerting   │  │  Communication      │   │
-│  │• Historical │  │• Artifacts  │  │• Logs       │  │• Workflow           │   │
-│  │  Patterns   │  │             │  │             │  │  Triggers           │   │
+│  │• Docker     │  │• Local      │  │• Direct     │  │• Real-time          │   │
+│  │  Containers │  │  Cache      │  │  MEC Comm   │  │  Metrics            │   │
+│  │• Kubernetes │  │• Model      │  │• Low        │  │• Swarm              │   │
+│  │  Orchestr   │  │  Storage    │  │  Latency    │  │  Triggers           │   │
+│  │• Auto       │  │• Response   │  │• Redundant  │  │• Pattern            │   │
+│  │  Scaling    │  │  Cache      │  │  Paths      │  │  Recognition        │   │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────────────┘   │
 │                                                                                 │
 │                    ┌─────────────────────────────────────────────────────┐     │
-│                    │              Step Functions                         │     │
+│                    │           Swarm Coordination                        │     │
 │                    │                                                     │     │
-│                    │  • Multi-Agent Workflow Orchestration              │     │
-│                    │  • Error Handling and Retry Logic                  │     │
-│                    │  • Complex Decision Pipelines                      │     │
-│                    │  • Agent Coordination Workflows                    │     │
+│                    │  • Inter-MEC Agent Communication                    │     │
+│                    │  • Consensus-based Decision Making                  │     │
+│                    │  • Autonomous Load Balancing                        │     │
+│                    │  • Threshold-based Orchestration                    │     │
 │                    └─────────────────────────────────────────────────────┘     │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           Three-Tier Compute Model                             │
+│                        Three-Layer Intelligence Model                          │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌─────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐     │
-│  │   Device Edge   │    │      MEC Edge       │    │    Cloud Tier       │     │
+│  │ Device Layer    │    │    MEC Layer        │    │   Cloud Layer       │     │
+│  │ (First Line)    │    │  (Primary Intel)    │    │ (Passive Observer)  │     │
 │  │                 │    │                     │    │                     │     │
 │  │ ┌─────────────┐ │    │ ┌─────────────────┐ │    │ ┌─────────────────┐ │     │
-│  │ │Local Models │ │    │ │ AWS Wavelength  │ │    │ │ Bedrock Models  │ │     │
-│  │ │             │ │    │ │                 │ │    │ │                 │ │     │
-│  │ │• Ultra-low  │ │    │ │• Regional Edge  │ │    │ │• Full AI        │ │     │
-│  │ │  Latency    │ │    │ │• 5G Integration │ │    │ │  Capabilities   │ │     │
-│  │ │• Privacy    │ │    │ │• Low Latency    │ │    │ │• Latest Models  │ │     │
-│  │ │  First      │ │    │ │• Compliance     │ │    │ │• Unlimited      │ │     │
-│  │ │• Offline    │ │    │ │                 │ │    │ │  Compute        │ │     │
-│  │ │  Capable    │ │    │ └─────────────────┘ │    │ └─────────────────┘ │     │
-│  │ └─────────────┘ │    │                     │    │                     │     │
-│  │                 │    │ ┌─────────────────┐ │    │ ┌─────────────────┐ │     │
-│  │ Latency: <50ms  │    │ │ AWS Outposts    │ │    │ │   SageMaker     │ │     │
-│  │ Privacy: High   │    │ │                 │ │    │ │                 │ │     │
-│  │ Cost: Low       │    │ │• On-premises    │ │    │ │• Custom Models  │ │     │
-│  │                 │    │ │  Edge           │ │    │ │• Training       │ │     │
-│  │                 │    │ │• Hybrid Cloud   │ │    │ │• Endpoints      │ │     │
-│  │                 │    │ │• Data Residency │ │    │ │                 │ │     │
-│  │                 │    │ └─────────────────┘ │    │ └─────────────────┘ │     │
+│  │ │Small Lang   │ │    │ │ Strands Swarm   │ │    │ │ Analytics Only  │ │     │
+│  │ │Models (SLM) │ │    │ │ Orchestration   │ │    │ │                 │ │     │
+│  │ │             │ │    │ │                 │ │    │ │• Long-term      │ │     │
+│  │ │• Immediate  │ │    │ │• Real-time      │ │    │ │  Analytics      │ │     │
+│  │ │  Response   │ │    │ │  Decisions      │ │    │ │• Pattern        │ │     │
+│  │ │• Local      │ │    │ │• Swarm          │ │    │ │  Recognition    │ │     │
+│  │ │  Processing │ │    │ │  Coordination   │ │    │ │• Observability  │ │     │
+│  │ │• Triggers   │ │    │ │• Load Balance   │ │    │ │• No Real-time   │ │     │
+│  │ │  MEC        │ │    │ │• Autonomous     │ │    │ │  Decisions      │ │     │
+│  │ └─────────────┘ │    │ └─────────────────┘ │    │ └─────────────────┘ │     │
 │  │                 │    │                     │    │                     │     │
-│  │                 │    │ Latency: <100ms     │    │ Latency: 100ms+     │     │
-│  │                 │    │ Privacy: Medium     │    │ Privacy: Standard   │     │
-│  │                 │    │ Cost: Medium        │    │ Cost: Variable      │     │
+│  │ ┌─────────────┐ │    │ ┌─────────────────┐ │    │ ┌─────────────────┐ │     │
+│  │ │ Edge        │ │    │ │ 5G RAN          │ │    │ │ Data            │ │     │
+│  │ │ Sensors     │ │    │ │ Controllers     │ │    │ │ Aggregation     │ │     │
+│  │ │             │ │    │ │                 │ │    │ │                 │ │     │
+│  │ │• IoT        │ │    │ │• Physical       │ │    │ │• Historical     │ │     │
+│  │ │  Devices    │ │    │ │  Proximity      │ │    │ │  Data           │ │     │
+│  │ │• Mobile     │ │    │ │• Ultra-low      │ │    │ │• Trend          │ │     │
+│  │ │  Apps       │ │    │ │  Latency        │ │    │ │  Analysis       │ │     │
+│  │ │• Basic      │ │    │ │• Containerized  │ │    │ │• Compliance     │ │     │
+│  │ │  AI         │ │    │ │  Deployment     │ │    │ │  Reporting      │ │     │
+│  │ └─────────────┘ │    │ └─────────────────┘ │    │ └─────────────────┘ │     │
+│  │                 │    │                     │    │                     │     │
+│  │ Latency: <50ms  │    │ Latency: <100ms     │    │ Latency: N/A        │     │
+│  │ Role: Trigger   │    │ Role: Intelligence  │    │ Role: Observer      │     │
+│  │ Autonomy: Basic │    │ Autonomy: Full      │    │ Autonomy: None      │     │
 │  └─────────────────┘    └─────────────────────┘    └─────────────────────┘     │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        Visualization & Demo Layer                              │
+│                      MEC Orchestration Dashboard                               │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                      Streamlit Dashboard                                │   │
-│  │                        (Live Demo)                                     │   │
+│  │                    Real-time MEC Monitoring                             │   │
+│  │                      (Live Orchestration)                              │   │
 │  │                                                                         │   │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │   │
-│  │  │   Gaming    │  │ Automotive  │  │ Healthcare  │  │ Performance │   │   │
-│  │  │  Scenario   │  │  Scenario   │  │  Scenario   │  │  Analytics  │   │   │
+│  │  │ Threshold   │  │ Swarm       │  │ MEC Site    │  │ Performance │   │   │
+│  │  │ Monitoring  │  │ Coordination│  │ Health      │  │ Analytics   │   │   │
 │  │  │             │  │             │  │             │  │             │   │   │
-│  │  │• NPC        │  │• Safety     │  │• Patient    │  │• Real-time  │   │   │
-│  │  │  Dialogue   │  │  Decisions  │  │  Monitoring │  │  Metrics    │   │   │
-│  │  │• Real-time  │  │• Critical   │  │• Privacy    │  │• Cost       │   │   │
-│  │  │  Response   │  │  Response   │  │  Compliance │  │  Analysis   │   │   │
-│  │  │             │  │             │  │             │  │• Routing    │   │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  Decisions  │   │   │
-│  │                                                     └─────────────┘   │   │
+│  │  │• Latency    │  │• Agent      │  │• CPU/GPU    │  │• Sub-100ms  │   │   │
+│  │  │  <100ms     │  │  Swarm      │  │  Load       │  │  Decisions  │   │   │
+│  │  │• CPU Load   │  │• Load       │  │• Network    │  │• Swarm      │   │   │
+│  │  │  <80%       │  │  Balance    │  │  Status     │  │  Efficiency │   │   │
+│  │  │• Queue      │  │• Consensus  │  │• Container  │  │• Threshold  │   │   │
+│  │  │  <50 reqs   │  │  Decisions  │  │  Health     │  │  Accuracy   │   │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘   │   │
 │  └─────────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Key Architecture Principles
 
-### 1. Multi-Agent Coordination
+### 1. Threshold-Based Orchestration
 
-- **Bedrock AgentCore**: Central coordination hub for all agents
-- **Nova Reasoning**: AI-powered decision making across all routing choices
-- **Event-Driven**: Asynchronous communication via EventBridge
-- **Fault Tolerant**: Circuit breaker patterns and graceful degradation
+- **Real-time Monitoring**: Continuous tracking of latency, CPU/GPU load, and queue depth
+- **Swarm Triggering**: Automatic activation of Strands agent swarms when thresholds exceeded
+- **Autonomous Decisions**: No cloud dependency for real-time decision making
+- **Sub-100ms Response**: Target latency for all orchestration decisions
 
-### 2. Three-Tier Compute Strategy
+### 2. Three-Layer Intelligence Strategy
 
-- **Device Edge**: Ultra-low latency, privacy-first processing
-- **MEC Edge**: Regional processing with AWS Wavelength/Outposts
-- **Cloud Tier**: Full AI capabilities with Bedrock and SageMaker
+- **Device Layer**: Small Language Models (SLMs) for immediate response and MEC triggering
+- **MEC Layer**: Primary intelligence with Strands swarm coordination and load balancing
+- **Cloud Layer**: Passive observer for analytics and long-term pattern recognition
 
-### 3. Intelligent Routing
+### 3. Swarm Coordination
 
-- **Context-Aware**: Request complexity and user requirements analysis
-- **Resource-Aware**: Real-time capacity and cost monitoring
-- **Performance-Optimized**: Continuous learning and optimization
-- **Compliance-Ready**: Data residency and privacy controls
+- **Consensus-Based**: Multi-agent decision making across MEC sites
+- **Load Balancing**: Dynamic distribution of workload based on real-time capacity
+- **Fault Tolerance**: Automatic failover between MEC sites without cloud involvement
+- **Learning Adaptation**: Continuous threshold adjustment based on performance patterns
 
-### 4. AWS-Native Integration
+### 4. MEC-Native Deployment
 
-- **Infrastructure as Code**: CDK-based deployment and management
-- **Serverless-First**: Lambda functions for all agent implementations
-- **Monitoring & Observability**: CloudWatch, X-Ray, and custom dashboards
-- **Security & Compliance**: IAM, Secrets Manager, and audit trails
+- **Container Orchestration**: Docker/Kubernetes deployment at MEC sites
+- **Direct MEC Communication**: Low-latency networking between MEC sites
+- **Local Caching**: 15-minute refresh cycles with predictive preloading
+- **Edge Autonomy**: Complete independence from cloud for operational decisions
 
-## Data Flow Summary
+## MEC Orchestration Flow Summary
 
-1. **Request Ingestion**: User requests enter via API Gateway
-2. **Context Analysis**: Context Agent analyzes request using Nova models
-3. **Resource Assessment**: Resource Agent monitors all compute tiers
-4. **Routing Decision**: Router Agent uses Nova reasoning for optimal placement
-5. **Model Execution**: Selected tier processes the inference request
-6. **Performance Monitoring**: Monitor Agent tracks and learns from outcomes
-7. **Continuous Optimization**: System adapts routing based on performance data
+1. **Device Processing**: SLM handles immediate response, triggers MEC if complexity threshold exceeded
+2. **Threshold Monitoring**: Orchestrator Agent continuously monitors latency, load, and queue metrics
+3. **Swarm Activation**: When thresholds breached, Strands swarm coordination is triggered
+4. **Load Balancing**: Swarm agents coordinate to select optimal MEC site for processing
+5. **MEC Execution**: Selected MEC site processes request with local cached models
+6. **Swarm Learning**: Decision Coordinator learns from outcomes and adjusts thresholds
+7. **Cloud Observation**: Passive aggregation of metrics for long-term analytics (no real-time decisions)
 
 ## Competitive Advantages
 
-- **AWS AI Agent Compliance**: Full integration with Bedrock AgentCore and Nova
-- **Real-time Optimization**: Sub-100ms routing decisions with continuous learning
-- **Cost Intelligence**: Dynamic cost optimization across all compute tiers
-- **Enterprise Ready**: Security, compliance, and scalability built-in
-- **Demo Ready**: Live Streamlit dashboard with interactive scenarios
+- **True Edge Intelligence**: Real decisions made at MEC sites, not dependent on cloud connectivity
+- **Sub-100ms Orchestration**: Threshold-based swarm coordination for real-time applications
+- **Autonomous Operation**: Complete MEC autonomy with cloud as passive observer only
+- **5G-Native Design**: Optimized for deployment near RAN controllers and 5G infrastructure
+- **Swarm Resilience**: Multi-agent coordination provides redundancy and fault tolerance

@@ -1,169 +1,169 @@
-# Technical Architecture
+# MEC Intelligence Orchestration - Technical Architecture
 
 ## 🏗️ System Overview
 
-The MEC Inference Routing System uses a multi-agent architecture to intelligently route AI inference requests across three compute tiers: device, edge (MEC), and cloud.
+EdgeMind deploys Strands agent swarms directly at MEC (Multi-access Edge Computing) sites near 5G RAN controllers. The system uses threshold-based orchestration to trigger intelligent load balancing across MEC sites, ensuring optimal performance without cloud dependency.
 
-## 🤖 Agent Architecture
+## 🤖 MEC Agent Architecture
 
-### 1. Context Agent
-**Purpose**: Analyzes incoming requests to determine optimal routing
+### 1. Orchestrator Agent
+**Purpose**: Monitors system thresholds and triggers swarm coordination
 
 **Responsibilities**:
-- Request complexity analysis
-- User context evaluation
-- Device capability assessment
-- Network condition monitoring
+- Latency threshold monitoring (<100ms target)
+- CPU/GPU load tracking across MEC sites
+- Queue depth analysis
+- Swarm trigger decisions
 
-**AWS Services**:
-- Lambda (request processing)
-- API Gateway (request ingestion)
-- DynamoDB (context storage)
+**Deployment**: Primary controller at each MEC site
 
 **Key Algorithms**:
 ```python
-def analyze_request_complexity(request):
-    # NLP analysis of request
-    # Estimate required model size
-    # Predict inference time
-    return complexity_score
+def monitor_thresholds(mec_metrics):
+    # Monitor latency, CPU, GPU, queue depth
+    # Trigger swarm when thresholds exceeded
+    if any_threshold_breached(mec_metrics):
+        trigger_swarm_coordination()
+    return orchestration_decision
 
-def assess_device_capability(device_info):
-    # CPU/GPU benchmarking
-    # Memory availability
-    # Battery status
-    return capability_score
+def trigger_swarm_coordination():
+    # Activate Strands agents across MEC sites
+    # Coordinate load balancing decisions
+    # Ensure sub-100ms response times
+    return swarm_activation_plan
 ```
 
-### 2. Resource Agent
-**Purpose**: Monitors infrastructure capacity and performance
+### 2. Resource Monitor Agent
+**Purpose**: Tracks real-time metrics across MEC infrastructure
 
 **Responsibilities**:
-- MEC node capacity tracking
-- Cloud service availability
-- Network latency monitoring
-- Cost optimization
+- MEC site capacity monitoring
+- Network latency between MEC sites
+- Device connectivity status
+- Local cache performance
 
-**AWS Services**:
-- CloudWatch (metrics collection)
-- EC2 (MEC simulation)
-- Lambda (monitoring functions)
+**Deployment**: Strands swarm member at each MEC site
 
 **Metrics Tracked**:
-- CPU/GPU utilization
-- Memory usage
-- Network bandwidth
-- Queue lengths
-- Response times
+- CPU/GPU utilization per MEC site
+- Memory usage and availability
+- Inter-MEC network latency
+- Device-to-MEC connection quality
+- Local inference queue depths
 
-### 3. Router Agent
-**Purpose**: Makes intelligent routing decisions
+### 3. Load Balancer Agent
+**Purpose**: Distributes workload across MEC sites in real-time
 
 **Responsibilities**:
-- Multi-criteria decision making
-- Load balancing
-- Failover handling
+- Dynamic load distribution
+- MEC site selection
+- Failover coordination
 - Performance optimization
 
 **Decision Matrix**:
 ```
 Priority Factors:
-1. Latency requirements (40%)
-2. Model accuracy needs (30%)
-3. Cost constraints (20%)
-4. Availability (10%)
+1. MEC site latency (50%)
+2. Current load capacity (30%)
+3. Network proximity (15%)
+4. Site availability (5%)
 ```
 
-**Routing Logic**:
+**Load Balancing Logic**:
 ```python
-def route_request(context, resources, requirements):
-    scores = {
-        'device': calculate_device_score(context, requirements),
-        'mec': calculate_mec_score(resources, requirements),
-        'cloud': calculate_cloud_score(requirements)
-    }
-    return max(scores, key=scores.get)
+def balance_mec_load(swarm_metrics, incoming_request):
+    mec_scores = {}
+    for site in available_mec_sites:
+        mec_scores[site] = calculate_mec_score(
+            latency=site.current_latency,
+            capacity=site.available_capacity,
+            proximity=site.network_distance
+        )
+    return select_optimal_mec_site(mec_scores)
 ```
 
-### 4. Cache Agent
-**Purpose**: Manages model deployment and caching
+### 4. Cache Manager Agent
+**Purpose**: Manages local caching and model deployment at MEC sites
 
 **Responsibilities**:
-- Model distribution
-- Cache optimization
-- Version management
-- Preloading strategies
+- Local model caching (15-minute refresh cycles)
+- Response caching for frequent queries
+- Model version synchronization
+- Predictive preloading
 
-**AWS Services**:
-- S3 (model storage)
-- ECS (container management)
-- ElastiCache (response caching)
+**Deployment**: Strands swarm member with local storage access
 
 **Caching Strategy**:
-- **Hot models**: Deployed on MEC nodes
-- **Warm models**: Cached in S3 with fast deployment
-- **Cold models**: Cloud-only deployment
+- **Hot models**: Permanently cached at MEC sites
+- **Warm models**: Cached based on usage patterns
+- **Response cache**: 15-minute TTL for frequent queries
+- **Predictive loading**: Based on swarm coordination signals
 
-### 5. Monitor Agent
-**Purpose**: Tracks performance and enables learning
+### 5. Decision Coordinator Agent
+**Purpose**: Coordinates swarm consensus and learning
 
 **Responsibilities**:
-- Performance analytics
-- Decision quality assessment
-- System optimization
-- Anomaly detection
+- Swarm decision consensus
+- Performance pattern recognition
+- Threshold adjustment
+- Anomaly detection and response
 
-**AWS Services**:
-- Kinesis (data streaming)
-- CloudWatch (dashboards)
-- S3 (data lake)
-- SageMaker (ML analytics)
+**Deployment**: Strands swarm coordinator with inter-MEC communication
 
-## 🌐 Network Architecture
+**Coordination Logic**:
+- Aggregates decisions from multiple MEC sites
+- Learns from performance patterns
+- Adjusts thresholds based on network conditions
+- Coordinates failover between MEC sites
 
-### Three-Tier Compute Model
+## 🌐 MEC Network Architecture
 
-#### Tier 1: Device Edge
+### Three-Layer Intelligence Model
+
+#### Layer 1: Device Intelligence
 - **Hardware**: Mobile devices, IoT sensors, edge devices
-- **Models**: TinyLLM, MobileBERT, quantized models
+- **Models**: Small Language Models (SLMs), quantized models
 - **Latency**: <50ms
-- **Capabilities**: Basic NLP, simple classification
-- **Advantages**: Ultra-low latency, privacy, offline capability
+- **Capabilities**: Basic inference, immediate response
+- **Role**: First-line processing, triggers MEC when needed
 
-#### Tier 2: MEC (Multi-Access Edge Computing)
-- **Hardware**: Regional edge servers, 5G base stations
-- **Models**: Llama 7B/13B, BERT-large, specialized models
-- **Latency**: 50-200ms
-- **Capabilities**: Complex NLP, computer vision, reasoning
-- **Advantages**: Regional optimization, moderate latency
+#### Layer 2: MEC Intelligence (Primary)
+- **Hardware**: Edge compute nodes near 5G RAN controllers
+- **Models**: Medium-sized models, Strands agent swarms
+- **Latency**: <100ms (target for real-time applications)
+- **Capabilities**: Complex reasoning, swarm coordination, load balancing
+- **Role**: Primary intelligence layer, autonomous decision making
 
-#### Tier 3: Cloud
-- **Hardware**: AWS data centers, GPU clusters
-- **Models**: GPT-4, Claude, large multimodal models
-- **Latency**: 1-5 seconds
-- **Capabilities**: Advanced reasoning, creativity, complex analysis
-- **Advantages**: Unlimited compute, latest models
+#### Layer 3: Cloud Observability (Passive)
+- **Hardware**: Traditional cloud data centers
+- **Models**: Analytics and monitoring models only
+- **Latency**: Not critical (observability only)
+- **Capabilities**: Long-term analytics, pattern recognition
+- **Role**: Passive observer, no real-time decisions
 
-## 📊 Data Flow Architecture
+## 📊 MEC Orchestration Flow
 
 ```
-User Request
+Device Request (SLM Processing)
     ↓
-Context Agent (Analysis)
+MEC Orchestrator (Threshold Check)
     ↓
-Resource Agent (Capacity Check)
+Swarm Trigger (If Thresholds Exceeded)
     ↓
-Router Agent (Decision)
+┌─────────────────────────────────────┐
+│        Strands Swarm Coordination   │
+│  ┌─────────┬─────────┬─────────┐   │
+│  │ MEC A   │ MEC B   │ MEC C   │   │
+│  └─────────┴─────────┴─────────┘   │
+└─────────────────────────────────────┘
     ↓
-┌─────────┬─────────┬─────────┐
-│ Device  │   MEC   │  Cloud  │
-└─────────┴─────────┴─────────┘
-    ↓         ↓         ↓
-Cache Agent (Model Management)
+Load Balancer (Optimal MEC Selection)
     ↓
-Monitor Agent (Performance Tracking)
+Cache Manager (Local Model/Data)
     ↓
-Learning & Optimization
+Decision Coordinator (Swarm Consensus)
+    ↓
+Cloud Observer (Passive Monitoring)
 ```
 
 ## 🔧 Implementation Details
@@ -286,29 +286,30 @@ Learning & Optimization
 
 ## 🛠️ Technology Stack
 
-**Backend**:
-- Python 3.11
-- FastAPI
-- Asyncio for concurrency
+**MEC Orchestration**:
+- Strands framework for agent coordination
+- Python 3.11 with asyncio for real-time processing
+- Container-based deployment at MEC sites
 
-**AWS Services**:
-- Lambda (serverless compute)
-- API Gateway (request handling)
-- DynamoDB (metadata storage)
-- S3 (model storage)
-- CloudWatch (monitoring)
-- ECS (container orchestration)
+**Edge Infrastructure**:
+- Docker containers for MEC deployment
+- Kubernetes for MEC site orchestration
+- Direct MEC-to-MEC networking (no cloud routing)
 
-**ML/AI**:
-- Hugging Face Transformers
-- ONNX Runtime
-- TensorRT (optimization)
-- OpenAI API (cloud models)
+**Device Layer**:
+- Small Language Models (SLMs)
+- ONNX Runtime for optimized inference
+- Local caching and preprocessing
 
-**Infrastructure**:
-- Terraform (IaC)
-- Docker (containerization)
-- Kubernetes (orchestration)
+**Observability (Cloud)**:
+- Passive monitoring and analytics
+- Long-term pattern recognition
+- Aggregated metrics from MEC sites
+
+**Communication**:
+- 5G network integration
+- Low-latency MEC-to-MEC protocols
+- Threshold-based event triggering
 
 ---
 

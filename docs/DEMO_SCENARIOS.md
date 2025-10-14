@@ -1,10 +1,10 @@
-# Demo Scenarios for AWS Hackathon
+# Demo Scenarios for 5G-MEC Intelligence Showcase
 
 ## 🎬 Demo Strategy Overview
 
 **Total Demo Time**: 2-3 minutes
-**Format**: Live dashboard + narrated scenarios
-**Goal**: Show intelligent routing in action across multiple use cases
+**Format**: Live MEC orchestration dashboard + real-time scenarios
+**Goal**: Demonstrate threshold-based swarm coordination and sub-100ms decision making
 
 ## 🎮 Scenario 1: Gaming - Real-Time NPC Interactions
 
@@ -21,16 +21,16 @@
 - NPC interaction complexity: "Tell me about the ancient dragon lore"
 - Network condition: Strong WiFi (100 Mbps, 20ms latency)
 
-**Routing Decision**:
-1. **Context Agent**: Analyzes request complexity → "High complexity dialogue"
-2. **Resource Agent**: Checks MEC capacity → "Tokyo MEC available"
-3. **Router Agent**: Decision → "Route to MEC (Llama 7B)"
-4. **Result**: 150ms response with rich, contextual lore
+**MEC Orchestration Decision**:
+1. **Device SLM**: Processes simple dialogue → "Basic response ready (40ms)"
+2. **Orchestrator**: Detects complexity threshold exceeded → "Trigger swarm coordination"
+3. **Swarm Coordination**: Tokyo MEC A + MEC B collaborate → "Load balanced processing"
+4. **Result**: 85ms response with rich, contextual lore through MEC intelligence
 
 **Comparison Shown**:
-- Device routing: 50ms but generic response
-- Cloud routing: 2s but creative response
-- **MEC routing: 150ms with rich response** ✅
+- Device only: 40ms but generic response
+- Cloud dependency: 2s+ with network delays
+- **MEC swarm coordination: 85ms with intelligent response** ✅
 
 ### Business Impact
 - 60% faster than cloud
@@ -54,12 +54,12 @@
 - Sensor input: "Pedestrian detected + traffic analysis needed"
 - Network: 4G connection (variable latency)
 
-**Multi-Tier Processing**:
-1. **Immediate Safety (Device)**: Pedestrian detection → Emergency brake signal (10ms)
-2. **Traffic Analysis (MEC)**: Regional traffic patterns → Route adjustment (100ms)
-3. **Journey Optimization (Cloud)**: Weather + global traffic → Long-term route (2s)
+**MEC Orchestration Processing**:
+1. **Immediate Safety (Device)**: Pedestrian detection → Emergency brake signal (8ms)
+2. **Traffic Coordination (MEC)**: Orchestrator triggers swarm → Multi-MEC site coordination (60ms)
+3. **Regional Optimization**: MEC sites A, B, C coordinate traffic flow → Optimal route (90ms)
 
-**Result**: Layered intelligence with appropriate latency for each decision type
+**Result**: Autonomous MEC intelligence without cloud dependency for real-time decisions
 
 ### Business Impact
 - Safety: <10ms critical decisions
@@ -186,19 +186,19 @@
 ## 🎯 Demo Script Template
 
 ### Opening (15 seconds)
-*"AI applications face a critical tradeoff: fast responses or smart responses. Our MEC routing system eliminates this tradeoff by intelligently choosing the right compute tier for each request."*
+*"Real-time applications need split-second decisions, but cloud dependency introduces unacceptable latency. EdgeMind deploys intelligent Strands agent swarms directly at 5G MEC sites, making autonomous decisions without cloud involvement."*
 
 ### Problem Statement (15 seconds)
-*"Traditional approaches force you to choose: run small models locally for speed, or large models in the cloud for accuracy. This creates suboptimal user experiences and inefficient resource usage."*
+*"Current systems rely on cloud processing for intelligence, creating 100ms+ delays that break real-time applications like autonomous vehicles, gaming, and industrial control. The intelligence needs to live at the edge."*
 
 ### Solution Demo (90 seconds)
-*"Watch as our multi-agent system analyzes each request and routes it to the optimal location..."*
-- Show 3-4 scenarios with live routing decisions
-- Highlight latency improvements and cost savings
-- Demonstrate real-time adaptation to changing conditions
+*"Watch as our MEC orchestrator monitors thresholds and triggers swarm coordination across multiple edge sites..."*
+- Show threshold monitoring triggering swarm responses
+- Demonstrate sub-100ms decision making
+- Highlight autonomous MEC coordination without cloud dependency
 
 ### Business Impact (15 seconds)
-*"The result: 40% latency reduction, 25% cost savings, and optimal user experiences across gaming, automotive, healthcare, and IoT applications."*
+*"The result: Sub-100ms autonomous decisions, 50% latency reduction, and true real-time performance through 5G-MEC intelligence that doesn't depend on the cloud."*
 
 ### Call to Action (15 seconds)
 *"This is the future of edge computing - intelligent, adaptive, and cost-effective. Ready to transform your AI applications?"*

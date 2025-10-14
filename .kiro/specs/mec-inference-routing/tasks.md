@@ -2,7 +2,7 @@
 
 ## Phase 1 — MVP (Week 1): Local Demo Simulation
 
-- [-] 0. Clean up legacy AWS project and prepare fresh MEC foundation
+- [x] 0. Clean up legacy AWS project and prepare fresh MEC foundation
 
   - Remove all legacy AWS-focused code and infrastructure files
   - Create clean, minimal repository structure for MEC-centric architecture
@@ -49,14 +49,14 @@
   - Remove any remaining AWS-specific references from documentation
   - _Requirements: 11.1_
 
-- [-] 0.6 Initialize version control and tagging
+- [x] 0.6 Initialize version control and tagging
 
   - Commit all changes after cleanup as initial v2 baseline
   - Tag this commit as `v2-init` or `task0-baseline`
   - Push to remote to preserve rollback point
   - _Requirements: 10.1_
 
-- [ ] 1. Set up project foundation and development environment
+- [x] 1. Set up project foundation and development environment
 
   - Create project structure with src/, tests/, and docs/ directories
   - Set up requirements.txt with Streamlit, plotly, pandas, and basic dependencies
@@ -64,14 +64,14 @@
   - Create basic README with setup instructions
   - _Requirements: 10.1, 11.1_
 
-- [ ] 1.1 Create project structure and dependencies
+- [x] 1.1 Create project structure and dependencies
 
   - Initialize src/agents/, src/mcp_tools/, src/dashboard/, src/data/ directories
   - Add requirements.txt with streamlit, plotly, pandas, networkx, streamlit-agraph
   - Create .gitignore for Python projects
   - _Requirements: 10.1_
 
-- [ ] 1.2 Set up basic configuration and environment
+- [x] 1.2 Set up basic configuration and environment
 
   - Create config.py with MEC site definitions and threshold settings
   - Add .env.example with simulation parameters

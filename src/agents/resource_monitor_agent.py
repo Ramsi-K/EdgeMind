@@ -25,8 +25,8 @@ class ResourceMonitorAgent:
         self.mec_site = mec_site
         self.logger = AgentActivityLogger(self.agent_id)
 
-        # Create dummy MCP tools for simulation
-        self.mcp_tools = self._create_dummy_mcp_tools()
+        # Create actual MCP tools
+        self.mcp_tools = self._create_mcp_tools()
 
         # Create the Strands agent with MCP tools
         self.agent = Agent(
@@ -35,13 +35,12 @@ class ResourceMonitorAgent:
             tools=self.mcp_tools,
         )
 
-    def _create_dummy_mcp_tools(self) -> list[Any]:
-        """Create dummy MCP tools for simulation."""
-        # For now, return empty list - will be replaced with actual MCP tools
-        # In real implementation, these would be:
-        # - metrics_monitor.mcp for resource monitoring
-        # - telemetry.mcp for performance logging
-        return []
+    def _create_mcp_tools(self) -> list[Any]:
+        """Create actual MCP tools for resource monitor agent."""
+        from src.mcp_tools.mcp_integration import get_mcp_tools_for_agent
+
+        # Get MCP tools: metrics_monitor, telemetry_logger, container_ops
+        return get_mcp_tools_for_agent("resource_monitor")
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the resource monitor agent."""
@@ -56,7 +55,8 @@ Your responsibilities:
 
 Available MCP Tools:
 - metrics_monitor: Collect real-time metrics from MEC sites and infrastructure
-- telemetry: Log performance data and send alerts for anomalies
+- telemetry_logger: Log performance data, send alerts for anomalies, and track trends
+- container_ops: Monitor container status and resource allocation
 
 Monitoring Scope:
 - CPU/GPU utilization (target: <80%)
@@ -67,11 +67,13 @@ Monitoring Scope:
 - Container health and resource allocation
 
 When participating in swarm consensus:
-1. Use metrics_monitor to get latest performance data
-2. Assess current resource availability and capacity
-3. Identify sites with optimal performance characteristics
-4. Recommend based on real-time metrics and historical trends
-5. Flag any performance risks or capacity constraints
+1. Use metrics_monitor to get latest performance data and site health status
+2. Use container_ops to assess container resource allocation and availability
+3. Assess current resource availability and capacity across all sites
+4. Use telemetry_logger to log monitoring decisions and performance assessments
+5. Identify sites with optimal performance characteristics and capacity
+6. Recommend based on real-time metrics and historical trends
+7. Flag any performance risks or capacity constraints
 
 Always provide specific metrics with timestamps and confidence intervals."""
 

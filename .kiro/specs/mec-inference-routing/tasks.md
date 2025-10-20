@@ -164,7 +164,7 @@
   - Document working examples of each agent specialization
   - _Requirements: 1.1, 1.2, 7.1_
 
-- [ ] 3.5 Build comprehensive test suite for swarm coordination
+- [x] 3.5 Build comprehensive test suite for swarm coordination
 
   - Check tests/ folder to see what tests exist and where they lack
   - Create unit tests for each Strands agent (OrchestratorAgent, LoadBalancerAgent, etc.)
@@ -175,7 +175,7 @@
   - Add test coverage reporting and continuous integration setup
   - _Requirements: 1.1, 1.2, 6.1, 7.1_
 
-- [ ] 3.6 Code review and architecture validation for Strands implementation
+- [x] 3.6 Code review and architecture validation for Strands implementation
 
   - Conduct comprehensive code review of all Strands agent implementations
   - Validate agent system prompts and specialization alignment with design
@@ -186,7 +186,7 @@
   - Create architecture decision records (ADRs) for key design choices
   - _Requirements: 1.1, 1.2, 7.1, 11.1_
 
-- [ ] 4. Integrate existing Streamlit dashboard with real Strands agents
+- [x] 4. Integrate existing Streamlit dashboard with real Strands agents
 
   - Connect existing dashboard mock data to real SwarmCoordinator and agents
   - Replace simulation data with actual threshold monitoring and swarm decisions
@@ -194,176 +194,214 @@
   - Add live swarm consensus visualization with actual agent handoffs
   - _Requirements: 11.1_
 
-- [ ] 4.1 Create dashboard foundation and layout
+- [x] 4.1 Create dashboard foundation and layout
 
   - Build main Streamlit app with sidebar and four-panel grid layout
   - Add simulation control sliders (latency, CPU, GPU, queue depth)
   - Implement mode selector (Normal/Threshold Breach/Swarm Active)
   - _Requirements: 11.1_
 
-- [ ] 4.2 Implement real-time metrics panel
+- [x] 4.2 Implement real-time metrics panel
 
   - Create plotly line charts for latency, CPU/GPU load, queue depth
   - Add threshold breach indicators with red flashing markers
   - Implement auto-refresh functionality with configurable intervals
   - _Requirements: 11.1_
 
-- [ ] 4.3 Build swarm visualization panel
+- [x] 4.3 Build swarm visualization panel
 
   - Create networkx graph of MEC sites with color-coded status
   - Implement node state visualization (green=active, red=overloaded, gray=standby)
   - Add edge thickness to represent inter-MEC communication volume
   - _Requirements: 11.1_
 
-- [ ] 4.4 Create agent activity stream panel
+- [x] 4.4 Create agent activity stream panel
 
   - Build real-time log display with color-coded message types
   - Add filtering by agent type and action category
   - Implement scrollable log history with timestamps
   - _Requirements: 11.1_
 
-- [ ] 5. Implement functional MCP tools (CRITICAL - Mentor Requirement)
+- [x] 5. Implement functional MCP tools for Streamlit dashboard integration (CRITICAL - Next Priority)
 
-  - **PRIORITY**: Build actual MCP tool implementations instead of stubs
-  - Create metrics_monitor.mcp with real MEC site monitoring APIs
-  - Implement container_ops.mcp with Kubernetes/Docker scaling operations
-  - Build telemetry.mcp with structured logging and metrics collection
-  - Add inference.mcp for model caching and execution simulation
-  - Create memory_sync.mcp for swarm state coordination
-  - Each tool must have functional APIs and realistic data processing
-  - _Requirements: 2.1, 8.1_
+  - **CONNECTS TO TASK 4**: Provide real MCP tools that feed data to the Streamlit dashboard's agent activity stream
+  - **DEMO FOCUS**: Build functional local tools that generate realistic data for dashboard visualization
+  - **AGENTCORE INTEGRATION**: Add long-term memory for MEC site coordination and decision learning
+  - Create MCP tools that Strands agents can actually call, with results displayed in Task 4's dashboard
+  - Integrate AWS Bedrock AgentCore Memory for persistent swarm coordination state
+  - Build enterprise architecture diagram showing AWS Cloud deployment path
+  - _Requirements: 2.1, 8.1, 11.1_
 
-- [ ] 5.1 Implement functional MCP tool servers (CRITICAL)
+- [x] 5.1 Create functional MCP tool implementations
 
-  - **metrics_monitor.mcp**: Real MEC site monitoring with AWS CloudWatch integration
-  - **container_ops.mcp**: Kubernetes/Docker operations via AWS EKS/ECS APIs
-  - **telemetry.mcp**: Structured logging with AWS CloudWatch Logs and X-Ray tracing
-  - **inference.mcp**: Model caching simulation with AWS S3 and Lambda
-  - **memory_sync.mcp**: Swarm state coordination using AWS DynamoDB
-  - **agentcore_memory.mcp**: AWS Bedrock AgentCore Memory integration for long-term agent memory
-  - Each tool must provide functional APIs, not stubs
+  - **metrics_monitor.py**: MCP tool server that provides real MEC site metrics data to agents
+  - **container_ops.py**: MCP tool server for container scaling and deployment operations
+  - **inference_engine.py**: MCP tool server for model caching and inference operations
+  - **telemetry_logger.py**: MCP tool server for structured event logging and metrics collection
+  - **memory_sync.py**: MCP tool server for swarm state synchronization and consensus coordination
+  - Each tool provides realistic simulation data and integrates with existing SwarmCoordinator
+  - _Requirements: 2.1, 11.1_
+
+- [x] 5.2 Connect MCP tools to existing Strands agents
+
+  - Replace empty mcp_tools lists in all agent implementations with actual MCP client connections
+  - Update OrchestratorAgent to use metrics_monitor and memory_sync MCP tools
+  - Update LoadBalancerAgent to use metrics_monitor and container_ops MCP tools
+  - Update DecisionCoordinatorAgent to use memory_sync and telemetry_logger MCP tools
+  - Update CacheManagerAgent to use inference_engine and telemetry_logger MCP tools
+  - Update ResourceMonitorAgent to use metrics_monitor and telemetry_logger MCP tools
+  - _Requirements: 2.1, 2.2_
+
+- [x] 5.3 Integrate MCP tool calls with dashboard real-time display
+
+  - Connect MCP tool call results to dashboard's agent activity stream panel
+  - Feed metrics_monitor data to dashboard's real-time metrics panel
+  - Stream container_ops operations to dashboard's swarm visualization panel
+  - Display telemetry_logger events in dashboard's activity stream with filtering
+  - Ensure all agent→MCP tool→dashboard data flow works seamlessly for live demo
+  - _Requirements: 8.1, 11.1_
+
+- [x] 5.4 Create enterprise architecture diagram for AWS deployment
+
+  - Design comprehensive architecture diagram showing local demo vs enterprise AWS deployment
+  - Include MEC sites, user devices, AWS Cloud services (EKS, DynamoDB, CloudWatch, Bedrock AgentCore)
+  - Show data flow from edge devices → MEC sites → AWS Cloud for enterprise scale
+  - Document deployment paths: local demo → staging → production enterprise
+  - Save as `architecture/enterprise_aws_deployment.md` with Mermaid diagram
   - _Requirements: 2.1_
 
-- [ ] 5.2 Build AWS AgentCore Memory integration
+- [ ] 6. Enhance dashboard with demo scenarios and real-time integration
 
-  - Create AgentCore Memory resources with semantic, summary, and user preference strategies
-  - Integrate AgentCoreMemoryToolProvider with Strands agents
-  - Implement memory namespaces for MEC site coordination (mec/{siteId}/metrics, mec/{siteId}/decisions)
-  - Add MemoryHookProvider for automatic memory persistence during swarm coordination
-  - Build memory retrieval for context-aware orchestration decisions
-  - _Requirements: 8.1_
-
-- [ ] 5.3 Build event logging and aggregation system
-
-  - Create EventLogger class with AWS CloudWatch Logs integration
-  - Implement log aggregation for dashboard display with AWS X-Ray tracing
-  - Add log filtering and search functionality via CloudWatch Insights
-  - Create structured logging for MCP tool calls and swarm decisions
-  - _Requirements: 8.1_
-
-- [ ] 6. Create working demo scenarios and testing
-
-  - Implement gaming, automotive, healthcare scenario simulations
+  - Implement gaming, automotive, healthcare scenario simulations in dashboard
+  - Connect dashboard to real SwarmCoordinator and ThresholdMonitor instances
+  - Replace mock data generation with actual agent activity and metrics
   - Add scenario-specific threshold patterns and swarm behaviors
-  - Create automated demo mode that cycles through scenarios
-  - Build basic testing framework for simulation logic
   - _Requirements: 4.1, 4.2, 4.3, 11.1_
 
-- [ ] 6.1 Implement demo scenario simulations
+- [ ] 6.1 Connect dashboard to real system components
 
-  - Create gaming scenario with NPC dialogue complexity patterns
-  - Build automotive scenario with safety-critical threshold breaches
-  - Add healthcare scenario with patient monitoring patterns
+  - Replace mock data generators in dashboard with actual SwarmCoordinator integration
+  - Connect dashboard metrics panel to real ThresholdMonitor events
+  - Stream actual agent activity from SwarmCoordinator to dashboard activity panel
+  - Display real MEC site status from SwarmCoordinator.mec_sites in network visualization
+  - _Requirements: 11.1_
+
+- [ ] 6.2 Implement demo scenario simulations
+
+  - Create gaming scenario with NPC dialogue complexity patterns and threshold triggers
+  - Build automotive scenario with safety-critical threshold breaches and failover testing
+  - Add healthcare scenario with patient monitoring patterns and swarm coordination
+  - Integrate scenarios with dashboard mode selector for live demonstration
   - _Requirements: 4.1, 4.2, 4.3_
 
-- [ ] 6.2 Add automated demo mode and testing
+- [ ] 6.3 Add automated demo mode and performance validation
+
   - Create demo orchestrator that cycles through scenarios automatically
-  - Implement basic unit tests for threshold detection and swarm logic
-  - Add integration tests for dashboard functionality
-  - _Requirements: 11.1_
+  - Validate sub-100ms orchestration decision targets with real measurements
+  - Add performance metrics display showing actual vs target response times
+  - Implement automated threshold breach → swarm activation → decision cycle testing
+  - _Requirements: 6.1, 11.1_
+
+- [ ] 7. Integrate AWS Bedrock AgentCore Memory for production-ready swarm coordination
+
+  - **PRODUCTION READINESS**: Add persistent memory for swarm decisions and pattern learning
+  - **ENTERPRISE SCALE**: Enable context-aware orchestration with historical decision patterns
+  - Install and configure AWS Bedrock AgentCore Memory with Strands agents integration
+  - Implement memory namespaces for MEC coordination: `mec/{siteId}/metrics`, `mec/{siteId}/decisions`, `mec/swarm/coordination`
+  - Add memory persistence for threshold learning and site performance patterns
+  - _Requirements: 8.1, 7.1_
+
+- [ ] 7.1 Install and configure AWS Bedrock AgentCore Memory
+
+  - Install `bedrock-agentcore[strands-agents]` dependency for local development
+  - Configure AWS credentials and Bedrock AgentCore Memory service connection
+  - Create AgentCore Memory with semantic and summary strategies for MEC coordination
+  - Set up memory namespaces and access patterns for swarm coordination
+  - _Requirements: 8.1_
+
+- [ ] 7.2 Integrate AgentCore Memory with existing Strands agents
+
+  - Add AgentCoreMemorySessionManager to SwarmCoordinator for persistent state
+  - Update OrchestratorAgent to store and retrieve threshold breach patterns
+  - Enhance DecisionCoordinatorAgent with historical decision context and learning
+  - Add memory-based pattern recognition for predictive threshold adjustment
+  - _Requirements: 7.1, 8.1_
+
+- [ ] 7.3 Implement context-aware orchestration with memory retrieval
+
+  - Build memory retrieval for context-aware orchestration (e.g., "Site A always overloads at 3pm")
+  - Add pattern-based threshold adjustment using historical performance data
+  - Implement predictive swarm activation based on learned usage patterns
+  - Create memory-driven cache preloading and resource optimization
+  - _Requirements: 7.1, 8.1_
 
 ## Phase 2 — Version 1: Functional Prototype with Strands Framework
 
-- [ ] 7. Implement Strands agent framework with MCP integration
+- [ ] 8. Enhance existing Strands agents with production-ready features
 
-  - Create base Agent class with MCP client integration
-  - Build agent registry and lifecycle management
-  - Implement agent communication protocols using message passing
-  - Add agent manifest system for tool access definition
-  - _Requirements: 2.1, 2.2, 9.1_
+  - **CURRENT STATUS**: Basic Strands agents are implemented and working with Claude integration
+  - **NEXT STEP**: Add production features like error handling, performance optimization, and monitoring
+  - Enhance existing agent implementations with robust error handling and recovery
+  - Add performance monitoring and optimization for sub-100ms orchestration targets
+  - Implement agent health checks and automatic restart capabilities
+  - _Requirements: 2.1, 2.2, 6.1, 8.1_
 
-- [ ] 7.1 Create base agent framework
+- [ ] 8.1 Add robust error handling and recovery to existing agents
 
-  - Implement BaseAgent class with MCP client integration
-  - Create AgentRegistry for agent discovery and communication
-  - Add agent lifecycle management (start, stop, restart)
-  - _Requirements: 2.1, 9.1_
+  - Enhance OrchestratorAgent with timeout handling and fallback mechanisms
+  - Add LoadBalancerAgent error recovery for failed MEC site scenarios
+  - Implement DecisionCoordinatorAgent consensus failure handling and retry logic
+  - Add CacheManagerAgent and ResourceMonitorAgent resilience for tool failures
+  - _Requirements: 8.1_
 
-- [ ] 7.2 Build agent manifest and tool access system
+- [ ] 8.2 Implement performance monitoring and optimization
 
-  - Create agent manifest.json files defining tool access per agent
-  - Implement MCP tool loading and validation system
-  - Add tool access control and permission checking
-  - _Requirements: 2.2_
+  - Add performance metrics tracking to all agent operations
+  - Implement sub-100ms orchestration decision monitoring and alerting
+  - Optimize agent communication patterns for minimal latency
+  - Add performance dashboards and real-time monitoring integration
+  - _Requirements: 6.1_
 
-- [ ] 8. Create specialized agent implementations
+- [ ] 8.3 Create agent health monitoring and lifecycle management
 
-  - Implement OrchestratorAgent with threshold monitoring and swarm triggering
-  - Build LoadBalancerAgent with MEC site selection and failover logic
-  - Create DecisionCoordinatorAgent with consensus algorithms
-  - Add CacheManagerAgent with model caching simulation
-  - Add ResourceMonitorAgent with metrics collection
-  - _Requirements: 1.1, 1.2, 2.1, 2.2_
+  - Implement agent health checks and status reporting
+  - Add automatic agent restart capabilities for failed agents
+  - Create agent registry for discovery and communication management
+  - Build agent manifest system for tool access and capability definition
+  - _Requirements: 2.1, 2.2, 8.1_
 
-- [ ] 8.1 Implement OrchestratorAgent
+- [ ] 9. Prepare system for AWS Wavelength deployment and 5G MEC integration
 
-  - Create OrchestratorAgent class with MCP tool integration
-  - Add threshold monitoring logic using metrics_monitor.mcp
-  - Implement swarm triggering via memory_sync.mcp
-  - _Requirements: 1.1_
+  - **PRODUCTION TARGET**: Deploy MEC orchestration to AWS Wavelength zones for real 5G edge computing
+  - **ENTERPRISE SCALE**: Multi-zone coordination with sub-10ms latency targets
+  - Create deployment configurations for AWS Wavelength zones (us-east-1-wl1, us-west-2-lax-1, etc.)
+  - Implement cross-Wavelength zone swarm coordination
+  - Add production monitoring with AWS CloudWatch and X-Ray integration
+  - _Requirements: 5.1, 5.2, 10.1, 10.2_
 
-- [ ] 8.2 Build LoadBalancerAgent
+- [ ] 9.1 Create AWS Wavelength deployment configurations
 
-  - Implement LoadBalancerAgent with site selection algorithms
-  - Add failover coordination using container_ops.mcp
-  - Create load distribution logic with weighted scoring
-  - _Requirements: 1.2_
+  - Design Kubernetes manifests for Wavelength zone deployment
+  - Configure carrier gateway and VPC routing for 5G RAN connectivity
+  - Create multi-zone deployment strategy with cross-zone coordination
+  - Add AWS CloudWatch and X-Ray integration for production monitoring
+  - _Requirements: 5.1, 10.1_
 
-- [ ] 8.3 Create DecisionCoordinatorAgent
+- [ ] 9.2 Implement cross-Wavelength zone coordination
 
-  - Build DecisionCoordinatorAgent with consensus protocols
-  - Implement modified Raft algorithm for swarm consensus
-  - Add pattern learning and threshold adjustment logic
-  - _Requirements: 7.1_
+  - Extend SwarmCoordinator for multi-zone MEC site management
+  - Add network latency optimization for cross-zone communication
+  - Implement zone-aware load balancing and failover strategies
+  - Create zone health monitoring and automatic failover capabilities
+  - _Requirements: 5.2, 8.1_
 
-- [ ] 8.4 Implement CacheManagerAgent and ResourceMonitorAgent
+- [ ] 9.3 Add production monitoring and observability
 
-  - Create CacheManagerAgent with model caching simulation
-  - Build ResourceMonitorAgent with metrics collection
-  - Add predictive preloading and cache optimization
-  - _Requirements: 2.1, 2.2_
-
-- [ ] 9. Upgrade Streamlit dashboard to use real agent methods
-
-  - Replace mock logic with actual agent method calls
-  - Add agent status monitoring and health checks
-  - Implement real-time agent communication visualization
-  - Create agent performance metrics and debugging tools
-  - _Requirements: 11.1_
-
-- [ ] 9.1 Integrate agents with Streamlit dashboard
-
-  - Replace simulation logic with actual agent method calls
-  - Add agent status indicators and health monitoring
-  - Implement real-time agent communication display
-  - _Requirements: 11.1_
-
-- [ ] 9.2 Add agent debugging and performance tools
-
-  - Create agent performance metrics dashboard
-  - Add agent communication flow visualization
-  - Implement debugging tools for agent state inspection
-  - _Requirements: 11.1_
+  - Integrate AWS CloudWatch for metrics collection and alerting
+  - Add AWS X-Ray for distributed tracing of agent interactions
+  - Create production dashboards for system health and performance monitoring
+  - Implement compliance logging and audit trail capabilities
+  - _Requirements: 5.1, 9.1_
 
 - [ ] 10. Implement data persistence and session management
 

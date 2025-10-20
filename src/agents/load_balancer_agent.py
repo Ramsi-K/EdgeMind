@@ -25,8 +25,8 @@ class LoadBalancerAgent:
         self.mec_site = mec_site
         self.logger = AgentActivityLogger(self.agent_id)
 
-        # Create dummy MCP tools for simulation
-        self.mcp_tools = self._create_dummy_mcp_tools()
+        # Create actual MCP tools
+        self.mcp_tools = self._create_mcp_tools()
 
         # Create the Strands agent with MCP tools
         self.agent = Agent(
@@ -35,13 +35,12 @@ class LoadBalancerAgent:
             tools=self.mcp_tools,
         )
 
-    def _create_dummy_mcp_tools(self) -> list[Any]:
-        """Create dummy MCP tools for simulation."""
-        # For now, return empty list - will be replaced with actual MCP tools
-        # In real implementation, these would be:
-        # - metrics_monitor.mcp for site assessment
-        # - container_ops.mcp for scaling operations
-        return []
+    def _create_mcp_tools(self) -> list[Any]:
+        """Create actual MCP tools for load balancer agent."""
+        from src.mcp_tools.mcp_integration import get_mcp_tools_for_agent
+
+        # Get MCP tools: metrics_monitor, container_ops, telemetry_logger
+        return get_mcp_tools_for_agent("load_balancer")
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the load balancer agent."""
@@ -55,8 +54,9 @@ Your responsibilities:
 5. Execute load balancing decisions through container scaling
 
 Available MCP Tools:
-- metrics_monitor: Get real-time MEC site metrics and capacity data
-- container_ops: Scale containers and deploy workloads to target sites
+- metrics_monitor: Get real-time MEC site metrics, capacity data, and health status
+- container_ops: Scale containers, deploy workloads, and manage container operations
+- telemetry_logger: Log load balancing decisions and performance metrics
 
 Site Selection Criteria (in priority order):
 1. Site health and availability (40% weight)
@@ -65,10 +65,11 @@ Site Selection Criteria (in priority order):
 4. Queue depth and response time (10% weight)
 
 When participating in swarm consensus:
-1. Use metrics_monitor to get current site metrics
-2. Calculate load scores for all available sites
+1. Use metrics_monitor to get current site metrics and health status
+2. Calculate load scores for all available sites using capacity data
 3. Recommend the site with the best capacity/performance ratio
-4. If selected for execution, use container_ops to implement the decision
+4. Use telemetry_logger to log the load balancing decision and reasoning
+5. If selected for execution, use container_ops to implement scaling decisions
 
 Always provide quantitative reasoning with specific metrics and scores."""
 

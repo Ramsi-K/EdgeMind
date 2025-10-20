@@ -41,8 +41,8 @@ class OrchestratorAgent:
             },
         )
 
-        # Create dummy MCP tools for simulation
-        self.mcp_tools = self._create_dummy_mcp_tools()
+        # Create actual MCP tools
+        self.mcp_tools = self._create_mcp_tools()
 
         # Create the Strands agent with Claude model and MCP tools
         self.agent = Agent(
@@ -56,13 +56,12 @@ class OrchestratorAgent:
         self.swarm = None
         self.peer_agents = {}
 
-    def _create_dummy_mcp_tools(self) -> list[Any]:
-        """Create dummy MCP tools for simulation."""
-        # For now, return empty list - will be replaced with actual MCP tools
-        # In real implementation, these would be:
-        # - metrics_monitor.mcp for threshold monitoring
-        # - memory_sync.mcp for swarm coordination
-        return []
+    def _create_mcp_tools(self) -> list[Any]:
+        """Create actual MCP tools for orchestrator agent."""
+        from src.mcp_tools.mcp_integration import get_mcp_tools_for_agent
+
+        # Get MCP tools: metrics_monitor, memory_sync, telemetry_logger
+        return get_mcp_tools_for_agent("orchestrator")
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the orchestrator agent."""
@@ -76,14 +75,15 @@ Your responsibilities:
 5. Log all orchestration decisions and performance metrics
 
 Available MCP Tools:
-- metrics_monitor: Check MEC site metrics and health status
-- memory_sync: Synchronize swarm state and trigger coordination
+- metrics_monitor: Check MEC site metrics, health status, and threshold monitoring
+- memory_sync: Synchronize swarm state, initiate consensus, and coordinate decisions
+- telemetry_logger: Log decisions, activities, and performance metrics
 
 When a threshold breach occurs:
-1. Use metrics_monitor to assess the situation
-2. Use memory_sync to trigger swarm coordination
-3. Participate in consensus voting for MEC site selection
-4. Execute the swarm decision
+1. Use metrics_monitor to assess site health and get current metrics
+2. Use memory_sync to initiate consensus coordination with other agents
+3. Use telemetry_logger to log the orchestration decision and performance
+4. Participate in consensus voting for optimal MEC site selection
 
 Always provide structured reasoning for your decisions and maintain sub-100ms response times for critical orchestration tasks."""
 

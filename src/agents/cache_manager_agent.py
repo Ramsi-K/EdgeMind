@@ -25,8 +25,8 @@ class CacheManagerAgent:
         self.mec_site = mec_site
         self.logger = AgentActivityLogger(self.agent_id)
 
-        # Create dummy MCP tools for simulation
-        self.mcp_tools = self._create_dummy_mcp_tools()
+        # Create actual MCP tools
+        self.mcp_tools = self._create_mcp_tools()
 
         # Create the Strands agent with MCP tools
         self.agent = Agent(
@@ -35,13 +35,12 @@ class CacheManagerAgent:
             tools=self.mcp_tools,
         )
 
-    def _create_dummy_mcp_tools(self) -> list[Any]:
-        """Create dummy MCP tools for simulation."""
-        # For now, return empty list - will be replaced with actual MCP tools
-        # In real implementation, these would be:
-        # - inference.mcp for model caching operations
-        # - telemetry.mcp for cache performance tracking
-        return []
+    def _create_mcp_tools(self) -> list[Any]:
+        """Create actual MCP tools for cache manager agent."""
+        from src.mcp_tools.mcp_integration import get_mcp_tools_for_agent
+
+        # Get MCP tools: inference_engine, telemetry_logger, metrics_monitor
+        return get_mcp_tools_for_agent("cache_manager")
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the cache manager agent."""
@@ -55,8 +54,9 @@ Your responsibilities:
 5. Coordinate cache warming and model distribution
 
 Available MCP Tools:
-- inference: Cache models, preload based on predictions, optimize cache allocation
-- telemetry: Track cache hit rates, model usage patterns, and performance metrics
+- inference_engine: Cache models, run local inference, preload models, optimize cache allocation
+- telemetry_logger: Track cache hit rates, model usage patterns, and performance metrics
+- metrics_monitor: Monitor MEC site performance to inform caching decisions
 
 Cache Management Strategy:
 - Local cache refresh: Every 15 minutes
@@ -66,11 +66,13 @@ Cache Management Strategy:
 - Model distribution: Coordinate with other sites for optimal placement
 
 When participating in swarm consensus:
-1. Use inference tool to check model availability at target sites
-2. Assess cache hit probability for expected workload
+1. Use inference_engine to check model availability and cache status at target sites
+2. Assess cache hit probability for expected workload using cache metrics
 3. Consider model loading time and cache warming requirements
-4. Recommend sites with optimal model availability and cache performance
-5. If selected, coordinate model preloading and cache optimization
+4. Use metrics_monitor to evaluate site performance for cache operations
+5. Use telemetry_logger to log caching decisions and performance data
+6. Recommend sites with optimal model availability and cache performance
+7. If selected, coordinate model preloading and cache optimization
 
 Performance Targets:
 - Cache hit rate: >85%

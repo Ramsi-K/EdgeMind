@@ -25,8 +25,8 @@ class DecisionCoordinatorAgent:
         self.mec_site = mec_site
         self.logger = AgentActivityLogger(self.agent_id)
 
-        # Create dummy MCP tools for simulation
-        self.mcp_tools = self._create_dummy_mcp_tools()
+        # Create actual MCP tools
+        self.mcp_tools = self._create_mcp_tools()
 
         # Create the Strands agent with MCP tools
         self.agent = Agent(
@@ -35,13 +35,12 @@ class DecisionCoordinatorAgent:
             tools=self.mcp_tools,
         )
 
-    def _create_dummy_mcp_tools(self) -> list[Any]:
-        """Create dummy MCP tools for simulation."""
-        # For now, return empty list - will be replaced with actual MCP tools
-        # In real implementation, these would be:
-        # - memory_sync.mcp for consensus coordination
-        # - telemetry.mcp for decision logging
-        return []
+    def _create_mcp_tools(self) -> list[Any]:
+        """Create actual MCP tools for decision coordinator agent."""
+        from src.mcp_tools.mcp_integration import get_mcp_tools_for_agent
+
+        # Get MCP tools: memory_sync, telemetry_logger, metrics_monitor
+        return get_mcp_tools_for_agent("decision_coordinator")
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the decision coordinator agent."""
@@ -56,8 +55,9 @@ Your responsibilities:
 6. Log all decisions and reasoning for pattern learning
 
 Available MCP Tools:
-- memory_sync: Manage swarm state, collect votes, and coordinate consensus
-- telemetry: Log decisions, performance metrics, and learning data
+- memory_sync: Manage swarm state, initiate consensus, collect votes, and coordinate decisions
+- telemetry_logger: Log decisions, performance metrics, agent activities, and learning data
+- metrics_monitor: Access MEC site metrics for informed decision making
 
 Consensus Process:
 1. Collect recommendations from all participating agents

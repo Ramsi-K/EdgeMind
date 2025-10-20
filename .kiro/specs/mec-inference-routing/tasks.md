@@ -100,27 +100,73 @@
   - Add data export functionality for analysis
   - _Requirements: 2.1_
 
-- [ ] 3. Implement basic swarm trigger logic and event system
+- [-] 3. Implement Strands-based swarm coordination and event system
 
-  - Create threshold monitoring logic that detects breaches
-  - Build simple swarm activation system with event logging
-  - Implement basic consensus simulation (majority vote algorithm)
-  - Add event history tracking for dashboard display
+  - Create threshold monitoring logic that detects breaches and triggers swarm
+  - Build Strands agent swarm with specialized MEC orchestration agents
+  - Implement real swarm consensus using Strands multi-agent framework
+  - Add MCP tool integration for infrastructure interaction (simulated)
+  - Create structured event logging and performance tracking
   - _Requirements: 1.1, 1.2, 7.1_
 
-- [ ] 3.1 Create threshold monitoring system
+- [x] 3.1 Create threshold monitoring system
 
   - Implement ThresholdMonitor class with configurable thresholds
   - Add breach detection logic for latency (>100ms), CPU (>80%), queue depth (>50)
   - Create event generation system with timestamps and severity levels
+  - Add callback system for swarm coordination triggers
   - _Requirements: 1.1, 6.1_
 
-- [ ] 3.2 Build swarm activation simulation
+- [x] 3.2 Build Strands swarm coordination system
 
-  - Implement SwarmCoordinator class with basic consensus logic
-  - Add majority vote algorithm for MEC site selection
-  - Create event logging system with structured log format
+  - Add strands-agents[openai] and strands-agents-tools to dependencies
+  - Create 5 specialized Strands agents: OrchestratorAgent, LoadBalancerAgent, DecisionCoordinatorAgent, ResourceMonitorAgent, CacheManagerAgent
+  - Implement SwarmCoordinator class using real Strands Swarm framework
+  - Add MCP tool placeholders for each agent (metrics_monitor, container_ops, telemetry, inference, memory_sync)
+  - Create threshold breach → swarm activation → consensus → decision flow
+  - Add structured event logging and performance metrics tracking
+  - Implement test integration between ThresholdMonitor and SwarmCoordinator
   - _Requirements: 1.2, 7.1_
+
+- [ ] 3.3 Configure OpenAI integration and test swarm execution
+
+  - Set up OpenAI API key configuration for Strands agents
+  - Test real swarm execution with threshold breach scenarios
+  - Validate sub-100ms orchestration decision targets
+  - Add error handling and fallback mechanisms for swarm failures
+  - Create comprehensive integration tests for the complete flow
+  - _Requirements: 1.1, 1.2, 7.1_
+
+- [ ] 3.4 Build and test Strands agents and swarm orchestration in Jupyter notebook
+
+  - Create interactive Jupyter notebook for testing Strands agent behavior
+  - Build step-by-step swarm orchestration demonstration with live execution
+  - Add visualization of agent handoffs and decision-making process
+  - Test different threshold breach scenarios with real-time agent responses
+  - Document agent system prompts and MCP tool interactions
+  - Create reproducible examples for each agent specialization
+  - _Requirements: 1.1, 1.2, 7.1_
+
+- [ ] 3.5 Build comprehensive test suite for swarm coordination
+
+  - Create unit tests for each Strands agent (OrchestratorAgent, LoadBalancerAgent, etc.)
+  - Build integration tests for SwarmCoordinator and ThresholdMonitor interaction
+  - Add performance tests to validate sub-100ms orchestration targets
+  - Create mock MCP tool tests for agent tool interactions
+  - Implement test scenarios for agent failure and recovery
+  - Add test coverage reporting and continuous integration setup
+  - _Requirements: 1.1, 1.2, 6.1, 7.1_
+
+- [ ] 3.6 Code review and architecture validation for Strands implementation
+
+  - Conduct comprehensive code review of all Strands agent implementations
+  - Validate agent system prompts and specialization alignment with design
+  - Review SwarmCoordinator integration with threshold monitoring system
+  - Assess MCP tool placeholder structure and future implementation readiness
+  - Evaluate performance and scalability of current swarm architecture
+  - Document technical debt and areas for improvement in Phase 2
+  - Create architecture decision records (ADRs) for key design choices
+  - _Requirements: 1.1, 1.2, 7.1, 11.1_
 
 - [ ] 4. Build Streamlit dashboard with four-panel layout
 
@@ -203,7 +249,7 @@
 
 ## Phase 2 — Version 1: Functional Prototype with Strands Framework
 
-- [ ] 7. Implement Strands-like agent framework with MCP integration
+- [ ] 7. Implement Strands agent framework with MCP integration
 
   - Create base Agent class with MCP client integration
   - Build agent registry and lifecycle management

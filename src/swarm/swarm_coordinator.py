@@ -152,7 +152,11 @@ class SwarmDecision:
             "fallback_sites": self.fallback_sites,
             "execution_time_ms": self.execution_time_ms,
             "participants": self.participants,
-            "swarm_status": (self.swarm_result.status if self.swarm_result else None),
+            "swarm_status": (
+                self.swarm_result.status
+                if self.swarm_result and hasattr(self.swarm_result, "status")
+                else str(self.swarm_result) if self.swarm_result else None
+            ),
             "timestamp": self.timestamp.isoformat(),
         }
 
@@ -331,7 +335,10 @@ class SwarmCoordinator:
         try:
             # Use orchestrator to handle the threshold breach via Strands swarm
             result = asyncio.run(
-                self.orchestrator.handle_threshold_breach(trigger_event)
+                asyncio.wait_for(
+                    self.orchestrator.handle_threshold_breach(trigger_event),
+                    timeout=self.consensus_timeout_ms / 1000.0,  # Convert to seconds
+                )
             )
 
             # Extract decision information from swarm result
@@ -358,6 +365,33 @@ class SwarmCoordinator:
                 duration_ms,
                 len(result.get("agents_involved", [])),
                 success=result.get("status") == "completed",
+            )
+
+            self.state = SwarmState.IDLE
+            return event
+
+        except asyncio.TimeoutError:
+            # Handle swarm execution timeout
+            duration_ms = int((time.perf_counter() - start_time) * 1000)
+            event = self._create_swarm_event(
+                "swarm_activation_failed",
+                trigger_event.site_id,
+                [],
+                None,
+                duration_ms,
+                False,
+                {
+                    "error": "Swarm execution timed out",
+                    "reason": "swarm_timeout",
+                    "timeout_ms": self.consensus_timeout_ms,
+                },
+            )
+
+            self.struct_logger.warning(
+                "Swarm activation timed out",
+                trigger_site=trigger_event.site_id,
+                duration_ms=duration_ms,
+                timeout_ms=self.consensus_timeout_ms,
             )
 
             self.state = SwarmState.IDLE

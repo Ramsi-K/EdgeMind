@@ -1,5 +1,23 @@
 # Implementation Plan
 
+## MENTOR FEEDBACK INTEGRATION
+
+**CRITICAL CHANGES REQUIRED:**
+
+1. **Replace Mock MCP Tools**: Implement functional MCP tool servers instead of stubs
+2. **AWS AgentCore Memory**: Integrate long-term and short-term memory for agent coordination
+3. **AWS Wavelength**: Add 5G edge deployment capabilities for true MEC orchestration
+4. **Functional APIs**: Each MCP tool must provide real functionality, not simulation
+
+**AWS SERVICES TO INTEGRATE:**
+
+- **Bedrock AgentCore**: Memory strategies (semantic, summary, user preference)
+- **Wavelength Zones**: 5G edge deployment (us-east-1-wl1, us-west-2-lax-1, etc.)
+- **CloudWatch**: Metrics, logging, and observability
+- **DynamoDB**: Swarm state coordination
+- **EKS/ECS**: Container orchestration at edge
+- **X-Ray**: Distributed tracing for agent interactions
+
 ## Phase 1 — MVP (Week 1): Local Demo Simulation
 
 - [x] 0. Clean up legacy AWS project and prepare fresh MEC foundation
@@ -128,27 +146,27 @@
   - Implement test integration between ThresholdMonitor and SwarmCoordinator
   - _Requirements: 1.2, 7.1_
 
-- [ ] 3.3 Configure OpenAI integration and test swarm execution
+- [x] 3.3 Configure Claude integration and test swarm execution
 
-  - Set up OpenAI API key configuration for Strands agents
-  - Test real swarm execution with threshold breach scenarios
+  - Set up Anthropic API key configuration for Strands agents with Claude 3.5 Sonnet
+  - Replace OpenAI models with AnthropicModel in all agent implementations
+  - Fix Swarm constructor syntax and test real swarm execution with threshold breach scenarios
   - Validate sub-100ms orchestration decision targets
   - Add error handling and fallback mechanisms for swarm failures
   - Create comprehensive integration tests for the complete flow
   - _Requirements: 1.1, 1.2, 7.1_
 
-- [ ] 3.4 Build and test Strands agents and swarm orchestration in Jupyter notebook
+- [x] 3.4 Test Strands agents in existing Jupyter notebooks
 
-  - Create interactive Jupyter notebook for testing Strands agent behavior
-  - Build step-by-step swarm orchestration demonstration with live execution
-  - Add visualization of agent handoffs and decision-making process
-  - Test different threshold breach scenarios with real-time agent responses
-  - Document agent system prompts and MCP tool interactions
-  - Create reproducible examples for each agent specialization
+  - Use existing `strands_swarm_testing_claude.ipynb` for Claude agent testing
+  - Validate swarm orchestration with live execution examples
+  - Test threshold breach scenarios and agent handoffs
+  - Document working examples of each agent specialization
   - _Requirements: 1.1, 1.2, 7.1_
 
 - [ ] 3.5 Build comprehensive test suite for swarm coordination
 
+  - Check tests/ folder to see what tests exist and where they lack
   - Create unit tests for each Strands agent (OrchestratorAgent, LoadBalancerAgent, etc.)
   - Build integration tests for SwarmCoordinator and ThresholdMonitor interaction
   - Add performance tests to validate sub-100ms orchestration targets
@@ -168,12 +186,12 @@
   - Create architecture decision records (ADRs) for key design choices
   - _Requirements: 1.1, 1.2, 7.1, 11.1_
 
-- [ ] 4. Build Streamlit dashboard with four-panel layout
+- [ ] 4. Integrate existing Streamlit dashboard with real Strands agents
 
-  - Create main dashboard with sidebar controls and four main panels
-  - Implement real-time metrics visualization with plotly charts
-  - Add swarm visualization using networkx and streamlit-agraph
-  - Build agent activity stream with live event logging
+  - Connect existing dashboard mock data to real SwarmCoordinator and agents
+  - Replace simulation data with actual threshold monitoring and swarm decisions
+  - Implement real-time agent activity stream showing MCP tool calls
+  - Add live swarm consensus visualization with actual agent handoffs
   - _Requirements: 11.1_
 
 - [ ] 4.1 Create dashboard foundation and layout
@@ -204,26 +222,43 @@
   - Implement scrollable log history with timestamps
   - _Requirements: 11.1_
 
-- [ ] 5. Add mock MCP tools and basic event logging
+- [ ] 5. Implement functional MCP tools (CRITICAL - Mentor Requirement)
 
-  - Create mock MCP tool interfaces for metrics_monitor, container_ops, telemetry
-  - Implement basic function stubs that return synthetic data
-  - Add structured logging for all MCP tool calls
-  - Build event aggregation for dashboard display
+  - **PRIORITY**: Build actual MCP tool implementations instead of stubs
+  - Create metrics_monitor.mcp with real MEC site monitoring APIs
+  - Implement container_ops.mcp with Kubernetes/Docker scaling operations
+  - Build telemetry.mcp with structured logging and metrics collection
+  - Add inference.mcp for model caching and execution simulation
+  - Create memory_sync.mcp for swarm state coordination
+  - Each tool must have functional APIs and realistic data processing
   - _Requirements: 2.1, 8.1_
 
-- [ ] 5.1 Create mock MCP tool interfaces
+- [ ] 5.1 Implement functional MCP tool servers (CRITICAL)
 
-  - Implement MockMCPClient class with tool registration system
-  - Create mock tools: metrics_monitor, container_ops, telemetry, memory_sync
-  - Add synthetic data responses with realistic latency simulation
+  - **metrics_monitor.mcp**: Real MEC site monitoring with AWS CloudWatch integration
+  - **container_ops.mcp**: Kubernetes/Docker operations via AWS EKS/ECS APIs
+  - **telemetry.mcp**: Structured logging with AWS CloudWatch Logs and X-Ray tracing
+  - **inference.mcp**: Model caching simulation with AWS S3 and Lambda
+  - **memory_sync.mcp**: Swarm state coordination using AWS DynamoDB
+  - **agentcore_memory.mcp**: AWS Bedrock AgentCore Memory integration for long-term agent memory
+  - Each tool must provide functional APIs, not stubs
   - _Requirements: 2.1_
 
-- [ ] 5.2 Build event logging and aggregation system
+- [ ] 5.2 Build AWS AgentCore Memory integration
 
-  - Create EventLogger class with structured log format
-  - Implement log aggregation for dashboard display
-  - Add log filtering and search functionality
+  - Create AgentCore Memory resources with semantic, summary, and user preference strategies
+  - Integrate AgentCoreMemoryToolProvider with Strands agents
+  - Implement memory namespaces for MEC site coordination (mec/{siteId}/metrics, mec/{siteId}/decisions)
+  - Add MemoryHookProvider for automatic memory persistence during swarm coordination
+  - Build memory retrieval for context-aware orchestration decisions
+  - _Requirements: 8.1_
+
+- [ ] 5.3 Build event logging and aggregation system
+
+  - Create EventLogger class with AWS CloudWatch Logs integration
+  - Implement log aggregation for dashboard display with AWS X-Ray tracing
+  - Add log filtering and search functionality via CloudWatch Insights
+  - Create structured logging for MCP tool calls and swarm decisions
   - _Requirements: 8.1_
 
 - [ ] 6. Create working demo scenarios and testing
@@ -419,12 +454,13 @@
   - Implement drill-down views for individual MEC analysis
   - _Requirements: 11.1_
 
-- [ ] 14. Integrate synthetic data MCP or AWS services
+- [ ] 14. Integrate AWS AgentCore and Wavelength for production MEC
 
-  - Add AWS Synthetic Data integration for realistic metrics
-  - Implement cloud observer functionality with passive monitoring
-  - Create Edge vs Cloud performance comparison analytics
-  - Build cost optimization and efficiency reporting
+  - **AWS Bedrock AgentCore Memory**: Long-term agent memory with semantic/summary/user preference strategies
+  - **AWS Wavelength Integration**: Deploy MEC orchestration at 5G edge locations (us-east-1-wl1, us-west-2-lax-1, etc.)
+  - **Cloud Observer**: Passive monitoring with AWS CloudWatch, X-Ray, and EventBridge
+  - **Edge vs Cloud Analytics**: Performance comparison with real latency measurements
+  - **Cost Optimization**: AWS Cost Explorer integration for MEC vs cloud cost analysis
   - _Requirements: 5.1, 8.2_
 
 - [ ] 14.1 Integrate AWS synthetic data services
@@ -486,12 +522,13 @@
   - Build interactive demo scenarios for stakeholder presentations
   - _Requirements: 11.2_
 
-- [ ] 17. Optional: Cloud deployment and live integration
+- [ ] 17. AWS Wavelength deployment and 5G MEC integration
 
-  - Deploy to AWS using ECS or Lambda for live demonstration
-  - Integrate with AWS Bedrock for enhanced AI capabilities
-  - Add Modal deployment option for easy cloud hosting
-  - Implement production monitoring and alerting
+  - **Wavelength Zone Deployment**: Deploy MEC orchestration to AWS Wavelength zones (us-east-1-wl1-bos-wlz-1, us-west-2-lax-1a, etc.)
+  - **5G Network Integration**: Configure carrier gateway and VPC routing for 5G RAN connectivity
+  - **Edge-Native Orchestration**: Deploy Strands agents directly at Wavelength zones for sub-10ms latency
+  - **Multi-Zone Coordination**: Implement cross-Wavelength zone swarm coordination
+  - **Production Monitoring**: AWS CloudWatch and X-Ray integration for edge performance monitoring
   - _Requirements: 5.1, 5.2_
 
 - [ ] 17.1 Deploy to cloud platforms

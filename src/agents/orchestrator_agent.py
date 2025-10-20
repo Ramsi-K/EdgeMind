@@ -159,7 +159,7 @@ Use your MCP tools to coordinate with the swarm and make the optimal decision.
                     "status": result.status,
                     "execution_time_ms": result.execution_time,
                     "agents_involved": [node.node_id for node in result.node_history],
-                    "final_result": result.result,
+                    "final_result": getattr(result, "output", str(result.status)),
                     "token_usage": result.accumulated_usage,
                 }
 

@@ -6,6 +6,7 @@ Creates Strands-compatible @tool decorated functions for agent usage.
 """
 
 import asyncio
+from datetime import UTC, datetime
 from typing import Any, Dict, List
 
 from strands import tool
@@ -81,12 +82,9 @@ class MCPToolIntegration:
             Returns:
                 Current metrics including CPU, GPU, memory utilization and health status
             """
-            result = asyncio.run(
-                self.metrics_monitor.handle_tool_call(
-                    "get_mec_metrics", {"site_id": site_id}
-                )
-            )
-            return {"status": "success", "content": [{"text": str(result)}]}
+            # Call synchronously to avoid async issues
+            result = self.metrics_monitor._generate_realistic_metrics(site_id)
+            return result
 
         @tool
         def get_all_mec_metrics() -> dict:
@@ -95,10 +93,12 @@ class MCPToolIntegration:
             Returns:
                 Metrics for all MEC sites with health status and performance data
             """
-            result = asyncio.run(
-                self.metrics_monitor.handle_tool_call("get_all_mec_metrics", {})
-            )
-            return {"status": "success", "content": [{"text": str(result)}]}
+            # Call synchronously to avoid async issues
+            result = {
+                site_id: self.metrics_monitor._generate_realistic_metrics(site_id)
+                for site_id in self.metrics_monitor.mec_sites
+            }
+            return result
 
         @tool
         def monitor_thresholds(
@@ -118,18 +118,56 @@ class MCPToolIntegration:
             Returns:
                 List of sites with threshold breaches and severity information
             """
-            result = asyncio.run(
-                self.metrics_monitor.handle_tool_call(
-                    "monitor_thresholds",
-                    {
-                        "cpu_threshold": cpu_threshold,
-                        "gpu_threshold": gpu_threshold,
-                        "latency_threshold": latency_threshold,
-                        "queue_threshold": queue_threshold,
-                    },
-                )
-            )
-            return {"status": "success", "content": [{"text": str(result)}]}
+            # Implement threshold monitoring synchronously
+            breaches = []
+            for site_id in self.metrics_monitor.mec_sites:
+                metrics = self.metrics_monitor._generate_realistic_metrics(site_id)
+                site_breaches = []
+
+                if metrics["cpu_utilization"] > cpu_threshold:
+                    site_breaches.append(
+                        {
+                            "metric": "cpu_utilization",
+                            "value": metrics["cpu_utilization"],
+                            "threshold": cpu_threshold,
+                        }
+                    )
+
+                if metrics["gpu_utilization"] > gpu_threshold:
+                    site_breaches.append(
+                        {
+                            "metric": "gpu_utilization",
+                            "value": metrics["gpu_utilization"],
+                            "threshold": gpu_threshold,
+                        }
+                    )
+
+                if metrics["response_time_ms"] > latency_threshold:
+                    site_breaches.append(
+                        {
+                            "metric": "response_time_ms",
+                            "value": metrics["response_time_ms"],
+                            "threshold": latency_threshold,
+                        }
+                    )
+
+                if metrics["queue_depth"] > queue_threshold:
+                    site_breaches.append(
+                        {
+                            "metric": "queue_depth",
+                            "value": metrics["queue_depth"],
+                            "threshold": queue_threshold,
+                        }
+                    )
+
+                if site_breaches:
+                    breaches.append({"site_id": site_id, "breaches": site_breaches})
+
+            return {
+                "total_breaches": len(breaches),
+                "sites_with_breaches": breaches,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
 
         return [get_mec_metrics, get_all_mec_metrics, monitor_thresholds]
 

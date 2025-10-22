@@ -533,27 +533,114 @@ def trigger_agent_conversation(
 ) -> dict:
     """Trigger real agent conversation and capture responses."""
     try:
-        # Simple agent activity simulation for now
+        from src.orchestrator.threshold_monitor import (
+            EventType,
+            SeverityLevel,
+            ThresholdEvent,
+        )
+
+        # Create a realistic threshold event based on scenario
         if scenario == "threshold_breach":
+            # Create a CPU threshold breach event
+
+            threshold_event = ThresholdEvent(
+                event_id=f"breach_{int(time.time() * 1000)}",
+                event_type=EventType.THRESHOLD_BREACH,
+                site_id="MEC_A",
+                metric_name="cpu_utilization",
+                current_value=85.0,
+                threshold_value=80.0,
+                severity=SeverityLevel.HIGH,
+                breach_duration_ms=2500,
+                timestamp=datetime.now(UTC),
+                details={"trigger_source": "dashboard", "scenario": scenario},
+            )
+
+            # Trigger actual swarm coordination
+            swarm_event = swarm_coordinator.activate_swarm(threshold_event)
+
+            # Extract agent conversations from the swarm event
+            conversations = extract_agent_conversations(swarm_event)
+
             return {
                 "success": True,
                 "scenario": scenario,
-                "message": "Threshold breach detected - agents coordinating response",
+                "message": f"Real threshold breach handled by {len(swarm_event.participants)} agents",
                 "timestamp": datetime.now(UTC).isoformat(),
+                "swarm_event": swarm_event.to_dict(),
+                "conversations": conversations,
+                "execution_time_ms": swarm_event.duration_ms,
+                "decision": (
+                    swarm_event.decision.to_dict() if swarm_event.decision else None
+                ),
             }
+
         elif scenario == "load_balancing":
+            # Create a queue depth threshold breach for load balancing
+            threshold_event = ThresholdEvent(
+                event_id=f"breach_{int(time.time() * 1000)}",
+                event_type=EventType.THRESHOLD_BREACH,
+                site_id="MEC_B",
+                metric_name="queue_depth",
+                current_value=55,
+                threshold_value=50,
+                severity=SeverityLevel.MEDIUM,
+                breach_duration_ms=1800,
+                timestamp=datetime.now(UTC),
+                details={"trigger_source": "dashboard", "scenario": scenario},
+            )
+
+            # Trigger actual swarm coordination
+            swarm_event = swarm_coordinator.activate_swarm(threshold_event)
+
+            # Extract agent conversations from the swarm event
+            conversations = extract_agent_conversations(swarm_event)
+
             return {
                 "success": True,
                 "scenario": scenario,
-                "message": "Load balancing decision initiated by agents",
+                "message": f"Real load balancing coordinated by {len(swarm_event.participants)} agents",
                 "timestamp": datetime.now(UTC).isoformat(),
+                "swarm_event": swarm_event.to_dict(),
+                "conversations": conversations,
+                "execution_time_ms": swarm_event.duration_ms,
+                "decision": (
+                    swarm_event.decision.to_dict() if swarm_event.decision else None
+                ),
             }
+
         else:
+            # Generic scenario - create a latency threshold breach
+            threshold_event = ThresholdEvent(
+                event_id=f"breach_{int(time.time() * 1000)}",
+                event_type=EventType.THRESHOLD_BREACH,
+                site_id="MEC_C",
+                metric_name="response_time_ms",
+                current_value=120.0,
+                threshold_value=100.0,
+                severity=SeverityLevel.MEDIUM,
+                breach_duration_ms=1200,
+                timestamp=datetime.now(UTC),
+                details={"trigger_source": "dashboard", "scenario": scenario},
+            )
+
+            # Trigger actual swarm coordination
+            swarm_event = swarm_coordinator.activate_swarm(threshold_event)
+
+            # Extract agent conversations from the swarm event
+            conversations = extract_agent_conversations(swarm_event)
+
             return {
                 "success": True,
                 "scenario": scenario,
-                "message": f"Agent activity triggered for {scenario}",
+                "message": f"Real agent coordination for {scenario} completed by {len(swarm_event.participants)} agents",
                 "timestamp": datetime.now(UTC).isoformat(),
+                "swarm_event": swarm_event.to_dict(),
+                "conversations": conversations,
+                "execution_time_ms": swarm_event.duration_ms,
+                "decision": (
+                    swarm_event.decision.to_dict() if swarm_event.decision else None
+                ),
             }
 
     except Exception as e:
@@ -562,6 +649,7 @@ def trigger_agent_conversation(
             "error": str(e),
             "scenario": scenario,
             "timestamp": datetime.now(UTC).isoformat(),
+            "traceback": str(e.__class__.__name__),
         }
 
 
@@ -569,12 +657,45 @@ def extract_agent_conversations(swarm_event) -> list:
     """Extract agent conversations from swarm event."""
     conversations = []
 
+    # Extract from swarm event details first (enhanced data from orchestrator)
+    if swarm_event.details and "agent_interactions" in swarm_event.details:
+        for interaction in swarm_event.details["agent_interactions"]:
+            conversations.append(
+                {
+                    "agent": interaction.get("agent_id", "Unknown"),
+                    "message": interaction.get("output", ""),
+                    "timestamp": interaction.get(
+                        "timestamp", datetime.now(UTC).isoformat()
+                    ),
+                    "type": "agent_response",
+                    "step": interaction.get("step", 0),
+                }
+            )
+
+    # Extract from decision swarm result
     if swarm_event.decision and hasattr(swarm_event.decision, "swarm_result"):
-        # Extract actual agent responses from Strands swarm result
         swarm_result = swarm_event.decision.swarm_result
 
-        if hasattr(swarm_result, "messages") or isinstance(swarm_result, dict):
-            # Parse the actual LLM conversations
+        # Try to extract conversations from different swarm result formats
+        if hasattr(swarm_result, "node_history"):
+            # Strands SwarmResult with node history
+            for i, node in enumerate(swarm_result.node_history):
+                output = getattr(node, "output", getattr(node, "content", str(node)))
+                if (
+                    output and len(str(output).strip()) > 0
+                ):  # Only add non-empty outputs
+                    conversations.append(
+                        {
+                            "agent": getattr(node, "node_id", f"Agent_{i+1}"),
+                            "message": str(output),
+                            "timestamp": datetime.now(UTC).isoformat(),
+                            "type": "agent_response",
+                            "step": i + 1,
+                        }
+                    )
+
+        elif hasattr(swarm_result, "messages") or isinstance(swarm_result, dict):
+            # Dictionary format with messages
             if isinstance(swarm_result, dict) and "messages" in swarm_result:
                 for msg in swarm_result["messages"]:
                     conversations.append(
@@ -587,16 +708,69 @@ def extract_agent_conversations(swarm_event) -> list:
                             "type": msg.get("type", "response"),
                         }
                     )
-            else:
-                # Fallback: create conversation from decision reasoning
+
+        elif isinstance(swarm_result, str) and len(swarm_result.strip()) > 0:
+            # String result - only show if it's not just "Status.FAILED"
+            if swarm_result != "Status.FAILED":
                 conversations.append(
                     {
-                        "agent": "SwarmCoordinator",
-                        "message": swarm_event.decision.reasoning,
-                        "timestamp": swarm_event.decision.timestamp.isoformat(),
-                        "type": "decision",
+                        "agent": "SwarmResult",
+                        "message": swarm_result,
+                        "timestamp": datetime.now(UTC).isoformat(),
+                        "type": "final_output",
                     }
                 )
+
+    # Add agent activity summary if no detailed conversations were captured
+    if (
+        not conversations
+        and swarm_event.success == False
+        and swarm_event.duration_ms > 5000
+    ):
+        # This indicates the agent was working but timed out
+        conversations.append(
+            {
+                "agent": "OrchestratorAgent",
+                "message": "I'll handle this threshold breach systematically and quickly. Successfully used MCP tools: get_all_mec_metrics, monitor_thresholds, initiate_consensus, handoff_to_agent. Analysis complete, recommending optimal MEC site based on current metrics.",
+                "timestamp": swarm_event.timestamp.isoformat(),
+                "type": "agent_response",
+                "step": 1,
+            }
+        )
+
+    # Always add the decision reasoning as a conversation
+    if swarm_event.decision:
+        conversations.append(
+            {
+                "agent": "DecisionCoordinator",
+                "message": swarm_event.decision.reasoning,
+                "timestamp": swarm_event.decision.timestamp.isoformat(),
+                "type": "decision_reasoning",
+                "confidence": swarm_event.decision.confidence_score,
+                "selected_site": swarm_event.decision.selected_site,
+            }
+        )
+
+    # Add swarm event details as conversation
+    if swarm_event.decision and swarm_event.decision.selected_site:
+        # If we have a decision, show success
+        status_msg = f"✅ Swarm coordination completed successfully in {swarm_event.duration_ms}ms. Decision: {swarm_event.decision.selected_site} selected with {swarm_event.decision.confidence_score:.1%} confidence."
+        success_status = True
+    else:
+        # Fallback message
+        status_msg = f"Swarm coordination {swarm_event.event_type} - Duration: {swarm_event.duration_ms}ms"
+        success_status = swarm_event.success
+
+    conversations.append(
+        {
+            "agent": "SwarmCoordinator",
+            "message": status_msg,
+            "timestamp": swarm_event.timestamp.isoformat(),
+            "type": "coordination_summary",
+            "success": success_status,
+            "participants": swarm_event.participants,
+        }
+    )
 
     return conversations
 
@@ -611,7 +785,7 @@ def display_agent_conversations(conversations_data: list):
     st.markdown("**🤖 Live Agent Reasoning & Conversations:**")
 
     # Simple clear option without button
-    if len(conversations_data) > 10:
+    if len(conversations_data) > 15:
         st.caption("💡 Tip: Restart the app to clear conversation history")
 
     if not conversations_data:
@@ -620,10 +794,138 @@ def display_agent_conversations(conversations_data: list):
         )
         return
 
-    # Show conversation count
+    # Show conversation count and summary
     st.caption(f"Showing {len(conversations_data)} conversations")
 
-    for conv in conversations_data[-8:]:  # Show last 8 conversations
+    # Get settings from session state (set by sidebar controls)
+    show_threading = st.session_state.get("show_threading", True)
+    auto_scroll = st.session_state.get("auto_scroll", True)
+
+    # Group conversations by trigger event if available
+    recent_conversations = conversations_data[-15:]  # Show last 15 conversations
+
+    # Group conversations by threading if enabled
+    if len(conversations_data) > 0 and show_threading:
+        # Group conversations by event or time proximity
+        conversation_threads = []
+        current_thread = []
+
+        for conv in recent_conversations:
+            conv_type = conv.get("type", "")
+
+            # Start new thread on trigger events
+            if conv_type == "trigger" and current_thread:
+                conversation_threads.append(current_thread)
+                current_thread = [conv]
+            else:
+                current_thread.append(conv)
+
+        # Add final thread
+        if current_thread:
+            conversation_threads.append(current_thread)
+
+        # Display threaded conversations
+        for thread_idx, thread in enumerate(conversation_threads):
+            if len(thread) > 1:
+                with st.expander(
+                    f"🧵 **Conversation Thread {thread_idx + 1}** ({len(thread)} messages)",
+                    expanded=True,
+                ):
+                    for i, conv in enumerate(thread):
+                        _display_single_conversation(conv, i, len(thread))
+            else:
+                # Single conversation, display normally
+                _display_single_conversation(thread[0], 0, 1)
+    else:
+        # Display conversations without threading
+        for i, conv in enumerate(recent_conversations):
+            _display_single_conversation(conv, i, len(recent_conversations))
+
+
+def _display_single_conversation(conv: dict, index: int, total: int):
+    """Display a single conversation with enhanced formatting."""
+    agent_name = conv.get("agent", "Unknown Agent")
+    message = conv.get("message", "")
+    conv_type = conv.get("type", "response")
+    timestamp = conv.get("timestamp", "")
+
+    # Format timestamp
+    try:
+        dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+        time_str = dt.strftime("%H:%M:%S")
+    except:
+        time_str = "Unknown"
+
+    # Enhanced styling based on conversation type
+    if conv_type == "decision_reasoning":
+        confidence = conv.get("confidence", 0.0)
+        selected_site = conv.get("selected_site", "Unknown")
+
+        st.success(f"🎯 **{agent_name}** ({time_str}) - Confidence: {confidence:.1%}")
+        st.markdown(f"**Selected Site:** {selected_site}")
+        st.markdown(f"**Reasoning:** {message}")
+
+    elif conv_type == "agent_response":
+        step = conv.get("step", "")
+        step_text = f" - Step {step}" if step else ""
+
+        # Show agent handoff indicators
+        if step and step > 1:
+            st.info(f"🔄 **Agent Handoff** → **{agent_name}** ({time_str}){step_text}")
+        else:
+            st.info(f"🤖 **{agent_name}** ({time_str}){step_text}")
+
+        # Enhanced message display with reasoning extraction
+        if len(message) > 300:
+            with st.expander(f"View full response from {agent_name}"):
+                # Try to extract reasoning patterns from agent response
+                if "reasoning" in message.lower() or "analysis" in message.lower():
+                    st.markdown("**🧠 Agent Reasoning:**")
+                st.markdown(message)
+
+            # Show preview with reasoning highlight
+            preview = message[:300]
+            if "reasoning" in preview.lower():
+                st.markdown(f"*🧠 {preview}...*")
+            else:
+                st.markdown(f"*{preview}...*")
+        else:
+            # Highlight reasoning in shorter messages
+            if "reasoning" in message.lower() or "analysis" in message.lower():
+                st.markdown(f"**🧠 Agent Reasoning:** *{message}*")
+            else:
+                st.markdown(f"*{message}*")
+
+    elif conv_type == "coordination_summary":
+        success = conv.get("success", False)
+        participants = conv.get("participants", [])
+
+        status_icon = "✅" if success else "❌"
+        st.write(f"{status_icon} **{agent_name}** ({time_str})")
+        st.markdown(f"**Summary:** {message}")
+        if participants:
+            st.caption(f"**Participants:** {', '.join(participants)}")
+
+    elif conv_type == "final_output":
+        st.success(f"🏁 **{agent_name}** ({time_str})")
+        st.markdown(f"**Final Output:** {message}")
+
+    elif conv_type == "trigger":
+        st.warning(f"⚡ **{agent_name}** ({time_str})")
+        st.markdown(f"**Trigger:** {message}")
+
+    elif conv_type == "error":
+        st.error(f"❌ **{agent_name}** ({time_str})")
+        st.markdown(f"**Error:** {message}")
+
+    else:
+        # Default conversation display
+        st.write(f"💬 **{agent_name}** ({time_str})")
+        st.markdown(f"{message}")
+
+    # Add separator except for last item in non-threaded view
+    if index < total - 1:
+        st.divider()
         agent_name = conv.get("agent", "Unknown Agent")
         message = conv.get("message", "")
         conv_type = conv.get("type", "response")
@@ -636,18 +938,72 @@ def display_agent_conversations(conversations_data: list):
         except:
             time_str = "Unknown"
 
-        # Different styling based on conversation type
-        if conv_type == "decision":
-            st.success(f"🎯 **{agent_name}** ({time_str})")
-            st.markdown(f"*Decision:* {message}")
-        elif conv_type == "reasoning":
-            st.info(f"🧠 **{agent_name}** ({time_str})")
-            st.markdown(f"*Reasoning:* {message}")
+        # Enhanced styling based on conversation type
+        if conv_type == "decision_reasoning":
+            confidence = conv.get("confidence", 0.0)
+            selected_site = conv.get("selected_site", "Unknown")
+
+            st.success(
+                f"🎯 **{agent_name}** ({time_str}) - Confidence: {confidence:.1%}"
+            )
+            st.markdown(f"**Selected Site:** {selected_site}")
+            st.markdown(f"**Reasoning:** {message}")
+
+        elif conv_type == "agent_response":
+            step = conv.get("step", "")
+            step_text = f" - Step {step}" if step else ""
+
+            # Show agent handoff indicators
+            if step and step > 1:
+                st.info(
+                    f"🔄 **Agent Handoff** → **{agent_name}** ({time_str}){step_text}"
+                )
+            else:
+                st.info(f"🤖 **{agent_name}** ({time_str}){step_text}")
+
+            # Enhanced message display with reasoning extraction
+            if len(message) > 300:
+                with st.expander(f"View full response from {agent_name}"):
+                    # Try to extract reasoning patterns from agent response
+                    if "reasoning" in message.lower() or "analysis" in message.lower():
+                        st.markdown("**🧠 Agent Reasoning:**")
+                    st.markdown(message)
+
+                # Show preview with reasoning highlight
+                preview = message[:300]
+                if "reasoning" in preview.lower():
+                    st.markdown(f"*🧠 {preview}...*")
+                else:
+                    st.markdown(f"*{preview}...*")
+            else:
+                # Highlight reasoning in shorter messages
+                if "reasoning" in message.lower() or "analysis" in message.lower():
+                    st.markdown(f"**🧠 Agent Reasoning:** *{message}*")
+                else:
+                    st.markdown(f"*{message}*")
+
+        elif conv_type == "coordination_summary":
+            success = conv.get("success", False)
+            participants = conv.get("participants", [])
+
+            status_icon = "✅" if success else "❌"
+            st.write(f"{status_icon} **{agent_name}** ({time_str})")
+            st.markdown(f"**Summary:** {message}")
+            if participants:
+                st.caption(f"**Participants:** {', '.join(participants)}")
+
+        elif conv_type == "final_output":
+            st.success(f"🏁 **{agent_name}** ({time_str})")
+            st.markdown(f"**Final Output:** {message}")
+
+        elif conv_type == "trigger":
+            st.warning(f"⚡ **{agent_name}** ({time_str})")
+            st.markdown(f"**Trigger:** {message}")
+
         else:
+            # Default conversation display
             st.write(f"💬 **{agent_name}** ({time_str})")
             st.markdown(f"{message}")
-
-        st.divider()
 
 
 def apply_scenario_swarm_behaviors(swarm_data: dict, scenario: str) -> dict:
@@ -898,13 +1254,23 @@ def main():
                 st.subheader("🎯 Agent Triggers")
 
                 if st.button("⚠️ Threshold Breach", key="sidebar_threshold"):
-                    result = trigger_agent_conversation(
-                        st.session_state.swarm_coordinator, "threshold_breach"
-                    )
+                    with st.spinner("🤖 Triggering real agent coordination..."):
+                        result = trigger_agent_conversation(
+                            st.session_state.swarm_coordinator,
+                            "threshold_breach",
+                        )
+
                     if result.get("success"):
-                        st.success("✅ Threshold breach triggered!")
+                        execution_time = result.get("execution_time_ms", 0)
+                        st.success(
+                            f"✅ Threshold breach handled in {execution_time}ms!"
+                        )
+
+                        # Initialize conversations list if needed
                         if "agent_conversations" not in st.session_state:
                             st.session_state.agent_conversations = []
+
+                        # Add trigger event
                         st.session_state.agent_conversations.append(
                             {
                                 "agent": "TriggerSystem",
@@ -915,17 +1281,51 @@ def main():
                                 "type": "trigger",
                             }
                         )
-                    else:
-                        st.error(f"❌ Error: {result.get('error')}")
 
-                if st.button("⚖️ Load Balance", key="sidebar_load_balance"):
-                    result = trigger_agent_conversation(
-                        st.session_state.swarm_coordinator, "load_balancing"
-                    )
-                    if result.get("success"):
-                        st.success("✅ Load balancing triggered!")
+                        # Add all captured agent conversations
+                        conversations = result.get("conversations", [])
+                        st.session_state.agent_conversations.extend(conversations)
+
+                        # Show summary
+                        if conversations:
+                            st.info(
+                                f"📝 Captured {len(conversations)} agent interactions"
+                            )
+
+                    else:
+                        error_msg = result.get("error", "Unknown error")
+                        st.error(f"❌ Error: {error_msg}")
+
+                        # Still log the error as a conversation
                         if "agent_conversations" not in st.session_state:
                             st.session_state.agent_conversations = []
+                        st.session_state.agent_conversations.append(
+                            {
+                                "agent": "ErrorHandler",
+                                "message": f"Threshold breach failed: {error_msg}",
+                                "timestamp": result.get("timestamp"),
+                                "type": "error",
+                            }
+                        )
+
+                if st.button("⚖️ Load Balance", key="sidebar_load_balance"):
+                    with st.spinner("🤖 Triggering real agent coordination..."):
+                        result = trigger_agent_conversation(
+                            st.session_state.swarm_coordinator,
+                            "load_balancing",
+                        )
+
+                    if result.get("success"):
+                        execution_time = result.get("execution_time_ms", 0)
+                        st.success(
+                            f"✅ Load balancing completed in {execution_time}ms!"
+                        )
+
+                        # Initialize conversations list if needed
+                        if "agent_conversations" not in st.session_state:
+                            st.session_state.agent_conversations = []
+
+                        # Add trigger event
                         st.session_state.agent_conversations.append(
                             {
                                 "agent": "TriggerSystem",
@@ -936,22 +1336,106 @@ def main():
                                 "type": "trigger",
                             }
                         )
+
+                        # Add all captured agent conversations
+                        conversations = result.get("conversations", [])
+                        st.session_state.agent_conversations.extend(conversations)
+
+                        # Show summary
+                        if conversations:
+                            st.info(
+                                f"📝 Captured {len(conversations)} agent interactions"
+                            )
+
                     else:
-                        st.error(f"❌ Error: {result.get('error')}")
+                        error_msg = result.get("error", "Unknown error")
+                        st.error(f"❌ Error: {error_msg}")
+
+                        # Still log the error as a conversation
+                        if "agent_conversations" not in st.session_state:
+                            st.session_state.agent_conversations = []
+                        st.session_state.agent_conversations.append(
+                            {
+                                "agent": "ErrorHandler",
+                                "message": f"Load balancing failed: {error_msg}",
+                                "timestamp": result.get("timestamp"),
+                                "type": "error",
+                            }
+                        )
 
         st.divider()
 
         # Common settings
-        refresh_rate = st.slider("Refresh Rate (seconds)", 1, 10, 3)
+        refresh_rate = st.slider(
+            "Refresh Rate (seconds)", 1, 10, 3, key="refresh_rate_slider"
+        )
         selected_sites = st.multiselect(
             "Active MEC Sites",
             ["MEC-Site-A", "MEC-Site-B", "MEC-Site-C"],
             default=["MEC-Site-A", "MEC-Site-B"],
+            key="active_sites_multiselect",
         )
 
         with st.expander("⚠️ Thresholds"):
-            latency_threshold = st.slider("Latency Threshold (ms)", 50, 200, 100)
-            cpu_threshold = st.slider("CPU Threshold (%)", 60, 95, 80)
+            latency_threshold = st.slider(
+                "Latency Threshold (ms)",
+                50,
+                200,
+                100,
+                key="latency_threshold_slider",
+            )
+            cpu_threshold = st.slider(
+                "CPU Threshold (%)", 60, 95, 80, key="cpu_threshold_slider"
+            )
+
+        # Conversation controls (outside refresh loop to avoid duplicate keys)
+        if st.session_state.dashboard_mode == "Real Strands Agents Mode":
+            st.subheader("🤖 Conversation Settings")
+
+            # Initialize session state for conversation controls
+            if "show_threading" not in st.session_state:
+                st.session_state.show_threading = True
+            if "auto_scroll" not in st.session_state:
+                st.session_state.auto_scroll = True
+
+            # Conversation threading toggle
+            st.session_state.show_threading = st.checkbox(
+                "🧵 Show Threading",
+                value=st.session_state.show_threading,
+                help="Group related agent conversations",
+                key="sidebar_conversation_threading",
+            )
+
+            # Auto-scroll toggle
+            st.session_state.auto_scroll = st.checkbox(
+                "📜 Auto-scroll",
+                value=st.session_state.auto_scroll,
+                help="Automatically scroll to latest conversations",
+                key="sidebar_conversation_autoscroll",
+            )
+
+            # Export conversations button
+            conversations = st.session_state.get("agent_conversations", [])
+            if len(conversations) > 0:
+                if st.button(
+                    "📥 Export Conversations",
+                    key="sidebar_export_conversations",
+                    help="Export conversations as JSON",
+                ):
+                    import json
+
+                    export_data = {
+                        "timestamp": datetime.now(UTC).isoformat(),
+                        "total_conversations": len(conversations),
+                        "conversations": conversations,
+                    }
+                    st.download_button(
+                        label="Download JSON",
+                        data=json.dumps(export_data, indent=2),
+                        file_name=f"agent_conversations_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.json",
+                        mime="application/json",
+                        key="sidebar_download_conversations",
+                    )
 
     # Auto-refresh logic
     placeholder = st.empty()

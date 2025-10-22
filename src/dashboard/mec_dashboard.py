@@ -3,6 +3,7 @@ MEC Orchestration Dashboard - Streamlit Interface
 """
 
 import asyncio
+import math
 import os
 import random
 import time
@@ -311,15 +312,45 @@ def get_real_activity_data(swarm_coordinator: SwarmCoordinator) -> list:
 
 
 def apply_demo_scenario(data: dict, scenario: str, data_type: str) -> dict:
-    """Apply demo scenario modifications to data."""
+    """Apply comprehensive demo scenario modifications to data."""
+
     if scenario == "gaming":
         if data_type == "metrics":
-            # Gaming scenario: High GPU usage, variable latency
-            data["gpu_usage"] = min(95, data.get("gpu_usage", 50) + 30)
-            data["latency"] = data.get("latency", 50) + random.randint(20, 50)
-            data["queue_depth"] = data.get("queue_depth", 25) + random.randint(10, 30)
+            # Gaming scenario: High GPU usage for rendering, variable latency for real-time multiplayer
+            current_time = time.time()
+
+            # Simulate gaming load patterns - peak during evening hours
+            hour_factor = 1.0 + 0.3 * abs(
+                math.sin(current_time / 3600)
+            )  # Hourly variation
+
+            # High GPU usage for game rendering and AI NPCs
+            data["gpu_usage"] = min(
+                95, int(data.get("gpu_usage", 50) + 35 * hour_factor)
+            )
+
+            # Variable latency for multiplayer synchronization
+            base_latency = data.get("latency", 50)
+            multiplayer_spike = random.choice([0, 0, 0, 25, 45])  # Occasional spikes
+            data["latency"] = int(base_latency + 15 + multiplayer_spike)
+
+            # Queue depth varies with concurrent players
+            data["queue_depth"] = min(
+                80, data.get("queue_depth", 25) + random.randint(15, 35)
+            )
+
+            # CPU usage for game logic and physics
+            data["cpu_usage"] = min(85, data.get("cpu_usage", 50) + 20)
+
+            # Add gaming-specific metadata
+            data["scenario_context"] = {
+                "active_players": random.randint(150, 500),
+                "npc_ai_load": f"{random.randint(60, 95)}%",
+                "physics_calculations": f"{random.randint(1000, 3500)}/sec",
+            }
+
         elif data_type == "activity":
-            # Add gaming-specific activities
+            # Add comprehensive gaming-specific activities
             gaming_activities = [
                 {
                     "time": datetime.now(UTC),
@@ -327,6 +358,7 @@ def apply_demo_scenario(data: dict, scenario: str, data_type: str) -> dict:
                     "action": "PRELOAD_GAME_ASSETS",
                     "level": "info",
                     "scenario": "gaming",
+                    "details": f"Cached {random.randint(15, 45)} game textures",
                 },
                 {
                     "time": datetime.now(UTC) - timedelta(seconds=2),
@@ -334,18 +366,52 @@ def apply_demo_scenario(data: dict, scenario: str, data_type: str) -> dict:
                     "action": "OPTIMIZE_NPC_DIALOGUE",
                     "level": "success",
                     "scenario": "gaming",
+                    "details": f"Balanced {random.randint(25, 80)} NPC AI requests",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=4),
+                    "agent": "ResourceMonitor",
+                    "action": "MULTIPLAYER_SYNC_CHECK",
+                    "level": "info",
+                    "scenario": "gaming",
+                    "details": f"Synchronized {random.randint(100, 300)} player states",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=6),
+                    "agent": "DecisionCoordinator",
+                    "action": "PHYSICS_ENGINE_SCALING",
+                    "level": "success",
+                    "scenario": "gaming",
+                    "details": "Scaled physics calculations for battle scene",
                 },
             ]
             data.extend(gaming_activities)
 
     elif scenario == "automotive":
         if data_type == "metrics":
-            # Automotive scenario: Critical latency, high reliability
-            data["latency"] = min(30, data.get("latency", 50))  # Ultra-low latency
-            data["cpu_usage"] = min(90, data.get("cpu_usage", 50) + 25)
-            data["queue_depth"] = max(5, data.get("queue_depth", 25) - 15)
+            # Automotive scenario: Ultra-low latency for safety-critical systems
+
+            # Critical latency requirements for collision avoidance
+            data["latency"] = min(25, max(8, data.get("latency", 50) - 30))
+
+            # High CPU usage for real-time sensor processing
+            data["cpu_usage"] = min(92, data.get("cpu_usage", 50) + 30)
+
+            # Moderate GPU usage for computer vision
+            data["gpu_usage"] = min(75, data.get("gpu_usage", 50) + 15)
+
+            # Low queue depth - safety systems get priority
+            data["queue_depth"] = max(2, min(15, data.get("queue_depth", 25) - 18))
+
+            # Add automotive-specific metadata
+            data["scenario_context"] = {
+                "connected_vehicles": random.randint(25, 150),
+                "sensor_data_rate": f"{random.randint(500, 2000)} Hz",
+                "safety_alerts_active": random.randint(0, 3),
+            }
+
         elif data_type == "activity":
-            # Add automotive-specific activities
+            # Add comprehensive automotive-specific activities
             auto_activities = [
                 {
                     "time": datetime.now(UTC),
@@ -353,6 +419,7 @@ def apply_demo_scenario(data: dict, scenario: str, data_type: str) -> dict:
                     "action": "COLLISION_AVOIDANCE_CHECK",
                     "level": "success",
                     "scenario": "automotive",
+                    "details": f"Processed {random.randint(50, 200)} sensor readings",
                 },
                 {
                     "time": datetime.now(UTC) - timedelta(seconds=1),
@@ -360,9 +427,103 @@ def apply_demo_scenario(data: dict, scenario: str, data_type: str) -> dict:
                     "action": "ROUTE_OPTIMIZATION",
                     "level": "info",
                     "scenario": "automotive",
+                    "details": f"Optimized routes for {random.randint(15, 45)} vehicles",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=2),
+                    "agent": "LoadBalancer",
+                    "action": "V2X_COMMUNICATION_SYNC",
+                    "level": "success",
+                    "scenario": "automotive",
+                    "details": "Synchronized vehicle-to-everything communications",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=3),
+                    "agent": "CacheManager",
+                    "action": "MAP_DATA_PRELOAD",
+                    "level": "info",
+                    "scenario": "automotive",
+                    "details": f"Preloaded HD maps for {random.randint(5, 15)} km radius",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=5),
+                    "agent": "ResourceMonitor",
+                    "action": "EMERGENCY_RESPONSE_READY",
+                    "level": "warning" if random.random() < 0.3 else "success",
+                    "scenario": "automotive",
+                    "details": "Emergency braking system status verified",
                 },
             ]
             data.extend(auto_activities)
+
+    elif scenario == "healthcare":
+        if data_type == "metrics":
+            # Healthcare scenario: Reliable processing for patient monitoring
+
+            # Consistent low latency for patient monitoring
+            data["latency"] = min(40, max(15, data.get("latency", 50) - 20))
+
+            # Moderate CPU usage for continuous monitoring
+            data["cpu_usage"] = min(70, data.get("cpu_usage", 50) + 10)
+
+            # Low GPU usage - mostly data processing, not rendering
+            data["gpu_usage"] = min(45, data.get("gpu_usage", 50) - 10)
+
+            # Steady queue depth for continuous patient data
+            data["queue_depth"] = min(40, max(10, data.get("queue_depth", 25) + 5))
+
+            # Add healthcare-specific metadata
+            data["scenario_context"] = {
+                "monitored_patients": random.randint(50, 200),
+                "vital_signs_processed": f"{random.randint(1000, 5000)}/min",
+                "alert_conditions": random.randint(0, 5),
+            }
+
+        elif data_type == "activity":
+            # Add comprehensive healthcare-specific activities
+            healthcare_activities = [
+                {
+                    "time": datetime.now(UTC),
+                    "agent": "PatientMonitor",
+                    "action": "VITAL_SIGNS_ANALYSIS",
+                    "level": "success",
+                    "scenario": "healthcare",
+                    "details": f"Analyzed vitals for {random.randint(25, 100)} patients",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=2),
+                    "agent": "DecisionCoordinator",
+                    "action": "ALERT_PRIORITIZATION",
+                    "level": "warning" if random.random() < 0.4 else "info",
+                    "scenario": "healthcare",
+                    "details": f"Prioritized {random.randint(3, 12)} medical alerts",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=4),
+                    "agent": "CacheManager",
+                    "action": "MEDICAL_RECORD_SYNC",
+                    "level": "success",
+                    "scenario": "healthcare",
+                    "details": f"Synchronized {random.randint(15, 60)} patient records",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=6),
+                    "agent": "LoadBalancer",
+                    "action": "DIAGNOSTIC_LOAD_BALANCE",
+                    "level": "info",
+                    "scenario": "healthcare",
+                    "details": f"Balanced diagnostic requests across {random.randint(3, 8)} systems",
+                },
+                {
+                    "time": datetime.now(UTC) - timedelta(seconds=8),
+                    "agent": "ResourceMonitor",
+                    "action": "COMPLIANCE_CHECK",
+                    "level": "success",
+                    "scenario": "healthcare",
+                    "details": "HIPAA compliance verified for data processing",
+                },
+            ]
+            data.extend(healthcare_activities)
 
     return data
 
@@ -489,6 +650,84 @@ def display_agent_conversations(conversations_data: list):
         st.divider()
 
 
+def apply_scenario_swarm_behaviors(swarm_data: dict, scenario: str) -> dict:
+    """Apply scenario-specific swarm coordination behaviors."""
+
+    if scenario == "gaming":
+        # Gaming: Dynamic load balancing for multiplayer sessions
+        for site, data in swarm_data.items():
+            if data["status"] == "active":
+                # Simulate multiplayer session coordination
+                if random.random() < 0.3:  # 30% chance of gaming-specific behavior
+                    data["gaming_sessions"] = random.randint(5, 25)
+                    data["npc_ai_load"] = random.randint(60, 95)
+
+                    # Adjust load based on gaming activity
+                    if data["gaming_sessions"] > 15:
+                        data["load"] = min(95, data["load"] + 20)
+
+    elif scenario == "automotive":
+        # Automotive: Safety-critical coordination with priority routing
+        for site, data in swarm_data.items():
+            if data["status"] == "active":
+                # Simulate vehicle coordination
+                data["connected_vehicles"] = random.randint(10, 80)
+                data["safety_alerts"] = random.randint(0, 3)
+
+                # Priority handling for safety systems
+                if data["safety_alerts"] > 0:
+                    data["status"] = "priority_mode"
+                    data["load"] = max(data["load"], 70)  # Ensure adequate resources
+
+    elif scenario == "healthcare":
+        # Healthcare: Reliable patient monitoring with compliance
+        for site, data in swarm_data.items():
+            if data["status"] == "active":
+                # Simulate patient monitoring
+                data["monitored_patients"] = random.randint(20, 150)
+                data["vital_alerts"] = random.randint(0, 5)
+
+                # Ensure reliability for patient care
+                if data["vital_alerts"] > 2:
+                    data["status"] = "medical_priority"
+                    # Maintain steady, reliable load
+                    data["load"] = min(75, max(40, data["load"]))
+
+    return swarm_data
+
+
+def trigger_automated_demo_sequence():
+    """Trigger automated demo sequence with scenario transitions."""
+    if not st.session_state.get("auto_demo_active", False):
+        return
+
+    demo_sequence = ["normal", "gaming", "automotive", "healthcare"]
+    current_step = st.session_state.get("auto_demo_step", 0) % len(demo_sequence)
+
+    # Update scenario based on demo step
+    st.session_state.demo_scenario = demo_sequence[current_step]
+
+    # Add demo-specific activities
+    if "demo_activities" not in st.session_state:
+        st.session_state.demo_activities = []
+
+    # Add transition activity
+    transition_activity = {
+        "time": datetime.now(UTC),
+        "agent": "DemoOrchestrator",
+        "action": f"SCENARIO_TRANSITION_TO_{demo_sequence[current_step].upper()}",
+        "level": "info",
+        "scenario": demo_sequence[current_step],
+        "details": f"Automated demo transitioning to {demo_sequence[current_step]} scenario",
+    }
+
+    st.session_state.demo_activities.append(transition_activity)
+
+    # Keep only last 20 demo activities
+    if len(st.session_state.demo_activities) > 20:
+        st.session_state.demo_activities = st.session_state.demo_activities[-20:]
+
+
 def main():
     """Main dashboard function"""
     st.title("🏢 MEC Orchestration Dashboard")
@@ -540,10 +779,70 @@ def main():
             st.subheader("🎯 Demo Scenarios")
             demo_scenario = st.selectbox(
                 "Workload Type:",
-                ["Normal", "Gaming", "Automotive"],
+                ["Normal", "Gaming", "Automotive", "Healthcare"],
                 key="demo_scenario_select",
             )
             st.session_state.demo_scenario = demo_scenario.lower()
+
+            # Scenario descriptions
+            scenario_descriptions = {
+                "normal": "🔄 Standard MEC operations with balanced workloads",
+                "gaming": "🎮 High GPU usage, variable latency for multiplayer gaming",
+                "automotive": "🚗 Ultra-low latency for safety-critical vehicle systems",
+                "healthcare": "🏥 Reliable processing for patient monitoring systems",
+            }
+
+            if st.session_state.demo_scenario in scenario_descriptions:
+                st.caption(scenario_descriptions[st.session_state.demo_scenario])
+
+            # Automated demo sequence
+            st.subheader("🎬 Automated Demo")
+
+            if "auto_demo_active" not in st.session_state:
+                st.session_state.auto_demo_active = False
+            if "auto_demo_step" not in st.session_state:
+                st.session_state.auto_demo_step = 0
+            if "auto_demo_last_change" not in st.session_state:
+                st.session_state.auto_demo_last_change = time.time()
+
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("▶️ Start Auto Demo", key="start_auto_demo"):
+                    st.session_state.auto_demo_active = True
+                    st.session_state.auto_demo_step = 0
+                    st.session_state.auto_demo_last_change = time.time()
+
+            with col2:
+                if st.button("⏹️ Stop Auto Demo", key="stop_auto_demo"):
+                    st.session_state.auto_demo_active = False
+                    st.session_state.demo_scenario = "normal"
+
+            if st.session_state.auto_demo_active:
+                st.success("🎬 Auto demo running...")
+                demo_sequence = [
+                    "normal",
+                    "gaming",
+                    "automotive",
+                    "healthcare",
+                ]
+                current_step = st.session_state.auto_demo_step % len(demo_sequence)
+                st.caption(
+                    f"Step {current_step + 1}/4: {demo_sequence[current_step].title()}"
+                )
+
+                # Change scenario every 15 seconds
+                if time.time() - st.session_state.auto_demo_last_change > 15:
+                    st.session_state.auto_demo_step += 1
+                    st.session_state.demo_scenario = demo_sequence[current_step]
+                    st.session_state.auto_demo_last_change = time.time()
+
+            # Scenario-specific threshold adjustments
+            if st.session_state.demo_scenario == "automotive":
+                st.info("🚗 **Automotive Mode**: Ultra-low latency thresholds active")
+            elif st.session_state.demo_scenario == "gaming":
+                st.info("🎮 **Gaming Mode**: High GPU utilization expected")
+            elif st.session_state.demo_scenario == "healthcare":
+                st.info("🏥 **Healthcare Mode**: Reliable, consistent processing")
 
             # System mode
             mode = st.selectbox(
@@ -784,6 +1083,14 @@ def main():
                 swarm_data = generate_swarm_data(selected_sites, mode)
                 activity_data = generate_activity_data(mode)
 
+            # Handle automated demo sequence
+            if st.session_state.get("auto_demo_active", False):
+                trigger_automated_demo_sequence()
+
+                # Add demo activities to activity stream
+                demo_activities = st.session_state.get("demo_activities", [])
+                activity_data.extend(demo_activities[-5:])  # Add last 5 demo activities
+
             # Apply demo scenario modifications (works for both modes)
             if st.session_state.demo_scenario != "normal":
                 metrics_data = apply_demo_scenario(
@@ -791,6 +1098,11 @@ def main():
                 )
                 activity_data = apply_demo_scenario(
                     activity_data, st.session_state.demo_scenario, "activity"
+                )
+
+                # Apply scenario-specific swarm behaviors
+                swarm_data = apply_scenario_swarm_behaviors(
+                    swarm_data, st.session_state.demo_scenario
                 )
 
             # Update metrics panel
@@ -857,20 +1169,36 @@ def generate_metrics_data(mode):
 
 
 def generate_swarm_data(sites, mode):
-    """Generate mock swarm coordination data"""
+    """Generate mock swarm coordination data with scenario-specific behaviors"""
     swarm_data = {}
 
     for site in sites:
         status = "active"
+        base_load = random.randint(20, 60)
+        base_connections = random.randint(5, 25)
+
+        # Apply mode-specific modifications
         if mode == "Threshold Breach" and site == "MEC-Site-A":
             status = "overloaded"
+            base_load = random.randint(85, 95)
         elif mode == "Failover Test" and site == "MEC-Site-B":
             status = "failed"
+            base_load = 0
+            base_connections = 0
+        elif mode == "Swarm Active":
+            # Show coordinated load balancing
+            if site == "MEC-Site-A":
+                base_load = random.randint(45, 65)  # Balanced
+            elif site == "MEC-Site-B":
+                base_load = random.randint(30, 50)  # Lower load
+            else:
+                base_load = random.randint(55, 75)  # Higher load
 
         swarm_data[site] = {
             "status": status,
-            "load": random.randint(20, 90),
-            "connections": random.randint(5, 25),
+            "load": base_load,
+            "connections": base_connections,
+            "is_healthy": status == "active",
         }
 
     return swarm_data
@@ -948,7 +1276,7 @@ def generate_activity_data(mode):
 
 
 def display_metrics(data, latency_threshold, cpu_threshold):
-    """Display real-time metrics with mode indicators"""
+    """Display real-time metrics with mode indicators and scenario context"""
 
     # Add mode indicator banner
     if data.get("real_mode"):
@@ -963,7 +1291,66 @@ def display_metrics(data, latency_threshold, cpu_threshold):
     else:
         st.success("🎭 **Mock Mode** - Simulated data")
 
+    # Show scenario-specific context if available
+    scenario_context = data.get("scenario_context", {})
+    if scenario_context:
+        scenario = st.session_state.get("demo_scenario", "normal")
+
+        if scenario == "gaming":
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.caption(
+                    f"🎮 Players: {scenario_context.get('active_players', 'N/A')}"
+                )
+            with col2:
+                st.caption(f"🤖 NPC AI: {scenario_context.get('npc_ai_load', 'N/A')}")
+            with col3:
+                st.caption(
+                    f"⚡ Physics: {scenario_context.get('physics_calculations', 'N/A')}"
+                )
+
+        elif scenario == "automotive":
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.caption(
+                    f"🚗 Vehicles: {scenario_context.get('connected_vehicles', 'N/A')}"
+                )
+            with col2:
+                st.caption(
+                    f"📡 Sensors: {scenario_context.get('sensor_data_rate', 'N/A')}"
+                )
+            with col3:
+                alerts = scenario_context.get("safety_alerts_active", 0)
+                alert_color = "🔴" if alerts > 0 else "🟢"
+                st.caption(f"{alert_color} Alerts: {alerts}")
+
+        elif scenario == "healthcare":
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.caption(
+                    f"🏥 Patients: {scenario_context.get('monitored_patients', 'N/A')}"
+                )
+            with col2:
+                st.caption(
+                    f"💓 Vitals: {scenario_context.get('vital_signs_processed', 'N/A')}"
+                )
+            with col3:
+                alerts = scenario_context.get("alert_conditions", 0)
+                alert_color = "🔴" if alerts > 2 else "🟡" if alerts > 0 else "🟢"
+                st.caption(f"{alert_color} Conditions: {alerts}")
+
     col1, col2, col3, col4 = st.columns(4)
+
+    # Scenario-specific threshold adjustments
+    scenario = st.session_state.get("demo_scenario", "normal")
+
+    # Adjust thresholds based on scenario
+    if scenario == "automotive":
+        latency_threshold = min(latency_threshold, 30)  # Stricter for safety
+    elif scenario == "gaming":
+        gpu_threshold = 85  # Higher tolerance for gaming
+    elif scenario == "healthcare":
+        latency_threshold = min(latency_threshold, 50)  # Moderate for reliability
 
     # Determine threshold breach status
     latency_breach = data["latency"] > latency_threshold
@@ -972,8 +1359,18 @@ def display_metrics(data, latency_threshold, cpu_threshold):
     with col1:
         # Add warning color for threshold breach
         delta_color = "inverse" if latency_breach else "normal"
+
+        # Scenario-specific latency context
+        latency_icon = ""
+        if scenario == "automotive" and data["latency"] < 25:
+            latency_icon = " 🚗✅"  # Safety compliant
+        elif scenario == "gaming" and data["latency"] > 80:
+            latency_icon = " 🎮⚠️"  # Gaming lag warning
+        elif latency_breach:
+            latency_icon = " ⚠️"
+
         st.metric(
-            "Latency" + (" ⚠️" if latency_breach else ""),
+            f"Latency{latency_icon}",
             f"{data['latency']}ms",
             delta=f"{random.randint(-5, 5)}ms",
             delta_color=delta_color,
@@ -981,18 +1378,32 @@ def display_metrics(data, latency_threshold, cpu_threshold):
 
     with col2:
         delta_color = "inverse" if cpu_breach else "normal"
+
+        cpu_icon = ""
+        if scenario == "automotive" and data["cpu_usage"] > 85:
+            cpu_icon = " 🚗⚠️"  # Critical system load
+        elif cpu_breach:
+            cpu_icon = " ⚠️"
+
         st.metric(
-            "CPU Usage" + (" ⚠️" if cpu_breach else ""),
+            f"CPU Usage{cpu_icon}",
             f"{data['cpu_usage']}%",
             delta=f"{random.randint(-3, 8)}%",
             delta_color=delta_color,
         )
 
     with col3:
-        gpu_breach = data["gpu_usage"] > 80
+        gpu_breach = data["gpu_usage"] > (85 if scenario == "gaming" else 80)
         delta_color = "inverse" if gpu_breach else "normal"
+
+        gpu_icon = ""
+        if scenario == "gaming" and data["gpu_usage"] > 90:
+            gpu_icon = " 🎮🔥"  # High gaming load
+        elif gpu_breach:
+            gpu_icon = " ⚠️"
+
         st.metric(
-            "GPU Usage" + (" ⚠️" if gpu_breach else ""),
+            f"GPU Usage{gpu_icon}",
             f"{data['gpu_usage']}%",
             delta=f"{random.randint(-5, 10)}%",
             delta_color=delta_color,
@@ -1001,22 +1412,58 @@ def display_metrics(data, latency_threshold, cpu_threshold):
     with col4:
         queue_breach = data["queue_depth"] > 50
         delta_color = "inverse" if queue_breach else "normal"
+
+        queue_icon = ""
+        if scenario == "healthcare" and data["queue_depth"] > 35:
+            queue_icon = " 🏥⚠️"  # Patient data backlog
+        elif queue_breach:
+            queue_icon = " ⚠️"
+
         st.metric(
-            "Queue Depth" + (" ⚠️" if queue_breach else ""),
+            f"Queue Depth{queue_icon}",
             f"{data['queue_depth']}",
             delta=f"{random.randint(-2, 5)}",
             delta_color=delta_color,
         )
 
-    # Performance comparison
+    # Performance comparison with scenario context
     if data.get("real_mode"):
         st.caption("📊 **Performance**: ~2-5s response time | 🤖 Real agent reasoning")
     else:
-        st.caption("📊 **Performance**: Instant response | 🎭 Simulated data")
+        scenario_perf = {
+            "gaming": "🎮 Optimized for multiplayer and NPC AI processing",
+            "automotive": "🚗 Ultra-low latency for safety-critical systems",
+            "healthcare": "🏥 Reliable processing for patient monitoring",
+            "normal": "🔄 Standard balanced processing",
+        }
+        st.caption(
+            f"📊 **Performance**: Instant response | 🎭 {scenario_perf.get(scenario, 'Simulated data')}"
+        )
 
 
 def display_swarm_network(swarm_data):
-    """Display swarm network visualization"""
+    """Display enhanced swarm network visualization with scenario context"""
+
+    # Show scenario-specific swarm behavior summary
+    scenario = st.session_state.get("demo_scenario", "normal")
+
+    if scenario == "gaming":
+        st.caption(
+            "🎮 **Gaming Swarm Behavior**: Load balancing for multiplayer sessions and NPC AI processing"
+        )
+    elif scenario == "automotive":
+        st.caption(
+            "🚗 **Automotive Swarm Behavior**: Priority routing for safety-critical vehicle communications"
+        )
+    elif scenario == "healthcare":
+        st.caption(
+            "🏥 **Healthcare Swarm Behavior**: Reliable patient data processing with compliance monitoring"
+        )
+    else:
+        st.caption(
+            "🔄 **Standard Swarm Behavior**: Balanced load distribution across MEC sites"
+        )
+
     # Create a simple network graph
     graph = nx.Graph()
 
@@ -1028,60 +1475,171 @@ def display_swarm_network(swarm_data):
     sites = list(swarm_data.keys())
     for i in range(len(sites)):
         for j in range(i + 1, len(sites)):
-            graph.add_edge(sites[i], sites[j])
+            # Vary edge thickness based on scenario
+            weight = 1
+            if scenario == "automotive":
+                weight = 3  # Thicker edges for critical communications
+            elif scenario == "gaming":
+                weight = 2  # Medium thickness for multiplayer sync
+            graph.add_edge(sites[i], sites[j], weight=weight)
 
     # Create positions for visualization
-    pos = nx.spring_layout(graph)
+    pos = nx.spring_layout(graph, seed=42)  # Fixed seed for consistent layout
 
     # Create plotly figure
     fig = go.Figure()
 
-    # Add edges
-    for edge in graph.edges():
+    # Add edges with scenario-specific styling
+    for edge in graph.edges(data=True):
         x0, y0 = pos[edge[0]]
         x1, y1 = pos[edge[1]]
+
+        # Edge color and width based on scenario
+        edge_color = "gray"
+        edge_width = edge[2].get("weight", 1)
+
+        if scenario == "automotive":
+            edge_color = "orange"  # Safety-critical communications
+        elif scenario == "gaming":
+            edge_color = "purple"  # Gaming data flows
+        elif scenario == "healthcare":
+            edge_color = "blue"  # Medical data flows
+
         fig.add_trace(
             go.Scatter(
                 x=[x0, x1, None],
                 y=[y0, y1, None],
                 mode="lines",
-                line={"width": 2, "color": "gray"},
+                line={"width": edge_width, "color": edge_color},
                 showlegend=False,
+                hoverinfo="skip",
             ),
         )
 
-    # Add nodes
+    # Add nodes with enhanced information
     for node in graph.nodes():
         x, y = pos[node]
-        status = swarm_data[node]["status"]
-        color = {"active": "green", "overloaded": "red", "failed": "gray"}[status]
+        data = swarm_data[node]
+        status = data["status"]
+        load = data["load"]
+
+        # Node color based on status
+        color_map = {
+            "active": "green",
+            "overloaded": "red",
+            "failed": "gray",
+            "consensus": "blue",
+        }
+        color = color_map.get(status, "green")
+
+        # Node size based on load
+        size = max(15, min(40, 15 + (load / 100) * 25))
+
+        # Hover text with detailed information
+        hover_text = f"{node}<br>Status: {status}<br>Load: {load}%<br>Connections: {data.get('connections', 0)}"
+
+        if scenario != "normal":
+            hover_text += f"<br>Scenario: {scenario.title()}"
 
         fig.add_trace(
             go.Scatter(
                 x=[x],
                 y=[y],
                 mode="markers+text",
-                marker={"size": 20, "color": color},
-                text=[node],
+                marker={
+                    "size": size,
+                    "color": color,
+                    "line": {"width": 2, "color": "white"},
+                },
+                text=[f"{node}<br>{load}%"],
                 textposition="middle center",
+                textfont={"size": 10, "color": "white"},
+                hovertext=hover_text,
+                hoverinfo="text",
                 showlegend=False,
             ),
         )
 
+    # Add scenario-specific annotations
+    annotations = []
+    if scenario == "automotive" and any(
+        data["status"] == "overloaded" for data in swarm_data.values()
+    ):
+        annotations.append(
+            {
+                "text": "⚠️ Safety Alert: Rerouting critical traffic",
+                "x": 0.5,
+                "y": 1.1,
+                "xref": "paper",
+                "yref": "paper",
+                "showarrow": False,
+                "font": {"color": "red", "size": 12},
+            }
+        )
+    elif scenario == "gaming" and any(
+        data["load"] > 80 for data in swarm_data.values()
+    ):
+        annotations.append(
+            {
+                "text": "🎮 High Load: Scaling multiplayer instances",
+                "x": 0.5,
+                "y": 1.1,
+                "xref": "paper",
+                "yref": "paper",
+                "showarrow": False,
+                "font": {"color": "purple", "size": 12},
+            }
+        )
+
     fig.update_layout(
-        title="MEC Site Network Status",
+        title=f"MEC Site Network Status - {scenario.title()} Mode",
         showlegend=False,
         xaxis={"showgrid": False, "zeroline": False, "showticklabels": False},
         yaxis={"showgrid": False, "zeroline": False, "showticklabels": False},
-        height=300,
+        height=350,
+        annotations=annotations,
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
+    # Show swarm coordination status
+    active_sites = sum(1 for data in swarm_data.values() if data["status"] == "active")
+    total_sites = len(swarm_data)
+    avg_load = (
+        sum(data["load"] for data in swarm_data.values()) / total_sites
+        if total_sites > 0
+        else 0
+    )
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Active Sites", f"{active_sites}/{total_sites}")
+    with col2:
+        st.metric("Avg Load", f"{avg_load:.1f}%")
+    with col3:
+        coordination_status = (
+            "🟢 Optimal"
+            if avg_load < 70
+            else "🟡 Busy" if avg_load < 85 else "🔴 Overloaded"
+        )
+        st.metric("Coordination", coordination_status)
+
 
 def display_activity_stream(activities):
-    """Display agent activity stream"""
-    for activity in activities[:10]:  # Show last 10 activities
+    """Display enhanced agent activity stream with scenario context"""
+
+    # Show scenario-specific activity summary
+    scenario = st.session_state.get("demo_scenario", "normal")
+    scenario_activities = [a for a in activities if a.get("scenario") == scenario]
+
+    if scenario_activities and scenario != "normal":
+        st.caption(
+            f"🎯 **{scenario.title()} Activities**: {len(scenario_activities)} scenario-specific events"
+        )
+
+    for activity in activities[:12]:  # Show last 12 activities
         level_colors = {
             "info": "🔵",
             "success": "🟢",
@@ -1092,6 +1650,16 @@ def display_activity_stream(activities):
         icon = level_colors.get(activity["level"], "⚪")
         time_str = activity["time"].strftime("%H:%M:%S")
 
+        # Add scenario-specific icons
+        scenario_icon = ""
+        if activity.get("scenario"):
+            scenario_icons = {
+                "gaming": "🎮",
+                "automotive": "🚗",
+                "healthcare": "🏥",
+            }
+            scenario_icon = f" {scenario_icons.get(activity['scenario'], '')}"
+
         # Enhanced display for real mode
         if activity.get("real_mode"):
             mode_indicator = " 🤖"
@@ -1099,10 +1667,13 @@ def display_activity_stream(activities):
             # Show more details for real agent activities
             if activity.get("mcp_source") or activity.get("swarm_source"):
                 with st.expander(
-                    f"{icon} **{time_str}** - {activity['agent']}: {activity['action']}{mode_indicator}"
+                    f"{icon} **{time_str}** - {activity['agent']}: {activity['action']}{scenario_icon}{mode_indicator}"
                 ):
                     if activity.get("details"):
-                        st.json(activity["details"])
+                        if isinstance(activity["details"], dict):
+                            st.json(activity["details"])
+                        else:
+                            st.markdown(f"**Details:** {activity['details']}")
                     elif activity.get("reasoning"):
                         st.markdown(f"**Reasoning:** {activity['reasoning']}")
                     else:
@@ -1112,12 +1683,45 @@ def display_activity_stream(activities):
             else:
                 st.write(
                     f"{icon} **{time_str}** - {activity['agent']}: "
-                    f"{activity['action']}{mode_indicator}"
+                    f"{activity['action']}{scenario_icon}{mode_indicator}"
                 )
         else:
-            st.write(
-                f"{icon} **{time_str}** - {activity['agent']}: " f"{activity['action']}"
+            # Enhanced mock mode display with scenario details
+            if activity.get("details"):
+                with st.expander(
+                    f"{icon} **{time_str}** - {activity['agent']}: {activity['action']}{scenario_icon}"
+                ):
+                    st.markdown(f"**Details:** {activity['details']}")
+            else:
+                st.write(
+                    f"{icon} **{time_str}** - {activity['agent']}: {activity['action']}{scenario_icon}"
+                )
+
+    # Show activity statistics
+    if len(activities) > 0:
+        total_activities = len(activities)
+        scenario_count = len(
+            [
+                a
+                for a in activities
+                if a.get("scenario") == scenario and scenario != "normal"
+            ]
+        )
+        success_count = len([a for a in activities if a.get("level") == "success"])
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.caption(f"📊 Total: {total_activities}")
+        with col2:
+            if scenario != "normal":
+                st.caption(f"🎯 {scenario.title()}: {scenario_count}")
+            else:
+                st.caption(f"✅ Success: {success_count}")
+        with col3:
+            success_rate = (
+                (success_count / total_activities * 100) if total_activities > 0 else 0
             )
+            st.caption(f"📈 Success: {success_rate:.0f}%")
 
 
 def display_analytics():

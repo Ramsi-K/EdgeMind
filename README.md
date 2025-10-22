@@ -201,16 +201,34 @@ The Streamlit dashboard simulates real-time orchestration behavior at 5G MEC sit
 
 🎚 **Sidebar Controls**
 
-- Operation Mode (Normal / Threshold Breach / Swarm Active / Failover Test)
+- **Dashboard Mode**: Mock Data Mode vs Real Strands Agents Mode
+- **Demo Scenarios**: Gaming, Automotive, Healthcare, Normal
+- **Automated Demo**: 15-second scenario transitions with ▶️ Start/⏹️ Stop
+- **Operation Mode**: Normal / Threshold Breach / Swarm Active / Failover Test
 - Active MEC Sites toggle
 - Adjustable Latency/CPU thresholds
 
-🧪 **Test Scenarios**
+🧪 **Enhanced Demo Scenarios**
 
 - “Threshold Breach”: triggers swarm response
 - “Swarm Active”: shows coordination logs
 - “Failover Test”: disables one MEC site
   ✅ Replicates telecom-grade orchestration under stress.
+
+**Scenario Types:**
+
+- **🎮 Gaming**: High GPU usage (85-95%), multiplayer synchronization, NPC AI processing
+- **🚗 Automotive**: Ultra-low latency (<30ms), safety-critical systems, V2X communication
+- **🏥 Healthcare**: Patient monitoring (50-200 patients), HIPAA compliance, medical alerts
+- **🔄 Normal**: Balanced resource utilization and standard MEC operations
+
+🎬 **Automated Demo Features**
+
+- **Auto Demo Mode**: Cycles through all scenarios every 15 seconds
+- **Scenario-Specific Metrics**: Context-aware thresholds and performance indicators
+- **Enhanced Visualizations**: Scenario-specific icons, colors, and coordination patterns
+- **Real-Time Integration**: Works seamlessly in both Mock and Real agent modes
+  ✅ Demonstrates comprehensive MEC orchestration across diverse use cases.
 
 ![dashboard](./demo_data/images/image_dashboard.png)
 

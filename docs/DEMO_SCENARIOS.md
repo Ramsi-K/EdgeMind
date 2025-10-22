@@ -1,233 +1,237 @@
-# Demo Scenarios for 5G-MEC Intelligence Showcase
+# Enhanced Demo Scenarios - MEC Orchestration Dashboard
 
-## 🎬 Demo Strategy Overview
+## Overview
 
-**Total Demo Time**: 2-3 minutes
-**Format**: Live MEC orchestration dashboard + real-time scenarios
-**Goal**: Demonstrate threshold-based swarm coordination and sub-100ms decision making
+The MEC Orchestration Dashboard now includes comprehensive demo scenarios that showcase different use cases for Multi-access Edge Computing (MEC) with AI orchestration. Each scenario demonstrates specific threshold patterns, swarm behaviors, and real-time coordination capabilities.
 
-## 🎮 Scenario 1: Gaming - Real-Time NPC Interactions
+## Implemented Scenarios
 
-### Setup
-**Game**: Multiplayer RPG with intelligent NPCs
-**Challenge**: Balance response speed with NPC personality depth
+### 1. 🎮 Gaming Scenario
 
-### Demo Flow (30 seconds)
+**Use Case**: Multiplayer gaming with NPC AI processing and real-time synchronization
 
-**Narrator**: *"In gaming, players expect instant NPC responses, but also want rich, contextual dialogue..."*
+**Characteristics**:
 
-**Dashboard Shows**:
-- Player location: Tokyo (good 5G connection)
-- NPC interaction complexity: "Tell me about the ancient dragon lore"
-- Network condition: Strong WiFi (100 Mbps, 20ms latency)
+- **High GPU Usage**: 85-95% for game rendering and NPC AI
+- **Variable Latency**: 65-115ms with occasional multiplayer spikes
+- **Dynamic Queue Depth**: 40-80 requests for concurrent players
+- **Moderate CPU Usage**: 70-85% for game logic and physics
 
-**MEC Orchestration Decision**:
-1. **Device SLM**: Processes simple dialogue → "Basic response ready (40ms)"
-2. **Orchestrator**: Detects complexity threshold exceeded → "Trigger swarm coordination"
-3. **Swarm Coordination**: Tokyo MEC A + MEC B collaborate → "Load balanced processing"
-4. **Result**: 85ms response with rich, contextual lore through MEC intelligence
+**Scenario Context**:
 
-**Comparison Shown**:
-- Device only: 40ms but generic response
-- Cloud dependency: 2s+ with network delays
-- **MEC swarm coordination: 85ms with intelligent response** ✅
+- Active Players: 150-500 concurrent users
+- NPC AI Load: 60-95% processing capacity
+- Physics Calculations: 1000-3500 calculations/second
 
-### Business Impact
-- 60% faster than cloud
-- 3x richer than device
-- Player engagement +40%
+**Agent Activities**:
 
----
+- `CacheManager`: Preload game assets and textures
+- `LoadBalancer`: Optimize NPC dialogue processing
+- `ResourceMonitor`: Multiplayer synchronization checks
+- `DecisionCoordinator`: Physics engine scaling
 
-## 🚗 Scenario 2: Autonomous Vehicle - Safety Critical Decision
+**Swarm Behaviors**:
 
-### Setup
-**Vehicle**: Self-driving car approaching intersection
-**Challenge**: Balance safety response time with decision accuracy
+- Dynamic load balancing for multiplayer sessions
+- Gaming session coordination across MEC sites
+- Automatic scaling for high-load gaming scenarios
 
-### Demo Flow (30 seconds)
+### 2. 🚗 Automotive Scenario
 
-**Narrator**: *"Autonomous vehicles need split-second decisions for safety, but complex analysis for optimization..."*
+**Use Case**: Safety-critical vehicle systems with ultra-low latency requirements
 
-**Dashboard Shows**:
-- Vehicle location: Highway intersection
-- Sensor input: "Pedestrian detected + traffic analysis needed"
-- Network: 4G connection (variable latency)
+**Characteristics**:
 
-**MEC Orchestration Processing**:
-1. **Immediate Safety (Device)**: Pedestrian detection → Emergency brake signal (8ms)
-2. **Traffic Coordination (MEC)**: Orchestrator triggers swarm → Multi-MEC site coordination (60ms)
-3. **Regional Optimization**: MEC sites A, B, C coordinate traffic flow → Optimal route (90ms)
+- **Ultra-Low Latency**: 8-25ms for collision avoidance
+- **High CPU Usage**: 85-92% for real-time sensor processing
+- **Moderate GPU Usage**: 60-75% for computer vision
+- **Low Queue Depth**: 2-15 requests (safety systems get priority)
 
-**Result**: Autonomous MEC intelligence without cloud dependency for real-time decisions
+**Scenario Context**:
 
-### Business Impact
-- Safety: <10ms critical decisions
-- Efficiency: Regional optimization
-- Planning: Global route intelligence
+- Connected Vehicles: 25-150 vehicles in coordination
+- Sensor Data Rate: 500-2000 Hz processing frequency
+- Safety Alerts: 0-3 active safety conditions
 
----
+**Agent Activities**:
 
-## 🏥 Scenario 3: Healthcare - Patient Monitoring
+- `SafetyMonitor`: Collision avoidance checks
+- `DecisionCoordinator`: Route optimization
+- `LoadBalancer`: V2X communication synchronization
+- `CacheManager`: HD map data preloading
+- `ResourceMonitor`: Emergency response system verification
 
-### Setup
-**Patient**: ICU monitoring with wearable devices
-**Challenge**: Balance privacy with diagnostic capability
+**Swarm Behaviors**:
 
-### Demo Flow (30 seconds)
+- Priority routing for safety-critical communications
+- Automatic failover for vehicle safety systems
+- Cross-MEC coordination for traffic management
 
-**Narrator**: *"Healthcare requires immediate alerts for emergencies, but complex analysis for diagnosis..."*
+### 3. 🏥 Healthcare Scenario
 
-**Dashboard Shows**:
-- Patient vitals: Heart rate spike detected
-- Privacy level: HIPAA compliance required
-- Network: Hospital WiFi (reliable but regulated)
+**Use Case**: Patient monitoring systems with reliability and compliance requirements
 
-**Tiered Response**:
-1. **Critical Alert (Device)**: Heart rate >120 BPM → Immediate nurse alert (50ms)
-2. **Pattern Analysis (MEC)**: Regional health data → Trend analysis (200ms)
-3. **Diagnostic Support (Cloud)**: Medical literature → Treatment recommendations (3s)
+**Characteristics**:
 
-**Privacy Protection**:
-- Raw vitals stay on device
-- Anonymized patterns to MEC
-- Aggregated insights to cloud
+- **Consistent Low Latency**: 15-40ms for patient monitoring
+- **Moderate CPU Usage**: 60-70% for continuous data processing
+- **Low GPU Usage**: 35-45% (primarily data processing, not rendering)
+- **Steady Queue Depth**: 20-40 requests for continuous patient data
 
-### Business Impact
-- 50% faster emergency response
-- HIPAA compliance maintained
-- 30% better diagnostic accuracy
+**Scenario Context**:
 
----
+- Monitored Patients: 50-200 patients under observation
+- Vital Signs Processed: 1000-5000 readings per minute
+- Alert Conditions: 0-5 active medical alerts
 
-## 🏭 Scenario 4: Industrial IoT - Predictive Maintenance
+**Agent Activities**:
 
-### Setup
-**Factory**: Manufacturing line with sensor monitoring
-**Challenge**: Prevent equipment failure while optimizing maintenance costs
+- `PatientMonitor`: Vital signs analysis
+- `DecisionCoordinator`: Medical alert prioritization
+- `CacheManager`: Medical record synchronization
+- `LoadBalancer`: Diagnostic load balancing
+- `ResourceMonitor`: HIPAA compliance verification
 
-### Demo Flow (30 seconds)
+**Swarm Behaviors**:
 
-**Narrator**: *"Industrial IoT needs real-time monitoring but also predictive analytics for cost optimization..."*
+- Reliable patient data processing with redundancy
+- Medical priority status for critical alerts
+- Compliance monitoring and audit trail maintenance
 
-**Dashboard Shows**:
-- Equipment: Conveyor belt motor
-- Sensor data: Vibration anomaly detected
-- Network: Industrial ethernet (stable, low bandwidth)
+### 4. 🔄 Normal Scenario
 
-**Predictive Pipeline**:
-1. **Anomaly Detection (Device)**: Vibration threshold exceeded → Immediate alert (100ms)
-2. **Failure Prediction (MEC)**: Historical patterns → 6-hour failure prediction (500ms)
-3. **Maintenance Optimization (Cloud)**: Supply chain + scheduling → Optimal maintenance window (5s)
+**Use Case**: Standard balanced MEC operations
 
-**Cost Optimization**:
-- Prevent $50K equipment failure
-- Schedule maintenance during planned downtime
-- Optimize parts inventory
+**Characteristics**:
 
-### Business Impact
-- 99.9% uptime maintained
-- 40% maintenance cost reduction
-- $10M annual savings
+- **Balanced Latency**: 40-60ms standard processing
+- **Moderate Resource Usage**: 50-70% across all metrics
+- **Standard Queue Depth**: 20-35 requests
+- **Consistent Performance**: Stable, predictable patterns
 
----
+## Automated Demo Features
 
-## 🛒 Scenario 5: Retail - Personalized Shopping
+### 🎬 Auto Demo Mode
 
-### Setup
-**Store**: Smart retail with AR shopping assistant
-**Challenge**: Instant product recognition with personalized recommendations
+**Sequence**: Normal → Gaming → Automotive → Healthcare (15-second transitions)
 
-### Demo Flow (20 seconds)
+**Features**:
 
-**Dashboard Shows**:
-- Customer: Scanning product with phone
-- Request: "Find similar items in my size and budget"
-- Location: In-store with store WiFi
+- Automatic scenario transitions every 15 seconds
+- Seamless threshold adjustments per scenario
+- Real-time activity stream updates
+- Visual indicators for current scenario phase
 
-**Smart Routing**:
-1. **Product Recognition (Device)**: Camera → Product ID (100ms)
-2. **Inventory Check (MEC)**: Store inventory → Available options (200ms)
-3. **Personalization (Cloud)**: Purchase history → Personalized recommendations (1s)
+**Controls**:
 
-**Result**: Seamless shopping experience with instant recognition and smart recommendations
+- ▶️ Start Auto Demo: Begin automated sequence
+- ⏹️ Stop Auto Demo: Return to manual control
+- Progress indicator showing current step (1/4, 2/4, etc.)
 
----
+### Enhanced Visualizations
 
-## 📊 Interactive Dashboard Features
+#### Metrics Panel Enhancements
 
-### Real-Time Metrics Display
-- **Latency Comparison**: Device vs MEC vs Cloud
-- **Cost Analysis**: Per-request cost breakdown
-- **Accuracy Metrics**: Model performance by tier
-- **Network Conditions**: Simulated real-world variability
+- **Scenario-Specific Icons**: 🚗✅ (automotive safety), 🎮⚠️ (gaming lag), 🏥⚠️ (patient alerts)
+- **Context Information**: Active players, connected vehicles, monitored patients
+- **Adaptive Thresholds**: Stricter latency for automotive, higher GPU tolerance for gaming
+- **Performance Descriptions**: Scenario-optimized performance indicators
 
-### Interactive Controls
-- **Network Slider**: Adjust bandwidth/latency in real-time
-- **Complexity Dial**: Change request complexity
-- **Location Selector**: Switch geographic regions
-- **Use Case Tabs**: Quick scenario switching
+#### Swarm Network Enhancements
 
-### Performance Visualization
-```
-┌─────────────────────────────────────┐
-│ Latency vs Accuracy Tradeoff       │
-│                                     │
-│ Accuracy                           │
-│    ↑                               │
-│ 95%┤     ● Cloud                   │
-│ 85%┤   ● MEC                       │
-│ 70%┤ ● Device                      │
-│    └─────────────────→ Latency     │
-│   50ms  200ms    2s               │
-└─────────────────────────────────────┘
+- **Scenario-Specific Edge Colors**: Orange (automotive), Purple (gaming), Blue (healthcare)
+- **Dynamic Node Sizing**: Based on load percentage (15-40px)
+- **Status Annotations**: Safety alerts, high load warnings, priority modes
+- **Coordination Metrics**: Active sites, average load, coordination status
+
+#### Activity Stream Enhancements
+
+- **Scenario Filtering**: Show scenario-specific activities with icons
+- **Detailed Expandable Entries**: Click to see full activity details
+- **Activity Statistics**: Total activities, scenario count, success rate
+- **Real-time Updates**: Live activity feed with scenario context
+
+## Technical Implementation
+
+### Scenario Data Modifications
+
+```python
+# Metrics enhancement with scenario context
+enhanced_metrics = apply_demo_scenario(base_metrics, scenario, "metrics")
+
+# Activity stream enhancement with scenario-specific events
+enhanced_activities = apply_demo_scenario(base_activities, scenario, "activity")
+
+# Swarm behavior enhancement with coordination patterns
+enhanced_swarm = apply_scenario_swarm_behaviors(swarm_data, scenario)
 ```
 
-## 🎯 Demo Script Template
+### Automated Demo Integration
 
-### Opening (15 seconds)
-*"Real-time applications need split-second decisions, but cloud dependency introduces unacceptable latency. EdgeMind deploys intelligent Strands agent swarms directly at 5G MEC sites, making autonomous decisions without cloud involvement."*
+```python
+# Automated demo sequence management
+if st.session_state.auto_demo_active:
+    trigger_automated_demo_sequence()
 
-### Problem Statement (15 seconds)
-*"Current systems rely on cloud processing for intelligence, creating 100ms+ delays that break real-time applications like autonomous vehicles, gaming, and industrial control. The intelligence needs to live at the edge."*
+# Scenario transition every 15 seconds
+demo_sequence = ["normal", "gaming", "automotive", "healthcare"]
+current_scenario = demo_sequence[step % len(demo_sequence)]
+```
 
-### Solution Demo (90 seconds)
-*"Watch as our MEC orchestrator monitors thresholds and triggers swarm coordination across multiple edge sites..."*
-- Show threshold monitoring triggering swarm responses
-- Demonstrate sub-100ms decision making
-- Highlight autonomous MEC coordination without cloud dependency
+### Real-Time Coordination
 
-### Business Impact (15 seconds)
-*"The result: Sub-100ms autonomous decisions, 50% latency reduction, and true real-time performance through 5G-MEC intelligence that doesn't depend on the cloud."*
+Both Mock and Real modes support scenario enhancements:
 
-### Call to Action (15 seconds)
-*"This is the future of edge computing - intelligent, adaptive, and cost-effective. Ready to transform your AI applications?"*
+- **Mock Mode**: Simulated scenario-specific patterns and behaviors
+- **Real Mode**: Actual MCP tool calls with scenario context integration
+- **Seamless Switching**: Scenarios work identically in both modes
 
-## 🏆 Judge Interaction Points
+## Usage Instructions
 
-### Technical Deep Dive
-- Show agent decision-making process
-- Explain routing algorithms
-- Demonstrate AWS integration
-- Discuss scalability architecture
+### Manual Scenario Selection
 
-### Business Case Discussion
-- ROI calculations
-- Market opportunity
-- Competitive advantages
-- Implementation roadmap
+1. Select scenario from "Workload Type" dropdown
+2. Observe real-time metrics adaptation
+3. Monitor scenario-specific activity stream
+4. View enhanced swarm coordination patterns
 
-### Live Testing
-- Judges can modify scenarios
-- Real-time parameter adjustment
-- Performance metric exploration
-- Cost analysis interaction
+### Automated Demo
 
----
+1. Click "▶️ Start Auto Demo" in sidebar
+2. Watch 15-second scenario transitions
+3. Observe seamless threshold and behavior changes
+4. Click "⏹️ Stop Auto Demo" to return to manual control
 
-**Demo Success Metrics**:
-- Clear problem/solution narrative ✅
-- Multiple compelling use cases ✅
-- Live, interactive demonstration ✅
-- Measurable business impact ✅
-- Technical depth for judges ✅
+### Scenario Comparison
+
+- Compare latency requirements across scenarios
+- Observe resource utilization patterns
+- Monitor swarm coordination differences
+- Analyze activity stream variations
+
+## Performance Validation
+
+### Scenario-Specific Targets
+
+- **Gaming**: GPU optimization, multiplayer synchronization
+- **Automotive**: Sub-30ms latency, safety-critical reliability
+- **Healthcare**: Consistent processing, compliance monitoring
+- **Normal**: Balanced resource utilization
+
+### Success Metrics
+
+- Threshold compliance per scenario
+- Activity success rates
+- Swarm coordination efficiency
+- Real-time responsiveness
+
+## Integration with Requirements
+
+This implementation addresses the following requirements:
+
+- **Requirement 4.1**: Gaming scenario with multiplayer and NPC AI patterns
+- **Requirement 4.2**: Automotive scenario with safety-critical latency
+- **Requirement 4.3**: Healthcare scenario with patient monitoring reliability
+- **Requirement 11.1**: Enhanced dashboard visualization and demo capabilities
+
+The enhanced demo scenarios provide comprehensive demonstration of MEC orchestration capabilities across diverse use cases, showcasing the system's adaptability and real-time coordination features.

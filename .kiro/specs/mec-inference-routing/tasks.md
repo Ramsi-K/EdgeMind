@@ -675,3 +675,18 @@
     - Implement real-time streaming of agent conversations as they happen
     - Add conversation export functionality for debugging and analysis
     - _Requirements: 6.1, User Experience_
+
+- [x] 8. Clean up and consolidate markdown documentation
+
+  - Review all markdown files in the repository and identify outdated/unnecessary ones
+  - Remove obsolete documentation files:
+    - `SETUP_CLAUDE.md` (outdated setup instructions) ✅
+    - `STRANDS_IMPLEMENTATION_STATUS.md` (implementation status tracking, now complete) ✅
+    - `architecture/code_review_strands_implementation.md` (outdated code review) ✅
+    - `architecture/technical_debt_analysis.md` (outdated technical debt analysis) ✅
+    - `docs/DEMO_SCENARIOS.md` (superseded by DEMO_SCENARIOS_ENHANCED.md) ✅
+    - `docs/BUSINESS_CASES.md` (if not actively maintained) ✅
+  - Consolidate remaining architecture docs into a single comprehensive guide ✅
+  - Update README.md to reflect current project state and remove outdated sections ✅
+  - Ensure all remaining docs are current and add value to the project ✅
+  - _Requirements: Project Maintenance, Documentation Quality_

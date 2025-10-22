@@ -2,7 +2,7 @@
 
 > 🏆 **5G Edge Computing Showcase**
 > Real-time AI orchestration at telecom edge with Strands agent swarms
-> https://ramsik-edgemind.streamlit.app/
+> [Live Demo](https://ramsik-edgemind.streamlit.app/)
 
 ## 🎯 Project Overview
 
@@ -78,8 +78,8 @@ User Devices (5G) → MEC Site A (Primary) → Swarm Coordination → MEC Sites 
 - **Edge Agents**: Strands framework with Claude 3.5 Sonnet integration
 - **AI Model**: Claude API for real agent coordination (optional for demo)
 - **MEC Infrastructure**: Docker/Kubernetes on edge compute nodes
-- **Dashboard**: Streamlit with real-time simulation
-- **Orchestration**: Threshold-based swarm coordination
+- **Dashboard**: Streamlit with real-time simulation and dual-mode operation
+- **Orchestration**: Threshold-based swarm coordination with MCP tools
 - **AWS Integration**: AgentCore Memory + Orchestration only
 - **Communication**: Direct MEC-to-MEC networking
 
@@ -87,7 +87,7 @@ User Devices (5G) → MEC Site A (Primary) → Swarm Coordination → MEC Sites 
 
 For full Strands agent experience:
 
-1. Get API key: https://console.anthropic.com/
+1. Get API key: [Anthropic Console](https://console.anthropic.com/)
 2. Create `.env` file: `ANTHROPIC_API_KEY=your-key-here`
 3. Test agents: `python tests/run_all_tests.py`
 
@@ -136,11 +136,18 @@ mec-inference-routing/
 ├── src/
 │   ├── agents/            # 5 Strands agents (Orchestrator, Load Balancer, etc.)
 │   ├── swarm/             # Swarm coordination logic
-│   ├── mcp_tools/         # Local MCP tools (metrics, containers, inference)
-│   └── dashboard/         # Streamlit UI components
-├── architecture/          # Technical documentation
-├── docs/                  # Business cases and technical specs
-└── tests/                 # Agent and swarm tests
+│   ├── mcp_tools/         # MCP tools (metrics, containers, inference, telemetry)
+│   ├── dashboard/         # Streamlit UI components with dual-mode support
+│   ├── data/              # Data generation and simulation
+│   ├── device/            # Device layer simulation
+│   └── orchestrator/      # Threshold monitoring and orchestration
+├── architecture/          # Consolidated architecture documentation
+│   ├── ARCHITECTURE_GUIDE.md          # Comprehensive architecture guide
+│   ├── architecture_decision_records.md  # ADRs and design decisions
+│   └── enterprise_aws_deployment.md   # AWS deployment architecture
+├── docs/                  # Enhanced demo scenarios and technical specs
+├── tests/                 # Comprehensive agent and swarm tests
+└── demo_data/             # Demo data and session management
 ```
 
 ## 🏆 5G Edge Computing Showcase
@@ -155,13 +162,16 @@ mec-inference-routing/
 
 ### **🚀 Live Demo Features:**
 
-🔗 https://ramsik-edgemind.streamlit.app/
+🔗 [Interactive Dashboard](https://ramsik-edgemind.streamlit.app/)
 
+- **Dual-Mode Operation**: Mock Data Mode (no API key) vs Real Strands Agents Mode (with Claude API)
 - **Interactive Dashboard**: Real-time MEC orchestration simulation
+- **Enhanced Demo Scenarios**: Gaming, Automotive, Healthcare, IoT use cases
+- **Automated Demo Mode**: 15-second scenario transitions with start/stop controls
 - **Threshold Testing**: Watch swarm activation during overload
 - **Failover Scenarios**: See how system handles MEC site failures
-- **Performance Metrics**: Track latency, CPU, GPU, queue depth
-- **Agent Activity**: Live stream of Strands agent coordination
+- **Performance Metrics**: Track latency, CPU, GPU, queue depth with scenario-specific patterns
+- **Agent Activity**: Live stream of Strands agent coordination and MCP tool calls
 
 ---
 
@@ -244,6 +254,21 @@ Planned research and implementation:
 - Build multi-MEC simulation for latency and consensus testing
 - Add reinforcement-based learning between edge and cloud layers
 - Formalize and publish ICEO as a framework for autonomous 5G orchestration
+
+## 📚 Documentation
+
+### Architecture Documentation
+
+- **[Architecture Guide](architecture/ARCHITECTURE_GUIDE.md)**: Comprehensive system architecture, agent design, deployment patterns, and key design decisions
+
+### Technical Specifications
+
+- **[Enhanced Demo Scenarios](docs/DEMO_SCENARIOS.md)**: Detailed demo scenarios for gaming, automotive, healthcare, and IoT
+
+### Development
+
+- **[Tests](tests/)**: Comprehensive test suite for agents, swarm coordination, and integration scenarios
+- **[Generated Diagrams](generated-diagrams/)**: Mermaid architecture diagrams and visualizations
 
 ---
 

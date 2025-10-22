@@ -1,0 +1,57 @@
+sequenceDiagram
+    participant User as 📱 User Device
+    participant SiteA as 📡 MEC Site A (Primary)
+    participant DecisionA as 🧠 Decision Coordinator A
+    participant SiteB as 📡 MEC Site B (Fallback)
+    participant SiteC as 📡 MEC Site C (Fallback)
+    participant AWS as ☁️ AWS AgentCore
+
+    Note over User, AWS: 5G-MEC Threshold Breach & Swarm Activation Flow
+
+    %% Normal Request Flow
+    User->>SiteA: 1. 5G Request
+    Note over SiteA: Orchestrator Agent processes
+    SiteA->>SiteA: 2. Check local MCP tools
+    Note over SiteA: metrics_monitor detects high load
+
+    %% Threshold Breach Detection
+    rect rgb(255, 240, 240)
+        Note over SiteA: ⚠️ THRESHOLD BREACH DETECTED
+        SiteA->>SiteA: 3. CPU > 80% | Latency > 100ms
+        SiteA->>DecisionA: 4. Alert Decision Coordinator
+    end
+
+    %% Swarm Activation
+    rect rgb(240, 248, 255)
+        Note over DecisionA, AWS: 🤝 SWARM COORDINATION ACTIVATED
+        DecisionA->>SiteB: 5. Check Site B capacity
+        DecisionA->>SiteC: 6. Check Site C capacity
+
+        SiteB-->>DecisionA: 7. Site B: CPU 25%, Available
+        SiteC-->>DecisionA: 8. Site C: CPU 15%, Available
+
+        DecisionA->>DecisionA: 9. Select optimal site (Site C)
+    end
+
+    %% AWS Memory Sync
+    DecisionA->>AWS: 10. Store swarm decision
+    AWS-->>DecisionA: 11. Decision logged
+
+    %% Request Routing
+    rect rgb(240, 255, 240)
+        Note over DecisionA, SiteC: ✅ ROUTE TO OPTIMAL SITE
+        DecisionA->>SiteC: 12. Route request to Site C
+        SiteC->>SiteC: 13. Process with local MCP tools
+        SiteC->>SiteC: 14. Execute inference_engine
+    end
+
+    %% Response Flow
+    SiteC-->>DecisionA: 15. Processing complete
+    DecisionA-->>SiteA: 16. Response ready
+    SiteA-->>User: 17. Final response (<100ms total)
+
+    %% Performance Notes
+    Note over User, AWS: 🎯 Target: Sub-100ms end-to-end
+    Note over SiteA, SiteC: 📊 Achieved: ~85ms via MEC proximity
+    Note over DecisionA: 🤖 Swarm decision: ~15ms
+    Note over AWS: ☁️ Memory sync: Passive (non-blocking)

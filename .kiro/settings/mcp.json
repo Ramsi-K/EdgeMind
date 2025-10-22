@@ -9,7 +9,10 @@
       ],
       "env": {},
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [
+        "suggest_aws_commands",
+        "call_aws"
+      ]
     },
     "awslabs.git-repo-research-mcp-server": {
       "command": "uv",

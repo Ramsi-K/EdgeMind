@@ -1,84 +1,153 @@
-graph LR
-%% Edge Devices
-subgraph EdgeDevices["🌐 Edge Devices"]
-Mobile["📱<br/>Mobile App"]
+graph TB
+%% User Devices Layer
+subgraph UserDevices["🌐 User Devices (5G Connected)"]
+Mobile["📱<br/>Mobile Apps"]
 IoT["🔧<br/>IoT Sensors"]
-Gaming["🎮<br/>Gaming Client"]
+Gaming["🎮<br/>Gaming Clients"]
+Vehicles["🚗<br/>Autonomous Vehicles"]
 end
 
-    %% MEC Site (Main Processing)
-    subgraph MECSite["🏢 MEC Site"]
-        subgraph MECOrch["MEC Orchestrator"]
-            Agent["🤖<br/>MEC Agent"]
-            Tools["🛠️<br/>Local Tools<br/>• metrics_monitor()<br/>• container_ops()<br/>• cache_manager()"]
+    %% MEC Site A (Radio Tower 1)
+    subgraph MECSiteA["📡 MEC Site A (5G Radio Tower 1)"]
+        subgraph AgentsA["🤖 Complete Strands Agent Set"]
+            OrchestratorA["🎯<br/>Orchestrator Agent"]
+            LoadBalancerA["⚖️<br/>Load Balancer Agent"]
+            ResourceMonitorA["📈<br/>Resource Monitor Agent"]
+            DecisionCoordA["🧠<br/>Decision Coordinator Agent"]
+            CacheManagerA["💾<br/>Cache Manager Agent"]
         end
 
-        subgraph MECCompute["💻 MEC Compute"]
-            Container1["📦 Container A"]
-            Container2["📦 Container B"]
-            GPU["🎯 GPU Inference"]
+        subgraph MCPToolsA["🛠️ Local MCP Tools"]
+            MetricsA["📊<br/>metrics_monitor"]
+            ContainerA["🐳<br/>container_ops"]
+            InferenceA["🧠<br/>inference_engine"]
+            TelemetryA["📝<br/>telemetry_logger"]
+            MemorySyncA["🔄<br/>memory_sync"]
         end
 
-        LocalStorage["💾<br/>Local Cache"]
+        subgraph ComputeA["💻 Local Edge Compute"]
+            ContainersA["📦<br/>Containers"]
+            CacheStorageA["💽<br/>Model Cache"]
+        end
     end
 
-    %% Swarm Coordination
-    subgraph SwarmLayer["🤝 Swarm Coordination"]
-        SwarmCoord["⚡<br/>Swarm Coordinator"]
-        Consensus["🧠<br/>Consensus Engine<br/>(Raft Protocol)"]
-        LoadBalancer["⚖️<br/>Load Balancer"]
+    %% MEC Site B (Radio Tower 2)
+    subgraph MECSiteB["📡 MEC Site B (5G Radio Tower 2)"]
+        subgraph AgentsB["🤖 Complete Strands Agent Set"]
+            OrchestratorB["🎯<br/>Orchestrator Agent"]
+            LoadBalancerB["⚖️<br/>Load Balancer Agent"]
+            ResourceMonitorB["📈<br/>Resource Monitor Agent"]
+            DecisionCoordB["🧠<br/>Decision Coordinator Agent"]
+            CacheManagerB["💾<br/>Cache Manager Agent"]
+        end
+
+        subgraph MCPToolsB["🛠️ Local MCP Tools"]
+            MetricsB["📊<br/>metrics_monitor"]
+            ContainerB["🐳<br/>container_ops"]
+            InferenceB["🧠<br/>inference_engine"]
+            TelemetryB["📝<br/>telemetry_logger"]
+            MemorySyncB["🔄<br/>memory_sync"]
+        end
+
+        subgraph ComputeB["💻 Local Edge Compute"]
+            ContainersB["📦<br/>Containers"]
+            CacheStorageB["💽<br/>Model Cache"]
+        end
     end
 
-    %% Cloud Fallback
-    subgraph CloudLayer["☁️ Cloud Fallback"]
-        CloudCompute["🌩️<br/>Cloud Compute"]
-        CloudStorage["💽<br/>Cloud Storage"]
+    %% AWS Cloud Layer (Only 2 AgentCore Services)
+    subgraph AWSCloud["☁️ AWS Cloud (Passive Observer)"]
+        AgentCoreMemory["⬜<br/>Bedrock AgentCore<br/>Memory<br/>(Swarm State Storage)"]
+        AgentCoreOrchestration["⬜<br/>Bedrock AgentCore<br/>Orchestration<br/>(Agent Coordination)"]
     end
 
-    %% Monitoring & Observability
-    subgraph Monitoring["📊 Monitoring"]
-        Metrics["📈<br/>Metrics Monitor"]
-        Alerts["🚨<br/>Alert System"]
+    %% MEC Site C (Radio Tower 3)
+    subgraph MECSiteC["📡 MEC Site C (5G Radio Tower 3)"]
+        subgraph AgentsC["🤖 Complete Strands Agent Set"]
+            OrchestratorC["🎯<br/>Orchestrator Agent"]
+            LoadBalancerC["⚖️<br/>Load Balancer Agent"]
+            ResourceMonitorC["📈<br/>Resource Monitor Agent"]
+            DecisionCoordC["🧠<br/>Decision Coordinator Agent"]
+            CacheManagerC["💾<br/>Cache Manager Agent"]
+        end
+
+        subgraph MCPToolsC["🛠️ Local MCP Tools"]
+            MetricsC["📊<br/>metrics_monitor"]
+            ContainerC["�<br/>ccontainer_ops"]
+            InferenceC["🧠<br/>inference_engine"]
+            TelemetryC["📝<br/>telemetry_logger"]
+            MemorySyncC["🔄<br/>memory_sync"]
+        end
+
+        subgraph ComputeC["💻 Local Edge Compute"]
+            ContainersC["📦<br/>Containers"]
+            CacheStorageC["💽<br/>Model Cache"]
+        end
     end
 
-    %% Primary Request Flow
-    Mobile -->|"1. User Request"| Agent
-    IoT -->|"1. Sensor Data"| Agent
-    Gaming -->|"1. Game State"| Agent
+    %% User Device to MEC Site A Primary Site
+    Mobile == "5G Request" ==> OrchestratorA
+    IoT  == "5G Sensor Data" ==> OrchestratorA
+    Gaming  == "5G Game State" ==> OrchestratorA
+    Vehicles  == "5G Navigation" ==> OrchestratorA
 
-    %% MEC Internal Processing
-    Agent -->|"2. Process Request"| Container1
-    Agent -->|"2. Route to GPU"| GPU
-    Agent -->|"3. Cache Check"| LocalStorage
 
-    %% Swarm Coordination Flow
-    Agent -->|"4. Swarm Decision"| SwarmCoord
-    SwarmCoord -->|"5. Consensus"| Consensus
-    SwarmCoord -->|"6. Load Balance"| LoadBalancer
+    %% Agents Use Local MCP Tools (Within Same MEC Site)
+    OrchestratorA --> MetricsA
+    LoadBalancerA --> ContainerA
+    ResourceMonitorA --> TelemetryA
+    DecisionCoordA --> MemorySyncA
+    CacheManagerA --> InferenceA
 
-    %% Monitoring Flow
-    Agent -.->|"Metrics"| Metrics
-    SwarmCoord -.->|"Health Check"| Metrics
-    Metrics -.->|"Threshold Breach"| Alerts
+    OrchestratorB --> MetricsB
+    LoadBalancerB --> ContainerB
+    ResourceMonitorB --> TelemetryB
+    DecisionCoordB --> MemorySyncB
+    CacheManagerB --> InferenceB
 
-    %% Fallback Flow
-    SwarmCoord -.->|"7. Failover<br/>(if overloaded)"| CloudCompute
-    CloudCompute --> CloudStorage
+    OrchestratorC --> MetricsC
+    LoadBalancerC --> ContainerC
+    ResourceMonitorC --> TelemetryC
+    DecisionCoordC --> MemorySyncC
+    CacheManagerC --> InferenceC
 
-    %% Response Flow
-    Container1 -->|"8. Response"| Agent
-    GPU -->|"8. Inference Result"| Agent
-    Agent -->|"9. Final Response"| Mobile
+    %% MCP Tools Interact with Local Compute
+    ContainerA --> ContainersA
+    InferenceA --> CacheStorageA
+    MetricsA --> ContainersA
+
+    ContainerB --> ContainersB
+    InferenceB --> CacheStorageB
+    MetricsB --> ContainersB
+
+    ContainerC --> ContainersC
+    InferenceC --> CacheStorageC
+    MetricsC --> ContainersC
+
+    %% Swarm Coordination Only when triggered by Site A
+    DecisionCoordA -.-> DecisionCoordB
+    DecisionCoordA -.-> DecisionCoordC
+
+    %% MEC Sites to AWS Cloud Only 2 AgentCore Services
+    MemorySyncA -.-> AgentCoreMemory
+    DecisionCoordA -.-> AgentCoreOrchestration
+
+    %% Invisible positioning connections to control layout
+    MECSiteA ~~~ AWSCloud
 
     %% Styling
-    classDef edgeStyle fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
-    classDef mecStyle fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
-    classDef swarmStyle fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
-    classDef cloudStyle fill:#fff3e0,stroke:#ff9800,stroke-width:2px
-    classDef monitorStyle fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    classDef userStyle fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef mecAStyle fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+    classDef mecBStyle fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef mecCStyle fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef cloudStyle fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    classDef agentStyle fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef toolStyle fill:#f1f8e9,stroke:#689f38,stroke-width:2px
 
-    class EdgeDevices,Mobile,IoT,Gaming edgeStyle
-    class MECSite,MECOrch,MECCompute,Agent,Tools,Container1,Container2,GPU,LocalStorage mecStyle
-    class SwarmLayer,SwarmCoord,Consensus,LoadBalancer swarmStyle
-    class CloudLayer,CloudCompute,CloudStorage cloudStyle
-    class Monitoring,Metrics,Alerts monitorStyle
+    class UserDevices,Mobile,IoT,Gaming,Vehicles userStyle
+    class MECSiteA,AgentsA,MCPToolsA,ComputeA,ContainersA,CacheStorageA mecAStyle
+    class MECSiteB,AgentsB,MCPToolsB,ComputeB,ContainersB,CacheStorageB mecBStyle
+    class MECSiteC,AgentsC,MCPToolsC,ComputeC,ContainersC,CacheStorageC mecCStyle
+    class AWSCloud,AgentCoreMemory,AgentCoreOrchestration cloudStyle
+    class OrchestratorA,LoadBalancerA,ResourceMonitorA,DecisionCoordA,CacheManagerA,OrchestratorB,LoadBalancerB,ResourceMonitorB,DecisionCoordB,CacheManagerB,OrchestratorC,LoadBalancerC,ResourceMonitorC,DecisionCoordC,CacheManagerC agentStyle
+    class MetricsA,ContainerA,InferenceA,TelemetryA,MemorySyncA,MetricsB,ContainerB,InferenceB,TelemetryB,MemorySyncB,MetricsC,ContainerC,InferenceC,TelemetryC,MemorySyncC toolStyle

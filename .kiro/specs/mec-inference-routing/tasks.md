@@ -270,15 +270,54 @@
   - Save as `architecture/enterprise_aws_deployment.md` with Mermaid diagram
   - _Requirements: 2.1_
 
-- [ ] 6. Enhance dashboard with demo scenarios and real-time integration
+- [x] 6. Add dual-mode dashboard for deployment accessibility (CRITICAL - Deployment Ready)
+
+  - **DEPLOYMENT FOCUS**: Enable public deployment where users can test without requiring their own Claude API key
+  - **USER EXPERIENCE**: Provide both simulation and real agent modes in single interface
+  - **API KEY MANAGEMENT**: Allow users to optionally enter their Claude API key for real agent testing
+  - Add mode selector in dashboard sidebar: "Mock Data Mode" vs "Real Strands Agents Mode"
+  - Implement secure API key input field (password-masked, session-only storage)
+  - Connect Real Strands Agents Mode to actual SwarmCoordinator and agents when API key provided
+  - Keep Mock Data Mode as default for users without API keys
+  - Add clear indicators showing which mode is active and what each mode provides
+  - _Requirements: 11.1, Deployment Readiness_
+
+- [x] 6.1 Implement dashboard mode selector and API key input
+
+  - Add radio button selector: "🎭 Mock Data Mode" vs "🤖 Real Strands Agents Mode"
+  - Create secure text input for Claude API key (st.text_input with type="password")
+  - Add mode descriptions: Mock = "Realistic simulation, no API needed" / Real = "Actual Claude agents, API required"
+  - Implement session state management for API key (never stored permanently)
+  - Add validation to test API key before switching to Real mode
+  - _Requirements: 11.1_
+
+- [x] 6.2 Connect Real mode to actual Strands agents
+
+  - Import and initialize SwarmCoordinator when Real mode selected with valid API key
+  - Replace generate_metrics_data() with real MCP tool calls in Real mode
+  - Replace generate_activity_data() with actual agent activity stream in Real mode
+  - Replace generate_swarm_data() with real SwarmCoordinator.mec_sites status in Real mode
+  - Add error handling for API failures with graceful fallback to Mock mode
+  - _Requirements: 11.1_
+
+- [x] 6.3 Add deployment-ready user experience enhancements
+
+  - Create clear onboarding instructions in dashboard sidebar
+  - Add "How to get Claude API key" link and instructions
+  - Implement loading states when switching between modes
+  - Add success/error notifications for mode switching
+  - Create demo scenarios that work in both Mock and Real modes
+  - Add performance comparison display: "Mock: Instant" vs "Real: ~2-5s (API calls)"
+  - _Requirements: 11.1, User Experience_
+
+- [x] 7. Enhance dashboard with demo scenarios and real-time integration
 
   - Implement gaming, automotive, healthcare scenario simulations in dashboard
-  - Connect dashboard to real SwarmCoordinator and ThresholdMonitor instances
-  - Replace mock data generation with actual agent activity and metrics
-  - Add scenario-specific threshold patterns and swarm behaviors
+  - Add scenario-specific threshold patterns and swarm behaviors for both Mock and Real modes
+  - Create automated demo sequences that showcase MEC orchestration capabilities
   - _Requirements: 4.1, 4.2, 4.3, 11.1_
 
-- [ ] 6.1 Connect dashboard to real system components
+- [x] 6.1 Connect dashboard to real system components
 
   - Replace mock data generators in dashboard with actual SwarmCoordinator integration
   - Connect dashboard metrics panel to real ThresholdMonitor events
@@ -286,7 +325,7 @@
   - Display real MEC site status from SwarmCoordinator.mec_sites in network visualization
   - _Requirements: 11.1_
 
-- [ ] 6.2 Implement demo scenario simulations
+- [x] 6.2 Implement demo scenario simulations
 
   - Create gaming scenario with NPC dialogue complexity patterns and threshold triggers
   - Build automotive scenario with safety-critical threshold breaches and failover testing
@@ -294,7 +333,7 @@
   - Integrate scenarios with dashboard mode selector for live demonstration
   - _Requirements: 4.1, 4.2, 4.3_
 
-- [ ] 6.3 Add automated demo mode and performance validation
+- [x] 6.3 Add automated demo mode and performance validation
 
   - Create demo orchestrator that cycles through scenarios automatically
   - Validate sub-100ms orchestration decision targets with real measurements
@@ -599,7 +638,40 @@
   - _Requirements: 6.1, 8.1_
 
 - [ ] 18.2 Prepare final submission package
+
   - Create complete submission package with code, documentation, and demo
   - Perform final code review and quality assurance
   - Validate all requirements are met and documented
   - _Requirements: 11.1_
+
+- [-] 7. Fix agent conversation capture in Real mode dashboard
+
+  - **ISSUE**: Agent conversations show placeholder text instead of actual Claude/Strands agent responses
+  - **CONTEXT**: Direct agent execution works and shows responses, but Streamlit dashboard integration is broken
+  - **GOAL**: Display actual agent reasoning, decisions, and LLM responses in Real mode conversation panel
+  - _Requirements: 6.1, Real Agent Integration_
+
+  - [x] 7.1 Debug agent conversation capture mechanism
+
+    - Investigate why `trigger_agent_conversation()` returns placeholder messages instead of real agent responses
+    - Check if SwarmCoordinator.activate_swarm() is properly capturing Strands agent conversations
+    - Verify that agent LLM responses are being logged and accessible in dashboard context
+    - Test direct agent execution vs dashboard integration to identify the disconnect
+    - _Requirements: 6.1_
+
+  - [x] 7.2 Implement proper agent response capture
+
+    - Modify trigger functions to capture actual Strands agent conversations and reasoning
+    - Extract real LLM responses from SwarmCoordinator and agent execution results
+    - Implement conversation parsing to show agent handoffs, decisions, and reasoning chains
+    - Add proper error handling for agent execution failures with detailed error messages
+    - _Requirements: 6.1, Agent Conversation Display_
+
+  - [x] 7.3 Enhance conversation display with agent reasoning
+
+    - Show actual agent-to-agent handoffs and communication in conversation panel
+    - Display LLM reasoning, decision rationale, and confidence scores from agents
+    - Add conversation threading to show how agents build on each other's responses
+    - Implement real-time streaming of agent conversations as they happen
+    - Add conversation export functionality for debugging and analysis
+    - _Requirements: 6.1, User Experience_
